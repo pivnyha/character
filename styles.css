@@ -2,10 +2,8 @@
    TARKOV STYLE - СУРОВЫЙ ВОЕННЫЙ МИНИМАЛИЗМ
    ======================================== */
 
-/* --- ИМПОРТ ШРИФТОВ --- */
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&family=Share+Tech+Mono&display=swap');
 
-/* --- БАЗОВЫЕ НАСТРОЙКИ --- */
 * {
     margin: 0;
     padding: 0;
@@ -18,30 +16,23 @@
     --bg-panel: #1a1a1a;
     --bg-card: #1e1e1e;
     --bg-hover: #2a2a2a;
-    
     --border-color: #2a2a2a;
     --border-light: #3a3a3a;
     --border-accent: #6b8c42;
-    
     --text-primary: #d4d4d4;
     --text-secondary: #888888;
     --text-muted: #555555;
     --text-accent: #8cb85c;
     --text-warning: #d4a843;
     --text-danger: #c0392b;
-    
     --accent-green: #6b8c42;
     --accent-green-bright: #8cb85c;
     --accent-red: #8c3a3a;
-    --accent-gold: #b8963a;
-    
     --font-main: 'Roboto Condensed', 'Arial Narrow', sans-serif;
     --font-mono: 'Share Tech Mono', 'Courier New', monospace;
 }
 
-html {
-    font-size: 16px;
-}
+html { font-size: 16px; }
 
 body {
     font-family: var(--font-main);
@@ -54,7 +45,6 @@ body {
         radial-gradient(ellipse at 80% 50%, rgba(107, 140, 66, 0.03) 0%, transparent 60%);
 }
 
-/* --- КОНТЕЙНЕР --- */
 .container {
     max-width: 1100px;
     margin: 0 auto;
@@ -77,7 +67,6 @@ body {
     opacity: 0.4;
 }
 
-/* --- ХЕДЕР --- */
 header {
     display: flex;
     justify-content: space-between;
@@ -164,7 +153,6 @@ header {
     50% { opacity: 0.3; }
 }
 
-/* --- ВКЛАДКИ --- */
 .tabs {
     display: flex;
     gap: 0;
@@ -202,26 +190,20 @@ header {
     background: rgba(107, 140, 66, 0.05);
 }
 
-.tab-icon {
-    font-size: 14px;
-}
+.tab-icon { font-size: 14px; }
 
-/* --- КОНТЕНТ ВКЛАДОК --- */
 .tab-content {
     display: none;
     animation: fadeIn 0.3s ease;
 }
 
-.tab-content.active {
-    display: block;
-}
+.tab-content.active { display: block; }
 
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(6px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* --- ЗАГОЛОВКИ ВКЛАДОК --- */
 .tab-header {
     display: flex;
     justify-content: space-between;
@@ -263,14 +245,12 @@ header {
     color: var(--accent-green-bright);
 }
 
-/* --- СЕТКА СТАТОВ --- */
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 8px;
 }
 
-/* --- ЭЛЕМЕНТ СТАТА --- */
 .stat-item {
     background: var(--bg-card);
     padding: 12px 16px;
@@ -343,15 +323,9 @@ header {
     color: var(--text-primary);
 }
 
-.stat-value.negative {
-    color: var(--text-danger);
-}
+.stat-value.negative { color: var(--text-danger); }
+.stat-value.positive { color: var(--accent-green-bright); }
 
-.stat-value.positive {
-    color: var(--accent-green-bright);
-}
-
-/* --- НАВЫКИ --- */
 .skills-section {
     display: flex;
     flex-direction: column;
@@ -374,10 +348,7 @@ header {
     border-bottom: 1px solid var(--border-color);
 }
 
-.category-icon {
-    font-size: 16px;
-    color: var(--accent-green);
-}
+.category-icon { font-size: 16px; color: var(--accent-green); }
 
 .category-title {
     font-family: var(--font-mono);
@@ -398,9 +369,7 @@ header {
     gap: 6px;
 }
 
-.skill-category .stat-item .stat-name {
-    font-size: 13px;
-}
+.skill-category .stat-item .stat-name { font-size: 13px; }
 
 .skill-category .stat-item .stat-name + span {
     font-size: 11px;
@@ -409,21 +378,29 @@ header {
     font-weight: 400;
 }
 
-/* --- ПЕРКИ --- */
+/* ===== ПЕРКИ ===== */
+.perks-container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
 .perks-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
 }
 
 .perk-item {
     background: var(--bg-card);
-    padding: 14px 18px;
+    padding: 12px 18px;
     border: 1px solid var(--border-color);
     border-radius: 2px;
     cursor: pointer;
     transition: all 0.2s ease;
     position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .perk-item:hover {
@@ -437,14 +414,10 @@ header {
     box-shadow: inset 0 0 30px rgba(107, 140, 66, 0.03);
 }
 
-.perk-item.selected::before {
-    content: '▶';
-    position: absolute;
-    left: -1px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--accent-green);
-    font-size: 10px;
+.perk-item .perk-info {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
 }
 
 .perk-item h4 {
@@ -453,17 +426,184 @@ header {
     font-weight: 700;
     letter-spacing: 1px;
     color: var(--text-primary);
-    margin-bottom: 4px;
 }
 
 .perk-item .perk-description {
     font-size: 12px;
     color: var(--text-secondary);
-    line-height: 1.5;
+    line-height: 1.4;
     font-weight: 400;
 }
 
-/* --- НИЖНИЕ КНОПКИ --- */
+.perk-item .perk-status {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-muted);
+    padding-left: 15px;
+    white-space: nowrap;
+}
+
+.perk-item.selected .perk-status {
+    color: var(--accent-green-bright);
+}
+
+/* ===== ПОДСКАЗКА ПРИ НАВЕДЕНИИ ===== */
+.perk-item .perk-tooltip {
+    display: none;
+    position: absolute;
+    right: calc(100% + 15px);
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--bg-panel);
+    border: 1px solid var(--border-accent);
+    border-radius: 4px;
+    padding: 12px 16px;
+    width: 280px;
+    z-index: 100;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+}
+
+.perk-item .perk-tooltip::after {
+    content: '';
+    position: absolute;
+    right: -8px;
+    top: 50%;
+    transform: translateY(-50%);
+    border-left: 8px solid var(--border-accent);
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent;
+}
+
+.perk-item .perk-tooltip .tooltip-title {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--accent-green-bright);
+    margin-bottom: 4px;
+}
+
+.perk-item .perk-tooltip .tooltip-desc {
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
+.perk-item:hover .perk-tooltip {
+    display: block;
+}
+
+@media (max-width: 768px) {
+    .perk-item .perk-tooltip {
+        right: 0;
+        top: calc(100% + 10px);
+        transform: none;
+        width: 100%;
+    }
+    .perk-item .perk-tooltip::after {
+        right: auto;
+        left: 20px;
+        top: -8px;
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        border-bottom: 8px solid var(--border-accent);
+        border-top: none;
+    }
+}
+
+/* ===== МОДАЛЬНОЕ ОКНО ===== */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+}
+
+.modal.hidden { display: none; }
+
+.modal-content {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-accent);
+    border-radius: 4px;
+    max-width: 700px;
+    width: 95%;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.modal-header h2 {
+    font-family: var(--font-mono);
+    font-size: 16px;
+    letter-spacing: 3px;
+    color: var(--text-primary);
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 24px;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.modal-close:hover { color: var(--text-danger); }
+
+.modal-body {
+    padding: 20px 24px;
+    overflow-y: auto;
+    flex: 1;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    line-height: 1.8;
+    color: var(--text-primary);
+    white-space: pre-wrap;
+}
+
+.modal-body .section-title {
+    color: var(--accent-green-bright);
+    font-weight: 700;
+    letter-spacing: 2px;
+    margin-top: 10px;
+    display: block;
+}
+
+.modal-body .section-title:first-child { margin-top: 0; }
+
+.modal-body .stat-line {
+    padding-left: 20px;
+    color: var(--text-secondary);
+}
+
+.modal-body .stat-line .value {
+    color: var(--text-primary);
+    font-weight: 700;
+}
+
+.modal-footer {
+    padding: 16px 24px;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: center;
+}
+
+/* ===== КНОПКИ ===== */
 .actions {
     display: flex;
     gap: 10px;
@@ -471,6 +611,7 @@ header {
     padding-top: 20px;
     border-top: 1px solid var(--border-color);
     flex-wrap: wrap;
+    justify-content: center;
 }
 
 .btn {
@@ -478,7 +619,7 @@ header {
     font-size: 11px;
     font-weight: 700;
     letter-spacing: 2px;
-    padding: 10px 24px;
+    padding: 10px 30px;
     border: 1px solid var(--border-color);
     border-radius: 2px;
     background: var(--bg-panel);
@@ -512,7 +653,6 @@ header {
     background: rgba(74, 122, 156, 0.1);
 }
 
-/* --- СООБЩЕНИЯ --- */
 .message {
     margin-top: 15px;
     padding: 10px 18px;
@@ -526,41 +666,19 @@ header {
     text-align: center;
 }
 
-.message.hidden {
-    display: none;
-}
-
+.message.hidden { display: none; }
 .message.error {
     border-color: var(--accent-red);
     color: #e74c3c;
 }
 
-/* --- АДАПТИВНОСТЬ --- */
+/* ===== АДАПТИВ ===== */
 @media (max-width: 768px) {
-    .container {
-        padding: 12px 14px 18px;
-        border-radius: 2px;
-    }
-
-    header {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 12px;
-    }
-
-    .header-right {
-        justify-content: space-between;
-    }
-
-    .logo-text {
-        font-size: 16px;
-        letter-spacing: 2px;
-    }
-
-    .tabs {
-        gap: 2px;
-    }
-
+    .container { padding: 12px 14px 18px; }
+    header { flex-direction: column; align-items: stretch; gap: 12px; }
+    .header-right { justify-content: space-between; }
+    .logo-text { font-size: 16px; letter-spacing: 2px; }
+    .tabs { gap: 2px; }
     .tab-btn {
         font-size: 10px;
         padding: 10px 14px;
@@ -568,112 +686,39 @@ header {
         flex: 1;
         justify-content: center;
     }
-
-    .stats-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .skill-category .stats-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .perks-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .tab-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 8px;
-    }
-
-    .actions {
-        flex-direction: column;
-    }
-
-    .btn {
-        width: 100%;
-        text-align: center;
-        padding: 12px;
-    }
-
-    .stat-badge {
-        font-size: 9px;
-        padding: 3px 10px;
-    }
-
-    .points-display {
-        padding: 4px 12px;
-    }
-
-    .points-value {
-        font-size: 16px;
-    }
+    .stats-grid { grid-template-columns: 1fr; }
+    .skill-category .stats-grid { grid-template-columns: 1fr; }
+    .perks-grid { grid-template-columns: 1fr; }
+    .tab-header { flex-direction: column; align-items: flex-start; gap: 8px; }
+    .actions { flex-direction: column; }
+    .btn { width: 100%; text-align: center; padding: 12px; }
+    .stat-badge { font-size: 9px; padding: 3px 10px; }
+    .points-display { padding: 4px 12px; }
+    .points-value { font-size: 16px; }
+    .modal-content { width: 98%; }
 }
 
 @media (max-width: 480px) {
-    body {
-        padding: 4px;
-    }
-
-    .container {
-        padding: 8px 10px 14px;
-    }
-
-    .tab-btn {
-        font-size: 9px;
-        padding: 8px 8px;
-        letter-spacing: 0.5px;
-    }
-
-    .tab-btn .tab-icon {
-        font-size: 11px;
-    }
-
-    .stat-item {
-        padding: 10px 12px;
-        flex-wrap: wrap;
-        gap: 6px;
-    }
-
-    .stat-name {
-        font-size: 13px;
-    }
-
-    .stat-controls {
-        gap: 6px;
-    }
-
-    .stat-controls button {
-        width: 26px;
-        height: 26px;
-        font-size: 14px;
-    }
-
-    .perk-item {
-        padding: 12px 14px;
-    }
-
-    .perk-item h4 {
-        font-size: 12px;
-    }
+    body { padding: 4px; }
+    .container { padding: 8px 10px 14px; }
+    .tab-btn { font-size: 9px; padding: 8px 8px; letter-spacing: 0.5px; }
+    .tab-btn .tab-icon { font-size: 11px; }
+    .stat-item { padding: 10px 12px; flex-wrap: wrap; gap: 6px; }
+    .stat-name { font-size: 13px; }
+    .stat-controls { gap: 6px; }
+    .stat-controls button { width: 26px; height: 26px; font-size: 14px; }
+    .perk-item { padding: 10px 14px; flex-wrap: wrap; }
+    .perk-item h4 { font-size: 12px; }
 }
 
-/* --- СКРОЛЛБАР (стилизация) --- */
 ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
 }
 
-::-webkit-scrollbar-track {
-    background: var(--bg-primary);
-}
-
+::-webkit-scrollbar-track { background: var(--bg-primary); }
 ::-webkit-scrollbar-thumb {
     background: var(--border-color);
     border-radius: 2px;
 }
-
-::-webkit-scrollbar-thumb:hover {
-    background: var(--border-light);
-}
+::-webkit-scrollbar-thumb:hover { background: var(--border-light); }
