@@ -23,10 +23,7 @@
                 <span class="tab-icon">📋</span> ХАРАКТЕРИСТИКИ
             </button>
             <button class="tab-btn" data-tab="skills">
-                <span class="tab-icon">🎯</span> НАВЫКИ
-            </button>
-            <button class="tab-btn" data-tab="perks">
-                <span class="tab-icon">🏅</span> ПЕРКИ
+                <span class="tab-icon">🎯</span> НАВЫКИ И ПЕРКИ
             </button>
         </nav>
 
@@ -43,13 +40,13 @@
             <div class="stats-grid" id="characteristicsGrid"></div>
         </section>
 
-        <!-- Вкладка: Навыки -->
+        <!-- Вкладка: Навыки и Перки -->
         <section id="skills" class="tab-content">
             <div class="tab-header">
-                <div class="tab-title">🎯 НАВЫКИ</div>
+                <div class="tab-title">🎯 НАВЫКИ И ПЕРКИ</div>
                 <div class="tab-stats">
-                    <span class="stat-badge" id="selectedSkillsDisplay">ВЫБРАНО: 0/4</span>
-                    <span class="stat-badge highlight" id="skillPointsDisplay">ОЧКОВ: 3</span>
+                    <span class="stat-badge" id="selectedDisplay">ВЫБРАНО: 0/6</span>
+                    <span class="stat-badge highlight" id="skillPointsDisplay">ОЧКОВ НАВЫКОВ: 3</span>
                 </div>
             </div>
 
@@ -57,36 +54,21 @@
             <div class="skills-layout">
                 <!-- Колонка 1: Все навыки -->
                 <div class="skills-column">
-                    <div class="column-title">ДОСТУПНЫЕ</div>
+                    <div class="column-title">📋 НАВЫКИ</div>
                     <div class="skills-list" id="allSkillsList"></div>
                 </div>
 
-                <!-- Колонка 2: Выбранные навыки -->
+                <!-- Колонка 2: Все перки -->
                 <div class="skills-column">
-                    <div class="column-title">ВЫБРАННЫЕ</div>
-                    <div class="skills-list" id="selectedSkillsList"></div>
+                    <div class="column-title">🏅 ПЕРКИ</div>
+                    <div class="skills-list" id="allPerksList"></div>
                 </div>
 
-                <!-- Колонка 3: Распределение очков -->
+                <!-- Колонка 3: Выбранное + распределение -->
                 <div class="skills-column">
-                    <div class="column-title">РАСПРЕДЕЛЕНИЕ</div>
-                    <div class="skills-list" id="distributionList">
-                        <div class="empty-message">Выберите навыки</div>
-                    </div>
+                    <div class="column-title">⚡ ВЫБРАННОЕ</div>
+                    <div class="skills-list" id="selectedList"></div>
                 </div>
-            </div>
-        </section>
-
-        <!-- Вкладка: Перки -->
-        <section id="perks" class="tab-content">
-            <div class="tab-header">
-                <div class="tab-title">🏅 ПЕРКИ</div>
-                <div class="tab-stats">
-                    <span class="stat-badge highlight" id="perkPointsDisplay">ОЧКОВ ПЕРКОВ: 3</span>
-                </div>
-            </div>
-            <div class="perks-container">
-                <div class="perks-grid" id="perksGrid"></div>
             </div>
         </section>
 
