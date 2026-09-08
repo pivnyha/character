@@ -8,7 +8,7 @@ class CharacterEditor {
             'Харизма': 0
         };
 
-        this.skills = {
+        this.allSkills = {
             'Стрельба': { value: 0, desc: '+1 на атаки дальнего боя', category: 'combat' },
             'Ближний бой': { value: 0, desc: '+1 на атаки в рукопашном бою', category: 'combat' },
             'Фехтование': { value: 0, desc: '+1 на атаки с оружием ближнего боя', category: 'combat' },
@@ -24,15 +24,18 @@ class CharacterEditor {
             'Интеллект': { value: 0, desc: 'Дает создавать более совершенные предметы', category: 'specialization' }
         };
 
+        // Выбранные навыки (максимум 4)
+        this.selectedSkillsList = [];
+
         this.perks = {
-            'Нежное обаяние': { selected: false, desc: 'Персонажи женского пола к вам более расположены: охотнее идут навстречу, легче верят и склонны трактовать ваши поступки в лучшую сторону. +1 к броскам на убеждение, обман или обаяние против женщин.' },
-            'Твердое слово': { selected: false, desc: 'Персонажи мужского пола к вам более расположены: охотнее идут навстречу, легче верят и склонны трактовать ваши поступки в лучшую сторону. +1 к броскам на убеждение, обман или обаяние против мужчин.' },
+            'Нежное обаяние': { selected: false, desc: 'Персонажи женского пола к вам более расположены...' },
+            'Твердое слово': { selected: false, desc: 'Персонажи мужского пола к вам более расположены...' },
             'Плохая компания': { selected: false, desc: 'Преступники, контрабандисты и теневики видят в тебе своего.' },
             'Ответка': { selected: false, desc: 'Увернувшись от удара, получаешь +1 к следующей атаке против обидчика.' },
             'Крепкий орешек': { selected: false, desc: 'Ваш персонаж получает дополнительные 20ХП.' },
-            'Мастер-торговец': { selected: false, desc: 'Ваш персонаж имеет больший шанс получить скидку и доп валюты при продаже. (зависит от харизмы)' },
+            'Мастер-торговец': { selected: false, desc: 'Ваш персонаж имеет больший шанс получить скидку и доп валюты при продаже.' },
             'Химик': { selected: false, desc: 'При употреблении препаратов или боевых стимуляторов его действия продляются на 1 ход.' },
-            'Таинственный незнакомец': { selected: false, desc: 'Дает вам личного ангела-хранителя. Когда вы начинаете проигрывать в бою, с малым шансом может появиться таинственный незнакомец.' },
+            'Таинственный незнакомец': { selected: false, desc: 'Дает вам личного ангела-хранителя...' },
             'Грамотный подход': { selected: false, desc: 'Требуется меньше ресурсов на создание предметов' },
             'Ты видел это?!': { selected: false, desc: '35% шанс отвлечь противника, тыкнув пальцем куда-то туда' },
             'Голос за кадром': { selected: false, desc: 'ГМ может дать расплывчатую подсказку игроку' }
@@ -41,7 +44,7 @@ class CharacterEditor {
         this.state = {
             points: 2,
             skillPoints: 3,
-            selectedSkills: 0,
+            selectedSkillsCount: 0,
             selectedPerks: 0,
             maxSkills: 4,
             maxPerks: 2
@@ -52,13 +55,15 @@ class CharacterEditor {
 
     init() {
         this.renderCharacteristics();
-        this.renderSkills();
+        this.renderAllSkills();
+        this.renderSelectedSkills();
         this.renderPerks();
         this.updateUI();
         this.setupEventListeners();
         this.loadFromLocalStorage();
     }
 
+    // ===== ХАРАКТЕРИСТИКИ =====
     renderCharacteristics() {
         const grid = document.getElementById('characteristicsGrid');
         if (!grid) return;
@@ -94,82 +99,158 @@ class CharacterEditor {
         this.saveToLocalStorage();
     }
 
-    renderSkills() {
-        const combatGrid = document.getElementById('combatSkills');
-        const specGrid = document.getElementById('specializationSkills');
-        if (!combatGrid || !specGrid) return;
-        combatGrid.innerHTML = '';
-        specGrid.innerHTML = '';
+    // ===== ВСЕ НАВЫКИ (для выбора) =====
+    renderAllSkills() {
+        const grid = document.getElementById('allSkillsGrid');
+        if (!grid) return;
+        grid.innerHTML = '';
 
-        Object.entries(this.skills).forEach(([name, data]) => {
-            const div = document.createElement('div');
-            div.className = 'stat-item';
-            const isSelected = data.value !== 0;
-            const canIncrease = data.value < 4;
-            const canDecrease = data.value > -4;
-            
-            div.innerHTML = `
-                <span>
-                    <span class="stat-name">${name}</span>
-                    <span class="stat-desc">${data.desc}</span>
-                </span>
-                <div class="stat-controls">
-                    <button class="skill-dec-btn" data-skill="${name}" ${!canDecrease ? 'disabled' : ''}>−</button>
-                    <span class="stat-value ${data.value < 0 ? 'negative' : data.value > 0 ? 'positive' : ''}">${data.value}</span>
-                    <button class="skill-inc-btn" data-skill="${name}" ${!canIncrease ? 'disabled' : ''}>+</button>
+        // Группируем по категориям
+        const combatSkills = [];
+        const specSkills = [];
+
+        Object.entries(this.allSkills).forEach(([name, data]) => {
+            const isSelected = this.selectedSkillsList.includes(name);
+            if (data.category === 'combat') {
+                combatSkills.push({ name, data, isSelected });
+            } else {
+                specSkills.push({ name, data, isSelected });
+            }
+        });
+
+        // Создаем секции
+        const createSection = (title, skills) => {
+            const section = document.createElement('div');
+            section.className = 'skill-category';
+            section.innerHTML = `
+                <div class="category-header">
+                    <span class="category-icon">${title === 'БОЕВЫЕ' ? '⚔' : '🔧'}</span>
+                    <span class="category-title">${title}</span>
+                    <span class="category-line"></span>
+                </div>
+                <div class="stats-grid">
+                    ${skills.map(({ name, data, isSelected }) => `
+                        <div class="stat-item skill-select-item ${isSelected ? 'selected-skill' : ''}" data-skill="${name}">
+                            <span class="stat-name">${name}</span>
+                            <span class="stat-desc">${data.desc}</span>
+                            <button class="skill-select-btn" data-skill="${name}" ${isSelected ? 'disabled' : ''}>
+                                ${isSelected ? '✓ ВЫБРАН' : '+'}
+                            </button>
+                        </div>
+                    `).join('')}
                 </div>
             `;
-            if (data.category === 'combat') combatGrid.appendChild(div);
-            else specGrid.appendChild(div);
+            return section;
+        };
+
+        grid.appendChild(createSection('БОЕВЫЕ', combatSkills));
+        grid.appendChild(createSection('СПЕЦИАЛИЗАЦИЯ', specSkills));
+
+        // Обработчики для кнопок выбора
+        grid.querySelectorAll('.skill-select-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const skillName = btn.dataset.skill;
+                this.toggleSkillSelection(skillName);
+            });
         });
     }
 
-    updateSkill(name, delta) {
-        const skill = this.skills[name];
-        if (!skill) return;
-        const newValue = skill.value + delta;
-        if (newValue < -4 || newValue > 4) return;
+    toggleSkillSelection(skillName) {
+        const index = this.selectedSkillsList.indexOf(skillName);
 
-        const wasZero = skill.value === 0;
-        const willBeZero = newValue === 0;
-
-        // Если добавляем с 0 до 1 — выбираем навык
-        if (delta > 0 && wasZero) {
-            if (this.state.selectedSkills >= this.state.maxSkills) {
+        if (index > -1) {
+            // Убираем навык
+            this.selectedSkillsList.splice(index, 1);
+            this.state.selectedSkillsCount--;
+            // Возвращаем очки, если они были распределены
+            const skillData = this.allSkills[skillName];
+            if (skillData && skillData.value !== 0) {
+                this.state.skillPoints += skillData.value;
+                skillData.value = 0;
+            }
+        } else {
+            // Добавляем навык
+            if (this.state.selectedSkillsCount >= this.state.maxSkills) {
                 this.showMessage('Максимум 4 навыка!', 'error');
                 return;
             }
-            if (this.state.skillPoints <= 0) {
-                this.showMessage('Нет очков навыков!', 'error');
-                return;
-            }
-            this.state.selectedSkills++;
-            this.state.skillPoints--;
-        }
-        // Если убираем с 1 до 0 — снимаем навык
-        else if (delta < 0 && willBeZero) {
-            this.state.selectedSkills--;
-            this.state.skillPoints++;
-        }
-        // Увеличиваем существующий навык
-        else if (delta > 0 && !wasZero) {
-            if (this.state.skillPoints <= 0) {
-                this.showMessage('Нет очков навыков!', 'error');
-                return;
-            }
-            this.state.skillPoints--;
-        }
-        // Уменьшаем существующий навык
-        else if (delta < 0 && !willBeZero) {
-            this.state.skillPoints++;
+            this.selectedSkillsList.push(skillName);
+            this.state.selectedSkillsCount++;
         }
 
-        skill.value = newValue;
-        this.renderSkills();
+        this.renderAllSkills();
+        this.renderSelectedSkills();
         this.updateUI();
         this.saveToLocalStorage();
     }
 
+    // ===== ВЫБРАННЫЕ НАВЫКИ (с распределением) =====
+    renderSelectedSkills() {
+        const grid = document.getElementById('selectedSkillsGrid');
+        if (!grid) return;
+
+        if (this.selectedSkillsList.length === 0) {
+            grid.innerHTML = '<div class="empty-message">Выберите навыки выше</div>';
+            return;
+        }
+
+        grid.innerHTML = '';
+        this.selectedSkillsList.forEach(skillName => {
+            const data = this.allSkills[skillName];
+            if (!data) return;
+
+            const div = document.createElement('div');
+            div.className = 'stat-item selected-skill-item';
+            div.innerHTML = `
+                <span class="stat-name">${skillName}</span>
+                <span class="stat-desc">${data.desc}</span>
+                <div class="stat-controls">
+                    <button class="selected-skill-dec" data-skill="${skillName}">−</button>
+                    <span class="stat-value ${data.value < 0 ? 'negative' : data.value > 0 ? 'positive' : ''}">${data.value}</span>
+                    <button class="selected-skill-inc" data-skill="${skillName}">+</button>
+                </div>
+            `;
+            grid.appendChild(div);
+        });
+
+        // Обработчики для + и -
+        grid.querySelectorAll('.selected-skill-inc, .selected-skill-dec').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const skillName = btn.dataset.skill;
+                const delta = btn.classList.contains('selected-skill-inc') ? 1 : -1;
+                this.updateSelectedSkill(skillName, delta);
+            });
+        });
+    }
+
+    updateSelectedSkill(skillName, delta) {
+        const skill = this.allSkills[skillName];
+        if (!skill) return;
+
+        const newValue = skill.value + delta;
+        if (newValue < -4 || newValue > 4) return;
+
+        // Проверка очков
+        if (delta > 0 && this.state.skillPoints <= 0) {
+            this.showMessage('Нет очков навыков!', 'error');
+            return;
+        }
+
+        if (delta < 0) {
+            this.state.skillPoints += 1;
+        } else {
+            this.state.skillPoints -= 1;
+        }
+
+        skill.value = newValue;
+        this.renderSelectedSkills();
+        this.updateUI();
+        this.saveToLocalStorage();
+    }
+
+    // ===== ПЕРКИ =====
     renderPerks() {
         const grid = document.getElementById('perksGrid');
         if (!grid) return;
@@ -199,26 +280,25 @@ class CharacterEditor {
             perk.selected = false;
             this.state.selectedPerks--;
             this.state.skillPoints++;
-            this.state.selectedSkills--; // перк больше не считается как навык
         } else {
             if (this.state.selectedPerks >= this.state.maxPerks) {
                 this.showMessage('Максимум 2 перка!', 'error');
                 return;
             }
             if (this.state.skillPoints <= 0) {
-                this.showMessage('Нет очков для выбора перка!', 'error');
+                this.showMessage('Нет очков для перка!', 'error');
                 return;
             }
             perk.selected = true;
             this.state.selectedPerks++;
             this.state.skillPoints--;
-            this.state.selectedSkills++; // перк считается как навык
         }
         this.renderPerks();
         this.updateUI();
         this.saveToLocalStorage();
     }
 
+    // ===== UI =====
     updateUI() {
         const totalPoints = document.getElementById('totalPoints');
         const charPoints = document.getElementById('charPointsDisplay');
@@ -226,16 +306,14 @@ class CharacterEditor {
         const selectedSkills = document.getElementById('selectedSkillsDisplay');
         const perkPoints = document.getElementById('perkPointsDisplay');
 
-        // Общее количество выбранных навыков = навыки + перки
-        const totalSelected = this.state.selectedSkills;
-
         if (totalPoints) totalPoints.textContent = this.state.points;
         if (charPoints) charPoints.textContent = `ОЧКОВ: ${this.state.points}`;
         if (skillPoints) skillPoints.textContent = `ОЧКОВ: ${this.state.skillPoints}`;
-        if (selectedSkills) selectedSkills.textContent = `ВЫБРАНО: ${totalSelected}/${this.state.maxSkills}`;
+        if (selectedSkills) selectedSkills.textContent = `ВЫБРАНО: ${this.state.selectedSkillsCount}/${this.state.maxSkills}`;
         if (perkPoints) perkPoints.textContent = `ОЧКОВ ПЕРКОВ: ${this.state.skillPoints}`;
     }
 
+    // ===== СОБЫТИЯ =====
     setupEventListeners() {
         document.querySelectorAll('.tab-btn').forEach(btn => {
             btn.addEventListener('click', function() {
@@ -254,17 +332,6 @@ class CharacterEditor {
             if (!stat) return;
             const delta = btn.classList.contains('char-inc-btn') ? 1 : -1;
             this.updateCharacteristic(stat, delta);
-        });
-
-        document.addEventListener('click', (e) => {
-            const btn = e.target.closest('button');
-            if (!btn) return;
-            if (btn.classList.contains('skill-inc-btn') || btn.classList.contains('skill-dec-btn')) {
-                const skill = btn.dataset.skill;
-                if (!skill) return;
-                const delta = btn.classList.contains('skill-inc-btn') ? 1 : -1;
-                this.updateSkill(skill, delta);
-            }
         });
 
         document.getElementById('resetBtn')?.addEventListener('click', () => {
@@ -316,11 +383,12 @@ class CharacterEditor {
             text += `  ${name}: ${value > 0 ? '+' : ''}${value}\n`;
         });
 
-        const selectedSkills = Object.entries(this.skills).filter(([_, data]) => data.value !== 0);
+        const selectedSkills = this.selectedSkillsList.filter(name => this.allSkills[name].value !== 0);
         if (selectedSkills.length > 0) {
             text += '\n🎯 НАВЫКИ:\n';
-            selectedSkills.forEach(([name, data]) => {
-                text += `  ${name}: ${data.value > 0 ? '+' : ''}${data.value}\n`;
+            selectedSkills.forEach(name => {
+                const val = this.allSkills[name].value;
+                text += `  ${name}: ${val > 0 ? '+' : ''}${val}\n`;
             });
         }
 
@@ -338,14 +406,16 @@ class CharacterEditor {
 
     resetAll() {
         Object.keys(this.characteristics).forEach(k => this.characteristics[k] = 0);
-        Object.keys(this.skills).forEach(k => this.skills[k].value = 0);
+        Object.keys(this.allSkills).forEach(k => this.allSkills[k].value = 0);
         Object.keys(this.perks).forEach(k => this.perks[k].selected = false);
+        this.selectedSkillsList = [];
         this.state.points = 2;
         this.state.skillPoints = 3;
-        this.state.selectedSkills = 0;
+        this.state.selectedSkillsCount = 0;
         this.state.selectedPerks = 0;
         this.renderCharacteristics();
-        this.renderSkills();
+        this.renderAllSkills();
+        this.renderSelectedSkills();
         this.renderPerks();
         this.updateUI();
         this.saveToLocalStorage();
@@ -356,7 +426,8 @@ class CharacterEditor {
         try {
             const data = {
                 characteristics: this.characteristics,
-                skills: this.skills,
+                allSkills: this.allSkills,
+                selectedSkillsList: this.selectedSkillsList,
                 perks: this.perks,
                 state: this.state
             };
@@ -370,11 +441,13 @@ class CharacterEditor {
             if (!saved) return;
             const data = JSON.parse(saved);
             Object.assign(this.characteristics, data.characteristics);
-            Object.assign(this.skills, data.skills);
+            Object.assign(this.allSkills, data.allSkills);
             Object.assign(this.perks, data.perks);
+            this.selectedSkillsList = data.selectedSkillsList || [];
             Object.assign(this.state, data.state);
             this.renderCharacteristics();
-            this.renderSkills();
+            this.renderAllSkills();
+            this.renderSelectedSkills();
             this.renderPerks();
             this.updateUI();
         } catch (e) {}
