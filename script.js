@@ -125,10 +125,14 @@ class CharacterEditor {
                 item.dataset.skill = name;
                 item.innerHTML = `
                     <span class="skill-name">${name}</span>
-                    <div class="skill-tooltip">${data.desc}</div>
                 `;
                 if (!isSelected) {
                     item.addEventListener('click', () => this.selectSkill(name));
+                    item.addEventListener('mouseenter', () => this.showDescription(name, data.desc, 'skill'));
+                    item.addEventListener('mouseleave', () => this.hideDescription());
+                } else {
+                    item.addEventListener('mouseenter', () => this.showDescription(name, data.desc, 'skill'));
+                    item.addEventListener('mouseleave', () => this.hideDescription());
                 }
                 group.appendChild(item);
             });
@@ -179,10 +183,14 @@ class CharacterEditor {
             item.dataset.perk = name;
             item.innerHTML = `
                 <span class="skill-name">${name}</span>
-                <div class="skill-tooltip">${data.desc}</div>
             `;
             if (!isSelected) {
                 item.addEventListener('click', () => this.selectPerk(name));
+                item.addEventListener('mouseenter', () => this.showDescription(name, data.desc, 'perk'));
+                item.addEventListener('mouseleave', () => this.hideDescription());
+            } else {
+                item.addEventListener('mouseenter', () => this.showDescription(name, data.desc, 'perk'));
+                item.addEventListener('mouseleave', () => this.hideDescription());
             }
             container.appendChild(item);
         });
@@ -338,6 +346,32 @@ class CharacterEditor {
         this.renderSelected();
         this.updateUI();
         this.saveToLocalStorage();
+    }
+
+    showDescription(name, desc, type) {
+        const area = document.getElementById('descriptionContent');
+        const placeholder = document.querySelector('.description-placeholder');
+        if (!area) return;
+        
+        if (placeholder) placeholder.style.display = 'none';
+        
+        const typeLabel = type === 'skill' ? '📋 НАВЫК' : '🏅 ПЕРК';
+        area.innerHTML = `
+            <div class="description-type">${typeLabel}</div>
+            <div class="description-name">${name}</div>
+            <div class="description-text">${desc}</div>
+        `;
+        area.style.display = 'block';
+    }
+
+    hideDescription() {
+        const area = document.getElementById('descriptionContent');
+        const placeholder = document.querySelector('.description-placeholder');
+        if (!area) return;
+        
+        if (placeholder) placeholder.style.display = 'block';
+        area.style.display = 'none';
+        area.innerHTML = '';
     }
 
     updateUI() {
