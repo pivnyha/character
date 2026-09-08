@@ -45,7 +45,6 @@ class CharacterEditor {
             points: 2,
             skillPoints: 3,
             maxSkills: 4,
-            maxPerks: 2,
             maxTotal: 4
         };
 
