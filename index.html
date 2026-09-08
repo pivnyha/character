@@ -14,10 +14,6 @@
                 <span class="logo-text">TAPKOV</span>
             </div>
             <div class="header-right">
-                <div class="points-display">
-                    <span class="points-label">ОЧКИ</span>
-                    <span class="points-value" id="totalPoints">2</span>
-                </div>
                 <div class="status-led"></div>
             </div>
         </header>
@@ -56,18 +52,27 @@
                     <span class="stat-badge highlight" id="skillPointsDisplay">ОЧКОВ: 3</span>
                 </div>
             </div>
-            
-            <!-- Список ВСЕХ навыков для выбора -->
-            <div class="skills-selection">
-                <h3 class="selection-title">ВЫБЕРИТЕ 4 НАВЫКА</h3>
-                <div class="skills-grid" id="allSkillsGrid"></div>
-            </div>
 
-            <!-- Выбранные навыки (всегда на одном месте) -->
-            <div class="selected-skills-section">
-                <h3 class="selection-title">ВЫБРАННЫЕ НАВЫКИ</h3>
-                <div class="selected-skills-grid" id="selectedSkillsGrid">
-                    <div class="empty-message">Выберите навыки выше</div>
+            <!-- Три колонки -->
+            <div class="skills-layout">
+                <!-- Колонка 1: Все навыки -->
+                <div class="skills-column">
+                    <div class="column-title">ДОСТУПНЫЕ</div>
+                    <div class="skills-list" id="allSkillsList"></div>
+                </div>
+
+                <!-- Колонка 2: Выбранные навыки -->
+                <div class="skills-column">
+                    <div class="column-title">ВЫБРАННЫЕ</div>
+                    <div class="skills-list" id="selectedSkillsList"></div>
+                </div>
+
+                <!-- Колонка 3: Распределение очков -->
+                <div class="skills-column">
+                    <div class="column-title">РАСПРЕДЕЛЕНИЕ</div>
+                    <div class="skills-list" id="distributionList">
+                        <div class="empty-message">Выберите навыки</div>
+                    </div>
                 </div>
             </div>
         </section>
