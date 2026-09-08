@@ -46,7 +46,7 @@ class CharacterEditor {
             skillPoints: 3,
             maxSkills: 4,
             maxPerks: 2,
-            maxTotal: 6
+            maxTotal: 4
         };
 
         this.init();
