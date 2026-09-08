@@ -35,7 +35,6 @@
             </button>
         </nav>
 
-        <!-- Вкладка: Характеристики -->
         <section id="characteristics" class="tab-content active">
             <div class="tab-header">
                 <div class="tab-title">📋 ХАРАКТЕРИСТИКИ</div>
@@ -48,7 +47,6 @@
             <div class="stats-grid" id="characteristicsGrid"></div>
         </section>
 
-        <!-- Вкладка: Навыки -->
         <section id="skills" class="tab-content">
             <div class="tab-header">
                 <div class="tab-title">🎯 НАВЫКИ</div>
@@ -77,12 +75,11 @@
             </div>
         </section>
 
-        <!-- Вкладка: Перки -->
         <section id="perks" class="tab-content">
             <div class="tab-header">
                 <div class="tab-title">🏅 ПЕРКИ</div>
                 <div class="tab-stats">
-                    <span class="stat-badge highlight" id="perkPointsDisplay">ОЧКОВ ПЕРКОВ: 0</span>
+                    <span class="stat-badge highlight" id="perkPointsDisplay">ОЧКОВ ПЕРКОВ: 3</span>
                 </div>
             </div>
             <div class="perks-container">
@@ -90,7 +87,6 @@
             </div>
         </section>
 
-        <!-- Кнопки -->
         <footer class="actions">
             <button id="resetBtn" class="btn btn-danger">⏻ СБРОС</button>
             <button id="doneBtn" class="btn btn-success">✅ ГОТОВО</button>
@@ -99,16 +95,13 @@
         <div id="savedMessage" class="message hidden">✔ ПЕРСОНАЖ СОХРАНЕН</div>
     </div>
 
-    <!-- Модальное окно результата -->
     <div id="resultModal" class="modal hidden">
         <div class="modal-content">
             <div class="modal-header">
                 <h2>📜 ХАРАКТЕРИСТИКИ ПЕРСОНАЖА</h2>
                 <button class="modal-close" id="closeModalBtn">✕</button>
             </div>
-            <div class="modal-body" id="resultBody">
-                <!-- Содержимое генерируется JS -->
-            </div>
+            <div class="modal-body" id="resultBody"></div>
             <div class="modal-footer">
                 <button id="copyBtn" class="btn btn-primary">📋 КОПИРОВАТЬ</button>
             </div>
