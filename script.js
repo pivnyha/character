@@ -45,6 +45,7 @@ class CharacterEditor {
             points: 2,
             skillPoints: 3,
             maxSkills: 4,
+            maxPerks: 2,
             maxTotal: 4
         };
 
@@ -153,8 +154,13 @@ class CharacterEditor {
             this.showMessage('Максимум 4 навыка!', 'error');
             return;
         }
+        if (this.state.skillPoints <= 0) {
+            this.showMessage('Нет очков распределения!', 'error');
+            return;
+        }
 
         this.selectedSkills.push(name);
+        this.state.skillPoints -= 1;
         this.renderAllSkills();
         this.renderSelected();
         this.updateUI();
@@ -183,18 +189,32 @@ class CharacterEditor {
     }
 
     selectPerk(name) {
-        const totalSelected = this.selectedSkills.length + this.selectedPerks.length;
-        if (totalSelected >= this.state.maxTotal) {
-            this.showMessage('Максимум 4 выбора!', 'error');
-            return;
-        }
-        if (this.selectedPerks.includes(name)) return;
-        if (this.selectedPerks.length >= this.state.maxPerks) {
-            this.showMessage('Максимум 2 перка!', 'error');
-            return;
+        const perk = this.allPerks[name];
+        if (!perk) return;
+
+        if (perk.selected) {
+            perk.selected = false;
+            this.selectedPerks = this.selectedPerks.filter(p => p !== name);
+            this.state.skillPoints += 1;
+        } else {
+            const totalSelected = this.selectedSkills.length + this.selectedPerks.length;
+            if (totalSelected >= this.state.maxTotal) {
+                this.showMessage('Максимум 4 выбора!', 'error');
+                return;
+            }
+            if (this.selectedPerks.length >= this.state.maxPerks) {
+                this.showMessage('Максимум 2 перка!', 'error');
+                return;
+            }
+            if (this.state.skillPoints <= 0) {
+                this.showMessage('Нет очков распределения!', 'error');
+                return;
+            }
+            perk.selected = true;
+            this.selectedPerks.push(name);
+            this.state.skillPoints -= 1;
         }
 
-        this.selectedPerks.push(name);
         this.renderAllPerks();
         this.renderSelected();
         this.updateUI();
@@ -280,6 +300,7 @@ class CharacterEditor {
             data.value = 0;
         }
         this.selectedSkills.splice(index, 1);
+        this.state.skillPoints += 1;
         this.renderAllSkills();
         this.renderSelected();
         this.updateUI();
@@ -290,6 +311,8 @@ class CharacterEditor {
         const index = this.selectedPerks.indexOf(name);
         if (index === -1) return;
         this.selectedPerks.splice(index, 1);
+        this.allPerks[name].selected = false;
+        this.state.skillPoints += 1;
         this.renderAllPerks();
         this.renderSelected();
         this.updateUI();
@@ -420,6 +443,7 @@ class CharacterEditor {
     resetAll() {
         Object.keys(this.characteristics).forEach(k => this.characteristics[k] = 0);
         Object.keys(this.allSkills).forEach(k => this.allSkills[k].value = 0);
+        Object.keys(this.allPerks).forEach(k => k.selected = false);
         this.selectedSkills = [];
         this.selectedPerks = [];
         this.state.points = 2;
