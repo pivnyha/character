@@ -34,6 +34,7 @@
             </button>
         </nav>
 
+        <!-- Вкладка: Характеристики -->
         <section id="characteristics" class="tab-content active">
             <div class="tab-header">
                 <div class="tab-title">📋 ХАРАКТЕРИСТИКИ</div>
@@ -46,6 +47,7 @@
             <div class="stats-grid" id="characteristicsGrid"></div>
         </section>
 
+        <!-- Вкладка: Навыки -->
         <section id="skills" class="tab-content">
             <div class="tab-header">
                 <div class="tab-title">🎯 НАВЫКИ</div>
@@ -54,26 +56,23 @@
                     <span class="stat-badge highlight" id="skillPointsDisplay">ОЧКОВ: 3</span>
                 </div>
             </div>
-            <div class="skills-section">
-                <div class="skill-category">
-                    <div class="category-header">
-                        <span class="category-icon">⚔</span>
-                        <span class="category-title">БОЕВЫЕ</span>
-                        <span class="category-line"></span>
-                    </div>
-                    <div class="stats-grid" id="combatSkills"></div>
-                </div>
-                <div class="skill-category">
-                    <div class="category-header">
-                        <span class="category-icon">🔧</span>
-                        <span class="category-title">СПЕЦИАЛИЗАЦИЯ</span>
-                        <span class="category-line"></span>
-                    </div>
-                    <div class="stats-grid" id="specializationSkills"></div>
+            
+            <!-- Список ВСЕХ навыков для выбора -->
+            <div class="skills-selection">
+                <h3 class="selection-title">ВЫБЕРИТЕ 4 НАВЫКА</h3>
+                <div class="skills-grid" id="allSkillsGrid"></div>
+            </div>
+
+            <!-- Выбранные навыки (всегда на одном месте) -->
+            <div class="selected-skills-section">
+                <h3 class="selection-title">ВЫБРАННЫЕ НАВЫКИ</h3>
+                <div class="selected-skills-grid" id="selectedSkillsGrid">
+                    <div class="empty-message">Выберите навыки выше</div>
                 </div>
             </div>
         </section>
 
+        <!-- Вкладка: Перки -->
         <section id="perks" class="tab-content">
             <div class="tab-header">
                 <div class="tab-title">🏅 ПЕРКИ</div>
