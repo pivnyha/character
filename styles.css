@@ -67,6 +67,7 @@ body {
     opacity: 0.4;
 }
 
+/* ===== ХЕДЕР ===== */
 header {
     display: flex;
     justify-content: space-between;
@@ -106,33 +107,6 @@ header {
     gap: 20px;
 }
 
-.points-display {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 8px 18px;
-    background: var(--bg-panel);
-    border: 1px solid var(--border-color);
-    border-radius: 3px;
-}
-
-.points-label {
-    font-family: var(--font-mono);
-    font-size: 12px;
-    color: var(--text-muted);
-    letter-spacing: 3px;
-}
-
-.points-value {
-    font-family: var(--font-mono);
-    font-size: 24px;
-    font-weight: 700;
-    color: #a8d870;
-    min-width: 36px;
-    text-align: center;
-    text-shadow: 0 0 20px rgba(107, 140, 66, 0.15);
-}
-
 .status-led {
     width: 8px;
     height: 8px;
@@ -147,6 +121,7 @@ header {
     50% { opacity: 0.3; }
 }
 
+/* ===== ВКЛАДКИ ===== */
 .tabs {
     display: flex;
     gap: 0;
@@ -198,6 +173,7 @@ header {
     to { opacity: 1; transform: translateY(0); }
 }
 
+/* ===== ЗАГОЛОВКИ ВКЛАДОК ===== */
 .tab-header {
     display: flex;
     justify-content: space-between;
@@ -243,6 +219,7 @@ header {
     text-shadow: 0 0 20px rgba(107, 140, 66, 0.2);
 }
 
+/* ===== ХАРАКТЕРИСТИКИ ===== */
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -334,7 +311,7 @@ header {
 .stat-value.negative { color: var(--text-danger); }
 .stat-value.positive { color: var(--accent-green-bright); }
 
-/* ===== ТРИ КОЛОНКИ ===== */
+/* ===== ТРИ КОЛОНКИ (НАВЫКИ И ПЕРКИ) ===== */
 .skills-layout {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
@@ -389,7 +366,7 @@ header {
     margin-bottom: 4px;
 }
 
-/* ===== ЭЛЕМЕНТЫ ВЫБОРА ===== */
+/* ===== ЭЛЕМЕНТЫ ВЫБОРА (НАВЫКИ И ПЕРКИ) ===== */
 .skill-item {
     padding: 8px 12px;
     background: var(--bg-card);
@@ -419,40 +396,36 @@ header {
     color: var(--text-primary);
 }
 
-/* ===== ПОДСКАЗКА ===== */
+/* ===== ПОДСКАЗКИ ПРИ НАВЕДЕНИИ (БОЛЬШИЕ, ПО ЦЕНТРУ) ===== */
 .skill-item .skill-tooltip {
     display: none;
-    position: absolute;
+    position: fixed;
     left: 50%;
-    transform: translateX(-50%);
-    bottom: calc(100% + 8px);
-    background: var(--bg-panel);
-    border: 1px solid var(--border-accent);
-    border-radius: 4px;
-    padding: 8px 12px;
-    font-size: 11px;
-    color: var(--text-secondary);
-    white-space: nowrap;
-    z-index: 100;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8);
-}
-
-.skill-item .skill-tooltip::after {
-    content: '';
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    bottom: -6px;
-    border-top: 6px solid var(--border-accent);
-    border-left: 6px solid transparent;
-    border-right: 6px solid transparent;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background: #1a1a1a;
+    border: 2px solid var(--border-accent);
+    border-radius: 8px;
+    padding: 20px 28px;
+    max-width: 500px;
+    width: auto;
+    min-width: 250px;
+    color: #d4d4d4;
+    font-size: 14px;
+    line-height: 1.6;
+    z-index: 999;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.95);
+    text-align: center;
+    white-space: normal;
+    word-wrap: break-word;
+    pointer-events: none;
 }
 
 .skill-item:hover .skill-tooltip {
     display: block;
 }
 
-/* ===== ВЫБРАННОЕ (КАК МИНИ-ВКЛАДКИ) ===== */
+/* ===== ВЫБРАННОЕ ===== */
 .selected-item {
     background: var(--bg-card);
     border: 1px solid var(--border-color);
@@ -513,7 +486,7 @@ header {
     padding: 4px 0;
 }
 
-/* ===== РАСПРЕДЕЛЕНИЕ ===== */
+/* ===== РАСПРЕДЕЛЕНИЕ ОЧКОВ ===== */
 .distribute-controls {
     display: flex;
     align-items: center;
@@ -568,18 +541,6 @@ header {
     color: var(--text-muted);
     text-align: center;
     padding: 30px 10px;
-}
-
-/* ===== АДАПТИВ ===== */
-@media (max-width: 900px) {
-    .skills-layout {
-        grid-template-columns: 1fr;
-        gap: 10px;
-    }
-    .skills-column {
-        min-height: auto;
-        max-height: 300px;
-    }
 }
 
 /* ===== КНОПКИ ===== */
@@ -724,6 +685,63 @@ header {
     justify-content: center;
 }
 
+/* ===== АДАПТИВ ===== */
+@media (max-width: 900px) {
+    .skills-layout {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    .skills-column {
+        min-height: auto;
+        max-height: 300px;
+    }
+}
+
+@media (max-width: 768px) {
+    .container { padding: 12px 14px 18px; }
+    header { flex-direction: column; align-items: stretch; gap: 12px; }
+    .header-right { justify-content: space-between; }
+    .logo-text { font-size: 16px; letter-spacing: 2px; }
+    .tabs { gap: 2px; }
+    .tab-btn {
+        font-size: 10px;
+        padding: 10px 14px;
+        letter-spacing: 1px;
+        flex: 1;
+        justify-content: center;
+    }
+    .stats-grid { grid-template-columns: 1fr; }
+    .tab-header { flex-direction: column; align-items: flex-start; gap: 8px; }
+    .actions { flex-direction: column; }
+    .btn { width: 100%; text-align: center; padding: 12px; }
+    .stat-badge { font-size: 9px; padding: 3px 10px; }
+    .modal-content { width: 98%; }
+    .skill-item .skill-tooltip {
+        max-width: 90%;
+        padding: 14px 18px;
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 480px) {
+    body { padding: 4px; }
+    .container { padding: 8px 10px 14px; }
+    .tab-btn { font-size: 9px; padding: 8px 8px; letter-spacing: 0.5px; }
+    .tab-btn .tab-icon { font-size: 11px; }
+    .stat-item { padding: 10px 12px; flex-wrap: wrap; gap: 6px; }
+    .stat-name { font-size: 13px; }
+    .stat-controls { gap: 6px; }
+    .stat-controls button { width: 26px; height: 26px; font-size: 14px; }
+    .selected-item { padding: 8px 10px; }
+    .skill-item .skill-tooltip {
+        max-width: 95%;
+        padding: 12px 14px;
+        font-size: 12px;
+        min-width: 150px;
+    }
+}
+
+/* ===== СКРОЛЛБАР ===== */
 ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
@@ -735,134 +753,3 @@ header {
     border-radius: 2px;
 }
 ::-webkit-scrollbar-thumb:hover { background: var(--border-light); }
-
-}
-
-/* ===== МНОГОСТРОЧНЫЕ ПОДСКАЗКИ С ВЫХОДОМ ЗА РАМКИ ===== */
-
-/* Навыки и перки — большие подсказки */
-.skill-item .skill-tooltip {
-    display: none;
-    position: fixed;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    background: #1a1a1a;
-    border: 2px solid var(--border-accent);
-    border-radius: 8px;
-    padding: 16px 24px;
-    font-size: 13px;
-    color: var(--text-secondary);
-    max-width: 500px;
-    width: auto;
-    min-width: 200px;
-    white-space: normal;
-    word-wrap: break-word;
-    z-index: 999;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.95);
-    text-align: center;
-    line-height: 1.6;
-    pointer-events: none;
-}
-
-.skill-item .skill-tooltip::after {
-    display: none;
-}
-
-.skill-item:hover .skill-tooltip {
-    display: block;
-}
-
-/* Затемнение фона при наведении */
-.skill-item:hover {
-    z-index: 1;
-}
-
-/* Адаптив для маленьких экранов */
-@media (max-width: 768px) {
-    .skill-item .skill-tooltip {
-        max-width: 90%;
-        padding: 12px 16px;
-        font-size: 12px;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
-    }
-}
-
-/* ===== НОВЫЕ ПОДСКАЗКИ (СПРАВА, ЧИТАЕМЫЕ) ===== */
-
-/* Базовый стиль для всех элементов с подсказками */
-.skill-item {
-    position: relative;
-}
-
-/* Сама подсказка — всплывает справа */
-.skill-item .skill-tooltip {
-    display: none;
-    position: absolute;
-    left: calc(100% + 15px);
-    top: 50%;
-    transform: translateY(-50%);
-    background: #1a1a1a;
-    border: 2px solid var(--border-accent);
-    border-radius: 8px;
-    padding: 14px 18px;
-    min-width: 250px;
-    max-width: 400px;
-    width: max-content;
-    color: #d4d4d4;
-    font-size: 13px;
-    line-height: 1.6;
-    z-index: 999;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9);
-    white-space: normal;
-    word-wrap: break-word;
-    pointer-events: none;
-}
-
-/* Стрелочка слева от подсказки */
-.skill-item .skill-tooltip::before {
-    content: '';
-    position: absolute;
-    left: -10px;
-    top: 50%;
-    transform: translateY(-50%);
-    border-right: 10px solid var(--border-accent);
-    border-top: 10px solid transparent;
-    border-bottom: 10px solid transparent;
-}
-
-/* Показываем при наведении */
-.skill-item:hover .skill-tooltip {
-    display: block;
-}
-
-/* Для мобильных — подсказка снизу */
-@media (max-width: 768px) {
-    .skill-item .skill-tooltip {
-        left: 50%;
-        top: calc(100% + 10px);
-        transform: translateX(-50%);
-        min-width: 200px;
-        max-width: 300px;
-    }
-    
-    .skill-item .skill-tooltip::before {
-        display: none;
-    }
-}
-
-/* Заголовок в подсказке (если нужно) */
-.skill-item .skill-tooltip .tooltip-title {
-    font-weight: 700;
-    color: var(--accent-green-bright);
-    margin-bottom: 4px;
-    font-size: 14px;
-}
-
-.skill-item .skill-tooltip .tooltip-desc {
-    color: #b0b0b0;
-    font-size: 13px;
-    line-height: 1.5;
-}
