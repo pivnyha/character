@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔫 Редактор персонажа - Tarkov Style</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Верхняя панель -->
+        <header>
+            <div class="logo">
+                <span class="logo-icon">⚔</span>
+                <span class="logo-text">PERSEUS</span>
+                <span class="logo-version">v1.0</span>
+            </div>
+            <div class="header-right">
+                <div class="points-display">
+                    <span class="points-label">ОЧКИ</span>
+                    <span class="points-value" id="totalPoints">2</span>
+                </div>
+                <div class="status-led"></div>
+            </div>
+        </header>
+
+        <!-- Вкладки -->
+        <nav class="tabs">
+            <button class="tab-btn active" data-tab="characteristics">
+                <span class="tab-icon">📋</span> ХАРАКТЕРИСТИКИ
+            </button>
+            <button class="tab-btn" data-tab="skills">
+                <span class="tab-icon">🎯</span> НАВЫКИ
+            </button>
+            <button class="tab-btn" data-tab="perks">
+                <span class="tab-icon">🏅</span> ПЕРКИ
+            </button>
+        </nav>
+
+        <!-- Вкладка: Характеристики -->
+        <section id="characteristics" class="tab-content active">
+            <div class="tab-header">
+                <div class="tab-title">📋 ХАРАКТЕРИСТИКИ</div>
+                <div class="tab-stats">
+                    <span class="stat-badge">MIN -4</span>
+                    <span class="stat-badge">MAX +4</span>
+                    <span class="stat-badge highlight">ОЧКОВ: 2</span>
+                </div>
+            </div>
+            <div class="stats-grid" id="characteristicsGrid"></div>
+        </section>
+
+        <!-- Вкладка: Навыки -->
+        <section id="skills" class="tab-content">
+            <div class="tab-header">
+                <div class="tab-title">🎯 НАВЫКИ</div>
+                <div class="tab-stats">
+                    <span class="stat-badge">МАКС: 4</span>
+                    <span class="stat-badge highlight">ОЧКОВ: 3</span>
+                </div>
+            </div>
+            <div class="skills-section">
+                <div class="skill-category">
+                    <div class="category-header">
+                        <span class="category-icon">⚔</span>
+                        <span class="category-title">БОЕВЫЕ</span>
+                        <span class="category-line"></span>
+                    </div>
+                    <div class="stats-grid" id="combatSkills"></div>
+                </div>
+                <div class="skill-category">
+                    <div class="category-header">
+                        <span class="category-icon">🔧</span>
+                        <span class="category-title">СПЕЦИАЛИЗАЦИЯ</span>
+                        <span class="category-line"></span>
+                    </div>
+                    <div class="stats-grid" id="specializationSkills"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Вкладка: Перки -->
+        <section id="perks" class="tab-content">
+            <div class="tab-header">
+                <div class="tab-title">🏅 ПЕРКИ</div>
+                <div class="tab-stats">
+                    <span class="stat-badge highlight">МАКС: 2</span>
+                </div>
+            </div>
+            <div class="perks-grid" id="perksGrid"></div>
+        </section>
+
+        <!-- Нижняя панель управления -->
+        <footer class="actions">
+            <button id="resetBtn" class="btn btn-danger">⏻ СБРОС</button>
+            <button id="saveBtn" class="btn btn-success">💾 СОХРАНИТЬ</button>
+            <button id="exportBtn" class="btn btn-primary">📤 ЭКСПОРТ</button>
+        </footer>
+
+        <div id="savedMessage" class="message hidden">✔ ПЕРСОНАЖ СОХРАНЕН</div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
