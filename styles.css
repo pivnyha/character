@@ -735,3 +735,57 @@ header {
     border-radius: 2px;
 }
 ::-webkit-scrollbar-thumb:hover { background: var(--border-light); }
+
+}
+
+/* ===== МНОГОСТРОЧНЫЕ ПОДСКАЗКИ С ВЫХОДОМ ЗА РАМКИ ===== */
+
+/* Навыки и перки — большие подсказки */
+.skill-item .skill-tooltip {
+    display: none;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background: #1a1a1a;
+    border: 2px solid var(--border-accent);
+    border-radius: 8px;
+    padding: 16px 24px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    max-width: 500px;
+    width: auto;
+    min-width: 200px;
+    white-space: normal;
+    word-wrap: break-word;
+    z-index: 999;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.95);
+    text-align: center;
+    line-height: 1.6;
+    pointer-events: none;
+}
+
+.skill-item .skill-tooltip::after {
+    display: none;
+}
+
+.skill-item:hover .skill-tooltip {
+    display: block;
+}
+
+/* Затемнение фона при наведении */
+.skill-item:hover {
+    z-index: 1;
+}
+
+/* Адаптив для маленьких экранов */
+@media (max-width: 768px) {
+    .skill-item .skill-tooltip {
+        max-width: 90%;
+        padding: 12px 16px;
+        font-size: 12px;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+    }
+}
