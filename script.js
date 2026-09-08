@@ -98,7 +98,7 @@ class CharacterEditor {
         this.saveToLocalStorage();
     }
 
-    // ===== ВСЕ НАВЫКИ (Колонка 1) =====
+    // ===== ВСЕ НАВЫКИ =====
     renderAllSkills() {
         const container = document.getElementById('allSkillsList');
         if (!container) return;
@@ -148,7 +148,7 @@ class CharacterEditor {
     selectSkill(name) {
         const totalSelected = this.selectedSkills.length + this.selectedPerks.length;
         if (totalSelected >= this.state.maxTotal) {
-            this.showMessage('Максимум 6 выборов!', 'error');
+            this.showMessage('Максимум 4 выбора!', 'error');
             return;
         }
         if (this.selectedSkills.includes(name)) return;
@@ -164,7 +164,7 @@ class CharacterEditor {
         this.saveToLocalStorage();
     }
 
-    // ===== ВСЕ ПЕРКИ (Колонка 2) =====
+    // ===== ВСЕ ПЕРКИ =====
     renderAllPerks() {
         const container = document.getElementById('allPerksList');
         if (!container) return;
@@ -189,7 +189,7 @@ class CharacterEditor {
     selectPerk(name) {
         const totalSelected = this.selectedSkills.length + this.selectedPerks.length;
         if (totalSelected >= this.state.maxTotal) {
-            this.showMessage('Максимум 6 выборов!', 'error');
+            this.showMessage('Максимум 4 выбора!', 'error');
             return;
         }
         if (this.selectedPerks.includes(name)) return;
@@ -205,7 +205,7 @@ class CharacterEditor {
         this.saveToLocalStorage();
     }
 
-    // ===== ВЫБРАННОЕ (Колонка 3) =====
+    // ===== ВЫБРАННОЕ (КАК МИНИ-ВКЛАДКИ) =====
     renderSelected() {
         const container = document.getElementById('selectedList');
         if (!container) return;
@@ -217,15 +217,16 @@ class CharacterEditor {
             return;
         }
 
+        // Навыки
         this.selectedSkills.forEach(name => {
             const data = this.allSkills[name];
             if (!data) return;
 
             const item = document.createElement('div');
-            item.className = 'selected-item skill-item-selected';
+            item.className = 'selected-item';
             item.innerHTML = `
                 <div class="selected-header">
-                    <span class="selected-name skill-color">${name}</span>
+                    <span class="selected-name">${name}</span>
                     <span class="selected-remove" data-type="skill" data-name="${name}">✕</span>
                 </div>
                 <div class="distribute-controls">
@@ -237,6 +238,7 @@ class CharacterEditor {
             container.appendChild(item);
         });
 
+        // Перки
         this.selectedPerks.forEach(name => {
             const data = this.allPerks[name];
             if (!data) return;
@@ -253,6 +255,7 @@ class CharacterEditor {
             container.appendChild(item);
         });
 
+        // События
         container.querySelectorAll('.selected-remove').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -394,7 +397,6 @@ class CharacterEditor {
         this.showMessage('📋 Скопировано!', 'success');
     }
 
-    // ===== РЕЗУЛЬТАТ (ВСЕ НАВЫКИ, ДАЖЕ С 0) =====
     showResultModal() {
         const body = document.getElementById('resultBody');
         if (!body) return;
@@ -404,7 +406,6 @@ class CharacterEditor {
             text += `  ${name}: ${value > 0 ? '+' : ''}${value}\n`;
         });
 
-        // ВСЕ выбранные навыки (даже с 0)
         if (this.selectedSkills.length > 0) {
             text += '\n🎯 НАВЫКИ:\n';
             this.selectedSkills.forEach(name => {
