@@ -98,13 +98,9 @@ header {
     color: var(--text-primary);
 }
 
+/* ВЕРСИЯ СКРЫТА */
 .logo-version {
-    font-family: var(--font-mono);
-    font-size: 10px;
-    color: var(--text-muted);
-    padding: 2px 8px;
-    border: 1px solid var(--border-color);
-    border-radius: 2px;
+    display: none;
 }
 
 .header-right {
@@ -260,6 +256,8 @@ header {
     justify-content: space-between;
     align-items: center;
     transition: all 0.2s ease;
+    flex-wrap: wrap;
+    gap: 8px;
 }
 
 .stat-item:hover {
@@ -272,6 +270,13 @@ header {
     font-weight: 700;
     letter-spacing: 0.5px;
     color: var(--text-primary);
+}
+
+.stat-desc {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-left: 8px;
+    font-weight: 400;
 }
 
 .stat-controls {
@@ -365,17 +370,8 @@ header {
 }
 
 .skill-category .stats-grid {
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 6px;
-}
-
-.skill-category .stat-item .stat-name { font-size: 13px; }
-
-.skill-category .stat-item .stat-name + span {
-    font-size: 11px;
-    color: var(--text-muted);
-    margin-left: 10px;
-    font-weight: 400;
 }
 
 /* ===== ПЕРКИ ===== */
@@ -426,13 +422,6 @@ header {
     font-weight: 700;
     letter-spacing: 1px;
     color: var(--text-primary);
-}
-
-.perk-item .perk-description {
-    font-size: 12px;
-    color: var(--text-secondary);
-    line-height: 1.4;
-    font-weight: 400;
 }
 
 .perk-item .perk-status {
@@ -574,26 +563,6 @@ header {
     line-height: 1.8;
     color: var(--text-primary);
     white-space: pre-wrap;
-}
-
-.modal-body .section-title {
-    color: var(--accent-green-bright);
-    font-weight: 700;
-    letter-spacing: 2px;
-    margin-top: 10px;
-    display: block;
-}
-
-.modal-body .section-title:first-child { margin-top: 0; }
-
-.modal-body .stat-line {
-    padding-left: 20px;
-    color: var(--text-secondary);
-}
-
-.modal-body .stat-line .value {
-    color: var(--text-primary);
-    font-weight: 700;
 }
 
 .modal-footer {
