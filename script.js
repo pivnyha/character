@@ -55,7 +55,7 @@ class CharacterEditor {
             },
             'Таинственный незнакомец': {
                 selected: false,
-                desc: 'Дает вам личного ангела-хранителя.. Когда вы начинаете проигрывать в бою, с малым шансом может появиться таинственный незнакомец.'
+                desc: 'Дает вам личного ангела-хранителя. Когда вы начинаете проигрывать в бою, с малым шансом может появиться таинственный незнакомец.'
             },
             'Грамотный подход': {
                 selected: false,
@@ -118,7 +118,6 @@ class CharacterEditor {
         
         if (newValue < -4 || newValue > 4) return;
         
-        // Проверка очков при увеличении
         if (delta > 0 && this.state.points <= 0) {
             this.showMessage('Недостаточно очков распределения!', 'error');
             return;
@@ -149,5 +148,23 @@ class CharacterEditor {
             div.className = 'stat-item';
             const isSelected = data.value > 0;
             div.innerHTML = `
-                <span class="stat-name
-});
+                <span>
+                    <span class="stat-name">${name}</span>
+                    <span class="stat-desc">${data.desc}</span>
+                </span>
+                <div class="stat-controls">
+                    <button class="skill-dec-btn" data-skill="${name}" ${!isSelected ? 'disabled' : ''}>−</button>
+                    <span class="stat-value ${data.value < 0 ? 'negative' : data.value > 0 ? 'positive' : ''}">${data.value}</span>
+                    <button class="skill-inc-btn" data-skill="${name}" ${isSelected && data.value >= 4 ? 'disabled' : ''}>+</button>
+                </div>
+            `;
+            
+            if (data.category === 'combat') {
+                combatGrid.appendChild(div);
+            } else {
+                specGrid.appendChild(div);
+            }
+        });
+    }
+
+    updateSkill(name
