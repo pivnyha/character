@@ -104,16 +104,19 @@ class CharacterEditor {
         Object.entries(this.skills).forEach(([name, data]) => {
             const div = document.createElement('div');
             div.className = 'stat-item';
-            const isSelected = data.value > 0;
+            const isSelected = data.value !== 0;
+            const canIncrease = data.value < 4;
+            const canDecrease = data.value > -4;
+            
             div.innerHTML = `
                 <span>
                     <span class="stat-name">${name}</span>
                     <span class="stat-desc">${data.desc}</span>
                 </span>
                 <div class="stat-controls">
-                    <button class="skill-dec-btn" data-skill="${name}" ${!isSelected ? 'disabled' : ''}>−</button>
+                    <button class="skill-dec-btn" data-skill="${name}" ${!canDecrease ? 'disabled' : ''}>−</button>
                     <span class="stat-value ${data.value < 0 ? 'negative' : data.value > 0 ? 'positive' : ''}">${data.value}</span>
-                    <button class="skill-inc-btn" data-skill="${name}" ${isSelected && data.value >= 4 ? 'disabled' : ''}>+</button>
+                    <button class="skill-inc-btn" data-skill="${name}" ${!canIncrease ? 'disabled' : ''}>+</button>
                 </div>
             `;
             if (data.category === 'combat') combatGrid.appendChild(div);
@@ -127,7 +130,11 @@ class CharacterEditor {
         const newValue = skill.value + delta;
         if (newValue < -4 || newValue > 4) return;
 
-        if (delta > 0 && skill.value === 0) {
+        const wasZero = skill.value === 0;
+        const willBeZero = newValue === 0;
+
+        // Если добавляем с 0 до 1 — выбираем навык
+        if (delta > 0 && wasZero) {
             if (this.state.selectedSkills >= this.state.maxSkills) {
                 this.showMessage('Максимум 4 навыка!', 'error');
                 return;
@@ -138,16 +145,22 @@ class CharacterEditor {
             }
             this.state.selectedSkills++;
             this.state.skillPoints--;
-        } else if (delta < 0 && skill.value === 1) {
+        }
+        // Если убираем с 1 до 0 — снимаем навык
+        else if (delta < 0 && willBeZero) {
             this.state.selectedSkills--;
             this.state.skillPoints++;
-        } else if (delta > 0 && skill.value > 0) {
+        }
+        // Увеличиваем существующий навык
+        else if (delta > 0 && !wasZero) {
             if (this.state.skillPoints <= 0) {
                 this.showMessage('Нет очков навыков!', 'error');
                 return;
             }
             this.state.skillPoints--;
-        } else if (delta < 0 && skill.value > 1) {
+        }
+        // Уменьшаем существующий навык
+        else if (delta < 0 && !willBeZero) {
             this.state.skillPoints++;
         }
 
@@ -168,7 +181,6 @@ class CharacterEditor {
             div.innerHTML = `
                 <div class="perk-info">
                     <h4>${name}</h4>
-                    <div class="perk-description">${data.desc}</div>
                 </div>
                 <div class="perk-status">${data.selected ? '✓ ВЫБРАН' : '—'}</div>
                 <div class="perk-tooltip">
@@ -187,6 +199,7 @@ class CharacterEditor {
             perk.selected = false;
             this.state.selectedPerks--;
             this.state.skillPoints++;
+            this.state.selectedSkills--; // перк больше не считается как навык
         } else {
             if (this.state.selectedPerks >= this.state.maxPerks) {
                 this.showMessage('Максимум 2 перка!', 'error');
@@ -199,6 +212,7 @@ class CharacterEditor {
             perk.selected = true;
             this.state.selectedPerks++;
             this.state.skillPoints--;
+            this.state.selectedSkills++; // перк считается как навык
         }
         this.renderPerks();
         this.updateUI();
@@ -212,10 +226,13 @@ class CharacterEditor {
         const selectedSkills = document.getElementById('selectedSkillsDisplay');
         const perkPoints = document.getElementById('perkPointsDisplay');
 
+        // Общее количество выбранных навыков = навыки + перки
+        const totalSelected = this.state.selectedSkills;
+
         if (totalPoints) totalPoints.textContent = this.state.points;
         if (charPoints) charPoints.textContent = `ОЧКОВ: ${this.state.points}`;
         if (skillPoints) skillPoints.textContent = `ОЧКОВ: ${this.state.skillPoints}`;
-        if (selectedSkills) selectedSkills.textContent = `ВЫБРАНО: ${this.state.selectedSkills}/${this.state.maxSkills}`;
+        if (selectedSkills) selectedSkills.textContent = `ВЫБРАНО: ${totalSelected}/${this.state.maxSkills}`;
         if (perkPoints) perkPoints.textContent = `ОЧКОВ ПЕРКОВ: ${this.state.skillPoints}`;
     }
 
@@ -299,11 +316,11 @@ class CharacterEditor {
             text += `  ${name}: ${value > 0 ? '+' : ''}${value}\n`;
         });
 
-        const selectedSkills = Object.entries(this.skills).filter(([_, data]) => data.value > 0);
+        const selectedSkills = Object.entries(this.skills).filter(([_, data]) => data.value !== 0);
         if (selectedSkills.length > 0) {
             text += '\n🎯 НАВЫКИ:\n';
             selectedSkills.forEach(([name, data]) => {
-                text += `  ${name}: +${data.value}\n`;
+                text += `  ${name}: ${data.value > 0 ? '+' : ''}${data.value}\n`;
             });
         }
 
