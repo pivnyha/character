@@ -41,13 +41,13 @@ class CharacterEditor {
         this.selectedSkills = [];
         this.selectedPerks = [];
 
-        // ===== ГЛАВНОЕ: ВСЕГО 4 ВЫБОРА! =====
+        // ===== ГЛАВНОЕ: maxTotal = 4 =====
         this.state = {
             points: 2,
             skillPoints: 3,
             maxSkills: 4,
             maxPerks: 2,
-            maxTotal: 4  // ← СЕЙЧАС ТОЧНО 4!
+            maxTotal: 4
         };
 
         this.init();
@@ -63,7 +63,6 @@ class CharacterEditor {
         this.loadFromLocalStorage();
     }
 
-    // ===== ХАРАКТЕРИСТИКИ =====
     renderCharacteristics() {
         const grid = document.getElementById('characteristicsGrid');
         if (!grid) return;
@@ -99,7 +98,6 @@ class CharacterEditor {
         this.saveToLocalStorage();
     }
 
-    // ===== ВСЕ НАВЫКИ =====
     renderAllSkills() {
         const container = document.getElementById('allSkillsList');
         if (!container) return;
@@ -165,7 +163,6 @@ class CharacterEditor {
         this.saveToLocalStorage();
     }
 
-    // ===== ВСЕ ПЕРКИ =====
     renderAllPerks() {
         const container = document.getElementById('allPerksList');
         if (!container) return;
@@ -206,7 +203,6 @@ class CharacterEditor {
         this.saveToLocalStorage();
     }
 
-    // ===== ВЫБРАННОЕ =====
     renderSelected() {
         const container = document.getElementById('selectedList');
         if (!container) return;
@@ -218,7 +214,6 @@ class CharacterEditor {
             return;
         }
 
-        // Навыки
         this.selectedSkills.forEach(name => {
             const data = this.allSkills[name];
             if (!data) return;
@@ -239,7 +234,6 @@ class CharacterEditor {
             container.appendChild(item);
         });
 
-        // Перки
         this.selectedPerks.forEach(name => {
             const data = this.allPerks[name];
             if (!data) return;
@@ -256,7 +250,6 @@ class CharacterEditor {
             container.appendChild(item);
         });
 
-        // События
         container.querySelectorAll('.selected-remove').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -305,7 +298,6 @@ class CharacterEditor {
         this.saveToLocalStorage();
     }
 
-    // ===== РАСПРЕДЕЛЕНИЕ ОЧКОВ (ТОЛЬКО НАВЫКИ) =====
     updateDistribution(name, delta) {
         const skill = this.allSkills[name];
         if (!skill) return;
@@ -327,7 +319,6 @@ class CharacterEditor {
         this.saveToLocalStorage();
     }
 
-    // ===== UI =====
     updateUI() {
         const charPoints = document.getElementById('charPointsDisplay');
         const skillPoints = document.getElementById('skillPointsDisplay');
@@ -340,7 +331,6 @@ class CharacterEditor {
         if (selectedDisplay) selectedDisplay.textContent = `ВЫБРАНО: ${totalSelected}/${this.state.maxTotal}`;
     }
 
-    // ===== СОБЫТИЯ =====
     setupEventListeners() {
         document.querySelectorAll('.tab-btn').forEach(btn => {
             btn.addEventListener('click', function() {
