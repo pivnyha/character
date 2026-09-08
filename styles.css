@@ -802,3 +802,252 @@ header {
 #skills .selected-skills-section {
     flex-shrink: 0;
 }
+
+/* ===== ТРИ КОЛОНКИ ДЛЯ НАВЫКОВ ===== */
+.skills-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.skills-column {
+    background: var(--bg-panel);
+    border: 1px solid var(--border-color);
+    border-radius: 2px;
+    padding: 12px;
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+}
+
+.column-title {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--text-secondary);
+    text-align: center;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 10px;
+}
+
+.skills-list {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.skill-group {
+    margin-bottom: 8px;
+}
+
+.skill-group-title {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    padding: 4px 8px;
+    background: var(--bg-secondary);
+    border-radius: 2px;
+    margin-bottom: 4px;
+}
+
+/* ===== ЭЛЕМЕНТ НАВЫКА ===== */
+.skill-item {
+    padding: 8px 12px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.skill-item:hover {
+    background: var(--bg-hover);
+    border-color: var(--border-light);
+}
+
+.skill-item.selected {
+    border-color: var(--accent-green);
+    background: rgba(107, 140, 66, 0.06);
+    cursor: default;
+}
+
+.skill-item .skill-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+    text-align: center;
+    flex: 1;
+}
+
+.skill-item .skill-remove {
+    color: var(--text-danger);
+    cursor: pointer;
+    font-size: 14px;
+    padding: 0 4px;
+    transition: color 0.2s;
+}
+
+.skill-item .skill-remove:hover {
+    color: #e74c3c;
+}
+
+/* ===== ПОДСКАЗКА ПРИ НАВЕДЕНИИ ===== */
+.skill-item .skill-tooltip {
+    display: none;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: calc(100% + 8px);
+    background: var(--bg-panel);
+    border: 1px solid var(--border-accent);
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-size: 11px;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    z-index: 100;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8);
+}
+
+.skill-item .skill-tooltip::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: -6px;
+    border-top: 6px solid var(--border-accent);
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+}
+
+.skill-item:hover .skill-tooltip {
+    display: block;
+}
+
+/* ===== РАСПРЕДЕЛЕНИЕ ===== */
+.distribute-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 12px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-accent);
+    border-radius: 2px;
+}
+
+.distribute-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent-green-bright);
+}
+
+.distribute-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.distribute-controls button {
+    width: 26px;
+    height: 26px;
+    border: 1px solid var(--border-color);
+    border-radius: 2px;
+    background: var(--bg-panel);
+    color: var(--text-secondary);
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+}
+
+.distribute-controls button:hover {
+    background: var(--bg-hover);
+    border-color: var(--border-light);
+    color: var(--text-primary);
+}
+
+.distribute-controls button:disabled {
+    opacity: 0.25;
+    cursor: not-allowed;
+}
+
+.distribute-value {
+    font-family: var(--font-mono);
+    font-size: 18px;
+    font-weight: 700;
+    min-width: 28px;
+    text-align: center;
+    color: var(--text-primary);
+}
+
+.distribute-value.negative { color: var(--text-danger); }
+.distribute-value.positive { color: var(--accent-green-bright); }
+
+.empty-message {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-muted);
+    text-align: center;
+    padding: 20px 10px;
+}
+
+/* ===== АДАПТИВ ===== */
+@media (max-width: 900px) {
+    .skills-layout {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    
+    .skills-column {
+        min-height: auto;
+    }
+}
+
+/* ===== БОЛЬШИЕ ОЧКИ ===== */
+.points-value,
+.distribute-value,
+.stat-value {
+    font-size: 22px !important;
+    min-width: 36px !important;
+    text-shadow: 0 0 20px rgba(107, 140, 66, 0.15);
+}
+
+.points-display {
+    padding: 8px 18px !important;
+}
+
+.points-label {
+    font-size: 12px !important;
+    letter-spacing: 3px !important;
+}
+
+.stat-badge {
+    font-size: 12px !important;
+    padding: 6px 16px !important;
+}
+
+.stat-badge.highlight {
+    font-size: 14px !important;
+    padding: 6px 20px !important;
+    border-width: 2px;
+    text-shadow: 0 0 20px rgba(107, 140, 66, 0.2);
+}
+
+.points-value {
+    color: #a8d870 !important;
+    font-size: 24px !important;
+}
