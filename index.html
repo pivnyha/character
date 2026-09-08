@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🔫 Редактор персонажа - Tarkov Style</title>
+    <title>Редактор персонажа</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
-        <!-- Верхняя панель -->
         <header>
             <div class="logo">
                 <span class="logo-icon">⚔</span>
@@ -24,7 +23,6 @@
             </div>
         </header>
 
-        <!-- Вкладки -->
         <nav class="tabs">
             <button class="tab-btn active" data-tab="characteristics">
                 <span class="tab-icon">📋</span> ХАРАКТЕРИСТИКИ
@@ -44,7 +42,7 @@
                 <div class="tab-stats">
                     <span class="stat-badge">MIN -4</span>
                     <span class="stat-badge">MAX +4</span>
-                    <span class="stat-badge highlight">ОЧКОВ: 2</span>
+                    <span class="stat-badge highlight" id="charPointsDisplay">ОЧКОВ: 2</span>
                 </div>
             </div>
             <div class="stats-grid" id="characteristicsGrid"></div>
@@ -55,8 +53,8 @@
             <div class="tab-header">
                 <div class="tab-title">🎯 НАВЫКИ</div>
                 <div class="tab-stats">
-                    <span class="stat-badge">МАКС: 4</span>
-                    <span class="stat-badge highlight">ОЧКОВ: 3</span>
+                    <span class="stat-badge" id="selectedSkillsDisplay">ВЫБРАНО: 0/4</span>
+                    <span class="stat-badge highlight" id="skillPointsDisplay">ОЧКОВ: 3</span>
                 </div>
             </div>
             <div class="skills-section">
@@ -84,20 +82,37 @@
             <div class="tab-header">
                 <div class="tab-title">🏅 ПЕРКИ</div>
                 <div class="tab-stats">
-                    <span class="stat-badge highlight">МАКС: 2</span>
+                    <span class="stat-badge highlight" id="perkPointsDisplay">ОЧКОВ ПЕРКОВ: 0</span>
                 </div>
             </div>
-            <div class="perks-grid" id="perksGrid"></div>
+            <div class="perks-container">
+                <div class="perks-grid" id="perksGrid"></div>
+            </div>
         </section>
 
-        <!-- Нижняя панель управления -->
+        <!-- Кнопки -->
         <footer class="actions">
             <button id="resetBtn" class="btn btn-danger">⏻ СБРОС</button>
-            <button id="saveBtn" class="btn btn-success">💾 СОХРАНИТЬ</button>
-            <button id="exportBtn" class="btn btn-primary">📤 ЭКСПОРТ</button>
+            <button id="doneBtn" class="btn btn-success">✅ ГОТОВО</button>
         </footer>
 
         <div id="savedMessage" class="message hidden">✔ ПЕРСОНАЖ СОХРАНЕН</div>
+    </div>
+
+    <!-- Модальное окно результата -->
+    <div id="resultModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📜 ХАРАКТЕРИСТИКИ ПЕРСОНАЖА</h2>
+                <button class="modal-close" id="closeModalBtn">✕</button>
+            </div>
+            <div class="modal-body" id="resultBody">
+                <!-- Содержимое генерируется JS -->
+            </div>
+            <div class="modal-footer">
+                <button id="copyBtn" class="btn btn-primary">📋 КОПИРОВАТЬ</button>
+            </div>
+        </div>
     </div>
 
     <script src="script.js"></script>
