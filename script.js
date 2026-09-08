@@ -41,12 +41,13 @@ class CharacterEditor {
         this.selectedSkills = [];
         this.selectedPerks = [];
 
+        // ===== ГЛАВНОЕ: ВСЕГО 4 ВЫБОРА! =====
         this.state = {
             points: 2,
             skillPoints: 3,
             maxSkills: 4,
             maxPerks: 2,
-            maxTotal: 4
+            maxTotal: 4  // ← СЕЙЧАС ТОЧНО 4!
         };
 
         this.init();
@@ -205,7 +206,7 @@ class CharacterEditor {
         this.saveToLocalStorage();
     }
 
-    // ===== ВЫБРАННОЕ (КАК МИНИ-ВКЛАДКИ) =====
+    // ===== ВЫБРАННОЕ =====
     renderSelected() {
         const container = document.getElementById('selectedList');
         if (!container) return;
@@ -304,6 +305,7 @@ class CharacterEditor {
         this.saveToLocalStorage();
     }
 
+    // ===== РАСПРЕДЕЛЕНИЕ ОЧКОВ (ТОЛЬКО НАВЫКИ) =====
     updateDistribution(name, delta) {
         const skill = this.allSkills[name];
         if (!skill) return;
@@ -312,7 +314,7 @@ class CharacterEditor {
         if (newValue < -4 || newValue > 4) return;
 
         if (delta > 0 && this.state.skillPoints <= 0) {
-            this.showMessage('Нет очков навыков!', 'error');
+            this.showMessage('Нет очков распределения!', 'error');
             return;
         }
 
@@ -325,6 +327,7 @@ class CharacterEditor {
         this.saveToLocalStorage();
     }
 
+    // ===== UI =====
     updateUI() {
         const charPoints = document.getElementById('charPointsDisplay');
         const skillPoints = document.getElementById('skillPointsDisplay');
@@ -333,10 +336,11 @@ class CharacterEditor {
         const totalSelected = this.selectedSkills.length + this.selectedPerks.length;
 
         if (charPoints) charPoints.textContent = `ОЧКОВ: ${this.state.points}`;
-        if (skillPoints) skillPoints.textContent = `ОЧКОВ НАВЫКОВ: ${this.state.skillPoints}`;
+        if (skillPoints) skillPoints.textContent = `ОЧКОВ РАСПРЕДЕЛЕНИЯ: ${this.state.skillPoints}`;
         if (selectedDisplay) selectedDisplay.textContent = `ВЫБРАНО: ${totalSelected}/${this.state.maxTotal}`;
     }
 
+    // ===== СОБЫТИЯ =====
     setupEventListeners() {
         document.querySelectorAll('.tab-btn').forEach(btn => {
             btn.addEventListener('click', function() {
