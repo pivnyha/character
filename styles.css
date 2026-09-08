@@ -345,5 +345,15 @@ header {
 .skills-column {
     background: var(--bg-panel);
     border: 1px solid var(--border-color);
-    border-radius:
+    border-radius: 2px;
+    padding: 12px;
+    min-height: 350px;
+    display: flex;
+    flex-direction: column;
 }
+
+.column-title {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing:
