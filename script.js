@@ -25,8 +25,8 @@ class CharacterEditor {
         };
 
         this.perks = {
-            'Нежное обаяние': { selected: false, desc: 'Персонажи женского пола к вам более расположены: охотнее идут навстречу, легче верят и склонны трактовать ваши поступки в лучшую сторону. +1 к броскам на убеждение, обман или обаяние против женщин. (Не работает на торговцев)' },
-            'Твердое слово': { selected: false, desc: 'Персонажи мужского пола к вам более расположены: охотнее идут навстречу, легче верят и склонны трактовать ваши поступки в лучшую сторону. +1 к броскам на убеждение, обман или обаяние против мужчин. (Не работает на торговцев)' },
+            'Нежное обаяние': { selected: false, desc: 'Персонажи женского пола к вам более расположены: охотнее идут навстречу, легче верят и склонны трактовать ваши поступки в лучшую сторону. +1 к броскам на убеждение, обман или обаяние против женщин.' },
+            'Твердое слово': { selected: false, desc: 'Персонажи мужского пола к вам более расположены: охотнее идут навстречу, легче верят и склонны трактовать ваши поступки в лучшую сторону. +1 к броскам на убеждение, обман или обаяние против мужчин.' },
             'Плохая компания': { selected: false, desc: 'Преступники, контрабандисты и теневики видят в тебе своего.' },
             'Ответка': { selected: false, desc: 'Увернувшись от удара, получаешь +1 к следующей атаке против обидчика.' },
             'Крепкий орешек': { selected: false, desc: 'Ваш персонаж получает дополнительные 20ХП.' },
@@ -59,7 +59,6 @@ class CharacterEditor {
         this.loadFromLocalStorage();
     }
 
-    // ===== ХАРАКТЕРИСТИКИ =====
     renderCharacteristics() {
         const grid = document.getElementById('characteristicsGrid');
         if (!grid) return;
@@ -95,7 +94,6 @@ class CharacterEditor {
         this.saveToLocalStorage();
     }
 
-    // ===== НАВЫКИ =====
     renderSkills() {
         const combatGrid = document.getElementById('combatSkills');
         const specGrid = document.getElementById('specializationSkills');
@@ -129,7 +127,6 @@ class CharacterEditor {
         const newValue = skill.value + delta;
         if (newValue < -4 || newValue > 4) return;
 
-        // Выбор навыка (с 0 до 1)
         if (delta > 0 && skill.value === 0) {
             if (this.state.selectedSkills >= this.state.maxSkills) {
                 this.showMessage('Максимум 4 навыка!', 'error');
@@ -141,22 +138,16 @@ class CharacterEditor {
             }
             this.state.selectedSkills++;
             this.state.skillPoints--;
-        }
-        // Снятие навыка (с 1 до 0)
-        else if (delta < 0 && skill.value === 1) {
+        } else if (delta < 0 && skill.value === 1) {
             this.state.selectedSkills--;
             this.state.skillPoints++;
-        }
-        // Увеличение существующего навыка
-        else if (delta > 0 && skill.value > 0) {
+        } else if (delta > 0 && skill.value > 0) {
             if (this.state.skillPoints <= 0) {
                 this.showMessage('Нет очков навыков!', 'error');
                 return;
             }
             this.state.skillPoints--;
-        }
-        // Уменьшение существующего навыка
-        else if (delta < 0 && skill.value > 1) {
+        } else if (delta < 0 && skill.value > 1) {
             this.state.skillPoints++;
         }
 
@@ -166,7 +157,6 @@ class CharacterEditor {
         this.saveToLocalStorage();
     }
 
-    // ===== ПЕРКИ =====
     renderPerks() {
         const grid = document.getElementById('perksGrid');
         if (!grid) return;
@@ -215,7 +205,6 @@ class CharacterEditor {
         this.saveToLocalStorage();
     }
 
-    // ===== ОБНОВЛЕНИЕ UI =====
     updateUI() {
         const totalPoints = document.getElementById('totalPoints');
         const charPoints = document.getElementById('charPointsDisplay');
@@ -230,9 +219,7 @@ class CharacterEditor {
         if (perkPoints) perkPoints.textContent = `ОЧКОВ ПЕРКОВ: ${this.state.skillPoints}`;
     }
 
-    // ===== СОБЫТИЯ =====
     setupEventListeners() {
-        // Вкладки
         document.querySelectorAll('.tab-btn').forEach(btn => {
             btn.addEventListener('click', function() {
                 document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -243,7 +230,6 @@ class CharacterEditor {
             });
         });
 
-        // Характеристики (делегирование)
         document.getElementById('characteristicsGrid')?.addEventListener('click', (e) => {
             const btn = e.target.closest('button');
             if (!btn) return;
@@ -253,7 +239,6 @@ class CharacterEditor {
             this.updateCharacteristic(stat, delta);
         });
 
-        // Навыки (глобальное делегирование)
         document.addEventListener('click', (e) => {
             const btn = e.target.closest('button');
             if (!btn) return;
@@ -265,17 +250,14 @@ class CharacterEditor {
             }
         });
 
-        // Сброс
         document.getElementById('resetBtn')?.addEventListener('click', () => {
             if (confirm('Сбросить всё?')) this.resetAll();
         });
 
-        // Готово
         document.getElementById('doneBtn')?.addEventListener('click', () => {
             this.showResultModal();
         });
 
-        // Модальное окно
         document.getElementById('closeModalBtn')?.addEventListener('click', () => {
             document.getElementById('resultModal').classList.add('hidden');
         });
@@ -288,34 +270,35 @@ class CharacterEditor {
 
         document.getElementById('copyBtn')?.addEventListener('click', () => {
             const text = document.getElementById('resultBody').textContent;
-            navigator.clipboard?.writeText(text).then(() => {
-                this.showMessage('📋 Скопировано!', 'success');
-            }).catch(() => {
-                // fallback
-                const range = document.createRange();
-                range.selectNode(document.getElementById('resultBody'));
-                window.getSelection().removeAllRanges();
-                window.getSelection().addRange(range);
-                document.execCommand('copy');
-                this.showMessage('📋 Скопировано!', 'success');
-            });
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(text).then(() => {
+                    this.showMessage('📋 Скопировано!', 'success');
+                }).catch(() => this.fallbackCopy(text));
+            } else {
+                this.fallbackCopy(text);
+            }
         });
     }
 
-    // ===== РЕЗУЛЬТАТ =====
+    fallbackCopy(text) {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        this.showMessage('📋 Скопировано!', 'success');
+    }
+
     showResultModal() {
         const body = document.getElementById('resultBody');
         if (!body) return;
 
-        let text = '';
-
-        // Характеристики
-        text += '📋 ХАРАКТЕРИСТИКИ:\n';
+        let text = '📋 ХАРАКТЕРИСТИКИ:\n';
         Object.entries(this.characteristics).forEach(([name, value]) => {
             text += `  ${name}: ${value > 0 ? '+' : ''}${value}\n`;
         });
 
-        // Навыки
         const selectedSkills = Object.entries(this.skills).filter(([_, data]) => data.value > 0);
         if (selectedSkills.length > 0) {
             text += '\n🎯 НАВЫКИ:\n';
@@ -324,7 +307,6 @@ class CharacterEditor {
             });
         }
 
-        // Перки
         const selectedPerks = Object.keys(this.perks).filter(name => this.perks[name].selected);
         if (selectedPerks.length > 0) {
             text += '\n🏅 ПЕРКИ:\n';
@@ -337,7 +319,6 @@ class CharacterEditor {
         document.getElementById('resultModal').classList.remove('hidden');
     }
 
-    // ===== СБРОС =====
     resetAll() {
         Object.keys(this.characteristics).forEach(k => this.characteristics[k] = 0);
         Object.keys(this.skills).forEach(k => this.skills[k].value = 0);
@@ -354,7 +335,6 @@ class CharacterEditor {
         this.showMessage('Сброшено!', 'success');
     }
 
-    // ===== СОХРАНЕНИЕ =====
     saveToLocalStorage() {
         try {
             const data = {
@@ -401,7 +381,6 @@ class CharacterEditor {
     }
 }
 
-// ===== ЗАПУСК =====
 document.addEventListener('DOMContentLoaded', () => {
     new CharacterEditor();
 });
