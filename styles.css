@@ -790,3 +790,79 @@ header {
     }
 }
 
+/* ===== НОВЫЕ ПОДСКАЗКИ (СПРАВА, ЧИТАЕМЫЕ) ===== */
+
+/* Базовый стиль для всех элементов с подсказками */
+.skill-item {
+    position: relative;
+}
+
+/* Сама подсказка — всплывает справа */
+.skill-item .skill-tooltip {
+    display: none;
+    position: absolute;
+    left: calc(100% + 15px);
+    top: 50%;
+    transform: translateY(-50%);
+    background: #1a1a1a;
+    border: 2px solid var(--border-accent);
+    border-radius: 8px;
+    padding: 14px 18px;
+    min-width: 250px;
+    max-width: 400px;
+    width: max-content;
+    color: #d4d4d4;
+    font-size: 13px;
+    line-height: 1.6;
+    z-index: 999;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9);
+    white-space: normal;
+    word-wrap: break-word;
+    pointer-events: none;
+}
+
+/* Стрелочка слева от подсказки */
+.skill-item .skill-tooltip::before {
+    content: '';
+    position: absolute;
+    left: -10px;
+    top: 50%;
+    transform: translateY(-50%);
+    border-right: 10px solid var(--border-accent);
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+}
+
+/* Показываем при наведении */
+.skill-item:hover .skill-tooltip {
+    display: block;
+}
+
+/* Для мобильных — подсказка снизу */
+@media (max-width: 768px) {
+    .skill-item .skill-tooltip {
+        left: 50%;
+        top: calc(100% + 10px);
+        transform: translateX(-50%);
+        min-width: 200px;
+        max-width: 300px;
+    }
+    
+    .skill-item .skill-tooltip::before {
+        display: none;
+    }
+}
+
+/* Заголовок в подсказке (если нужно) */
+.skill-item .skill-tooltip .tooltip-title {
+    font-weight: 700;
+    color: var(--accent-green-bright);
+    margin-bottom: 4px;
+    font-size: 14px;
+}
+
+.skill-item .skill-tooltip .tooltip-desc {
+    color: #b0b0b0;
+    font-size: 13px;
+    line-height: 1.5;
+}
