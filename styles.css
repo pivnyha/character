@@ -307,11 +307,17 @@ header {
 .stat-value.negative { color: var(--text-danger); }
 .stat-value.positive { color: var(--accent-green-bright); }
 
+/* ===== КОЛОНКИ ===== */
+.skills-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
 .skills-layout {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     gap: 15px;
-    margin-top: 10px;
 }
 
 .skills-column {
@@ -322,7 +328,6 @@ header {
     min-height: 350px;
     display: flex;
     flex-direction: column;
-    overflow: visible !important;
 }
 
 .column-title {
@@ -344,7 +349,6 @@ header {
     gap: 4px;
     max-height: 400px;
     overflow-y: auto;
-    overflow-x: visible !important;
 }
 
 .skill-group {
@@ -370,15 +374,12 @@ header {
     border-radius: 2px;
     cursor: pointer;
     transition: all 0.2s ease;
-    position: relative;
     text-align: center;
-    z-index: 1;
 }
 
 .skill-item:hover {
     background: var(--bg-hover);
     border-color: var(--border-light);
-    z-index: 10;
 }
 
 .skill-item.selected {
@@ -394,84 +395,59 @@ header {
     color: var(--text-primary);
 }
 
-/* ===== ПОДСКАЗКИ ===== */
-.skill-item .skill-tooltip {
-    display: none;
-    position: absolute;
-    bottom: calc(100% + 12px);
-    left: 50%;
-    transform: translateX(-50%);
-    background: #1a1a1a;
-    border: 2px solid var(--border-accent);
-    border-radius: 8px;
-    padding: 14px 20px;
-    min-width: 220px;
-    max-width: 350px;
-    width: max-content;
-    color: #d4d4d4;
-    font-size: 13px;
-    line-height: 1.5;
-    z-index: 9999;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.95);
-    white-space: normal;
-    word-wrap: break-word;
-    pointer-events: none;
+/* ===== ОБЛАСТЬ ОПИСАНИЯ ===== */
+.description-area {
+    background: var(--bg-panel);
+    border: 1px solid var(--border-accent);
+    border-radius: 4px;
+    padding: 16px 20px;
+    min-height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.description-placeholder {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-muted);
     text-align: center;
+    letter-spacing: 1px;
 }
 
-.skill-item .skill-tooltip::after {
-    content: '';
-    position: absolute;
-    bottom: -10px;
-    left: 50%;
-    transform: translateX(-50%);
-    border-top: 10px solid var(--border-accent);
-    border-left: 10px solid transparent;
-    border-right: 10px solid transparent;
+.description-content {
+    display: none;
+    width: 100%;
+    animation: fadeIn 0.2s ease;
 }
 
-.skill-item:not(.selected):hover .skill-tooltip {
-    display: block;
-}
-
-.skill-item:focus .skill-tooltip,
-.skill-item:active .skill-tooltip {
-    display: none !important;
-}
-
-@media (max-width: 768px) {
-    .skill-item .skill-tooltip {
-        bottom: auto;
-        top: calc(100% + 12px);
-        min-width: 180px;
-        max-width: 280px;
-        font-size: 12px;
-        padding: 12px 16px;
-    }
-    
-    .skill-item .skill-tooltip::after {
-        bottom: auto;
-        top: -10px;
-        border-top: none;
-        border-bottom: 10px solid var(--border-accent);
-        border-left: 10px solid transparent;
-        border-right: 10px solid transparent;
-    }
-}
-
-.skill-item .skill-tooltip .tooltip-title {
+.description-content .description-type {
+    font-family: var(--font-mono);
+    font-size: 10px;
     font-weight: 700;
     color: var(--accent-green-bright);
+    letter-spacing: 2px;
     margin-bottom: 4px;
-    font-size: 14px;
 }
 
-.skill-item .skill-tooltip .tooltip-desc {
-    color: #b0b0b0;
-    font-size: 13px;
+.description-content .description-name {
+    font-family: var(--font-mono);
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+}
+
+.description-content .description-text {
+    font-family: var(--font-main);
+    font-size: 14px;
+    color: var(--text-secondary);
     line-height: 1.5;
 }
 
+/* ===== ВЫБРАННОЕ ===== */
 .selected-item {
     background: var(--bg-card);
     border: 1px solid var(--border-color);
@@ -757,6 +733,16 @@ header {
     .btn { width: 100%; text-align: center; padding: 12px; }
     .stat-badge { font-size: 9px; padding: 3px 10px; }
     .modal-content { width: 98%; }
+    .description-area {
+        min-height: 60px;
+        padding: 12px 16px;
+    }
+    .description-content .description-name {
+        font-size: 14px;
+    }
+    .description-content .description-text {
+        font-size: 13px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -782,51 +768,3 @@ header {
     border-radius: 2px;
 }
 ::-webkit-scrollbar-thumb:hover { background: var(--border-light); }
-
-/* ===== ПОДСКАЗКИ ПОВЕРХ ВСЕГО ===== */
-
-.skill-item {
-    position: relative;
-    z-index: 1;
-}
-
-.skill-item .skill-tooltip {
-    display: none;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: #1a1a1a;
-    border: 2px solid var(--border-accent);
-    border-radius: 10px;
-    padding: 20px 28px;
-    max-width: 450px;
-    min-width: 250px;
-    color: #d4d4d4;
-    font-size: 14px;
-    line-height: 1.6;
-    z-index: 999999 !important;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.98);
-    white-space: normal;
-    word-wrap: break-word;
-    pointer-events: none;
-    text-align: center;
-}
-
-.skill-item:not(.selected):hover .skill-tooltip {
-    display: block;
-}
-
-.skill-item:focus .skill-tooltip,
-.skill-item:active .skill-tooltip {
-    display: none !important;
-}
-
-@media (max-width: 768px) {
-    .skill-item .skill-tooltip {
-        max-width: 90%;
-        min-width: 200px;
-        padding: 16px 20px;
-        font-size: 13px;
-    }
-}
