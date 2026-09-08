@@ -782,3 +782,51 @@ header {
     border-radius: 2px;
 }
 ::-webkit-scrollbar-thumb:hover { background: var(--border-light); }
+
+/* ===== ПОДСКАЗКИ ПОВЕРХ ВСЕГО ===== */
+
+.skill-item {
+    position: relative;
+    z-index: 1;
+}
+
+.skill-item .skill-tooltip {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #1a1a1a;
+    border: 2px solid var(--border-accent);
+    border-radius: 10px;
+    padding: 20px 28px;
+    max-width: 450px;
+    min-width: 250px;
+    color: #d4d4d4;
+    font-size: 14px;
+    line-height: 1.6;
+    z-index: 999999 !important;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.98);
+    white-space: normal;
+    word-wrap: break-word;
+    pointer-events: none;
+    text-align: center;
+}
+
+.skill-item:not(.selected):hover .skill-tooltip {
+    display: block;
+}
+
+.skill-item:focus .skill-tooltip,
+.skill-item:active .skill-tooltip {
+    display: none !important;
+}
+
+@media (max-width: 768px) {
+    .skill-item .skill-tooltip {
+        max-width: 90%;
+        min-width: 200px;
+        padding: 16px 20px;
+        font-size: 13px;
+    }
+}
