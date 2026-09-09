@@ -45,13 +45,16 @@ class CharacterEditor {
         this.mySkills = [];
         this.myPerks = [];
 
-        // ===== НОВАЯ СИСТЕМА ОЧКОВ =====
+        // ===== СИСТЕМА ОЧКОВ =====
         this.points = {
-            charPoints: 2,      // очки для характеристик
-            freePoints: 3,      // очки ТОЛЬКО для прокачки навыков (НЕ тратятся на выбор!)
-            skillLimit: 4,      // максимум навыков
-            totalLimit: 4       // всего выборов (навыки + перки)
+            charPoints: 2,
+            freePoints: 3,
+            skillLimit: 4,
+            totalLimit: 4
         };
+
+        // ===== ПРИ ЗАХОДЕ ОЧИЩАЕМ ВСЁ! =====
+        this.resetAll();
 
         this.start();
     }
@@ -63,7 +66,6 @@ class CharacterEditor {
         this.renderPicked();
         this.updateDisplay();
         this.listeners();
-        this.loadData();
     }
 
     // ===== ХАРАКТЕРИСТИКИ =====
@@ -99,7 +101,6 @@ class CharacterEditor {
         this.stats[name] = next;
         this.renderStats();
         this.updateDisplay();
-        this.saveData();
     }
 
     // ===== НАВЫКИ =====
@@ -155,12 +156,10 @@ class CharacterEditor {
             return;
         }
 
-        // ✅ НЕ ТРАТИМ ОЧКИ НА ВЫБОР!
         this.mySkills.push(name);
         this.renderSkills();
         this.renderPicked();
         this.updateDisplay();
-        this.saveData();
     }
 
     // ===== ПЕРКИ =====
@@ -200,7 +199,6 @@ class CharacterEditor {
                 this.showMsg('Максимум 4 выбора!', 'error');
                 return;
             }
-            // ✅ НЕ ТРАТИМ ОЧКИ НА ВЫБОР!
             perk.picked = true;
             this.myPerks.push(name);
         }
@@ -208,7 +206,6 @@ class CharacterEditor {
         this.renderPerks();
         this.renderPicked();
         this.updateDisplay();
-        this.saveData();
     }
 
     // ===== ВЫБРАННОЕ =====
@@ -289,7 +286,6 @@ class CharacterEditor {
         this.renderSkills();
         this.renderPicked();
         this.updateDisplay();
-        this.saveData();
     }
 
     unpickPerk(name) {
@@ -300,7 +296,6 @@ class CharacterEditor {
         this.renderPerks();
         this.renderPicked();
         this.updateDisplay();
-        this.saveData();
     }
 
     changeSkillVal(name, delta) {
@@ -317,7 +312,6 @@ class CharacterEditor {
         skill.val = next;
         this.renderPicked();
         this.updateDisplay();
-        this.saveData();
     }
 
     // ===== ОПИСАНИЕ =====
@@ -374,10 +368,6 @@ class CharacterEditor {
             if (!name) return;
             const delta = btn.classList.contains('stat-up') ? 1 : -1;
             this.changeStat(name, delta);
-        });
-
-        document.getElementById('resetBtn')?.addEventListener('click', () => {
-            if (confirm('Сбросить всё?')) this.resetAll();
         });
 
         document.getElementById('doneBtn')?.addEventListener('click', () => {
@@ -440,54 +430,21 @@ class CharacterEditor {
         document.getElementById('resultModal').classList.remove('hidden');
     }
 
+    // ===== ПОЛНЫЙ СБРОС =====
     resetAll() {
         Object.keys(this.stats).forEach(k => this.stats[k] = 0);
-        Object.keys(this.skillsDB).forEach(k => this.skillsDB[k].val = 0);
-        Object.keys(this.perksDB).forEach(k => this.perksDB[k].picked = false);
+        Object.keys(this.skillsDB).forEach(k => {
+            this.skillsDB[k].val = 0;
+        });
+        Object.keys(this.perksDB).forEach(k => {
+            this.perksDB[k].picked = false;
+        });
         this.mySkills = [];
         this.myPerks = [];
         this.points.charPoints = 2;
         this.points.freePoints = 3;
-        this.renderStats();
-        this.renderSkills();
-        this.renderPerks();
-        this.renderPicked();
-        this.updateDisplay();
-        this.saveData();
-        this.showMsg('Сброшено!', 'success');
-    }
-
-    saveData() {
-        try {
-            const data = {
-                stats: this.stats,
-                skillsDB: this.skillsDB,
-                perksDB: this.perksDB,
-                mySkills: this.mySkills,
-                myPerks: this.myPerks,
-                points: this.points
-            };
-            localStorage.setItem('charData', JSON.stringify(data));
-        } catch (e) {}
-    }
-
-    loadData() {
-        try {
-            const saved = localStorage.getItem('charData');
-            if (!saved) return;
-            const data = JSON.parse(saved);
-            Object.assign(this.stats, data.stats);
-            Object.assign(this.skillsDB, data.skillsDB);
-            Object.assign(this.perksDB, data.perksDB);
-            this.mySkills = data.mySkills || [];
-            this.myPerks = data.myPerks || [];
-            Object.assign(this.points, data.points);
-            this.renderStats();
-            this.renderSkills();
-            this.renderPerks();
-            this.renderPicked();
-            this.updateDisplay();
-        } catch (e) {}
+        // Очищаем localStorage при заходе
+        localStorage.removeItem('charData');
     }
 
     showMsg(text, type = 'info') {
