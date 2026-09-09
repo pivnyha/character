@@ -45,10 +45,10 @@ class CharacterEditor {
         this.mySkills = [];
         this.myPerks = [];
 
-        // ===== НОВАЯ СИСТЕМА ОЧКОВ (ПЕРЕРАБОТАННАЯ) =====
+        // ===== НОВАЯ СИСТЕМА ОЧКОВ =====
         this.points = {
             charPoints: 2,      // очки для характеристик
-            freePoints: 3,      // очки распределения (навыки + перки)
+            freePoints: 3,      // очки ТОЛЬКО для прокачки навыков (НЕ тратятся на выбор!)
             skillLimit: 4,      // максимум навыков
             totalLimit: 4       // всего выборов (навыки + перки)
         };
@@ -154,13 +154,9 @@ class CharacterEditor {
             this.showMsg('Максимум 4 навыка!', 'error');
             return;
         }
-        if (this.points.freePoints <= 0) {
-            this.showMsg('Нет очков распределения!', 'error');
-            return;
-        }
 
+        // ✅ НЕ ТРАТИМ ОЧКИ НА ВЫБОР!
         this.mySkills.push(name);
-        this.points.freePoints -= 1;
         this.renderSkills();
         this.renderPicked();
         this.updateDisplay();
@@ -198,20 +194,15 @@ class CharacterEditor {
         if (perk.picked) {
             perk.picked = false;
             this.myPerks = this.myPerks.filter(p => p !== name);
-            this.points.freePoints += 1;
         } else {
             const total = this.mySkills.length + this.myPerks.length;
             if (total >= this.points.totalLimit) {
                 this.showMsg('Максимум 4 выбора!', 'error');
                 return;
             }
-            if (this.points.freePoints <= 0) {
-                this.showMsg('Нет очков распределения!', 'error');
-                return;
-            }
+            // ✅ НЕ ТРАТИМ ОЧКИ НА ВЫБОР!
             perk.picked = true;
             this.myPerks.push(name);
-            this.points.freePoints -= 1;
         }
 
         this.renderPerks();
@@ -295,7 +286,6 @@ class CharacterEditor {
             data.val = 0;
         }
         this.mySkills.splice(idx, 1);
-        this.points.freePoints += 1;
         this.renderSkills();
         this.renderPicked();
         this.updateDisplay();
@@ -307,7 +297,6 @@ class CharacterEditor {
         if (idx === -1) return;
         this.myPerks.splice(idx, 1);
         this.perksDB[name].picked = false;
-        this.points.freePoints += 1;
         this.renderPerks();
         this.renderPicked();
         this.updateDisplay();
@@ -320,7 +309,7 @@ class CharacterEditor {
         const next = skill.val + delta;
         if (next < -4 || next > 4) return;
         if (delta > 0 && this.points.freePoints <= 0) {
-            this.showMsg('Нет очков распределения!', 'error');
+            this.showMsg('Нет очков!', 'error');
             return;
         }
         if (delta < 0) this.points.freePoints += 1;
@@ -362,7 +351,7 @@ class CharacterEditor {
         const selEl = document.getElementById('selectedDisplay');
         const total = this.mySkills.length + this.myPerks.length;
         if (charEl) charEl.textContent = `ОЧКОВ: ${this.points.charPoints}`;
-        if (freeEl) freeEl.textContent = `ОЧКОВ РАСПРЕДЕЛЕНИЯ: ${this.points.freePoints}`;
+        if (freeEl) freeEl.textContent = `ОЧКОВ: ${this.points.freePoints}`;
         if (selEl) selEl.textContent = `ВЫБРАНО: ${total}/${this.points.totalLimit}`;
     }
 
