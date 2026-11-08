@@ -316,16 +316,19 @@ class CharacterEditor {
         document.body.classList.remove('no-scroll');
     }
 
-    // ===== РАНДОМАЙЗЕР =====
+        // ===== РАНДОМАЙЗЕР =====
     randomize() {
         this.resetAll();
 
         // 1. Рандом характеристик
         let statPoints = this.isUnlimited ? 10 : 2;
         const statKeys = Object.keys(this.stats);
+        
         if (this.isUnlimited) {
+            // В безлимите кидаем рандом от -4 до +4, но не всем подряд, а рандомным
             statKeys.forEach(key => this.stats[key] = Math.floor(Math.random() * 9) - 4);
         } else {
+            // Обычный режим: 2 очка
             for (let i = 0; i < statPoints; i++) {
                 const rKey = statKeys[Math.floor(Math.random() * statKeys.length)];
                 if (this.stats[rKey] < 4) this.stats[rKey] += 1;
@@ -333,17 +336,25 @@ class CharacterEditor {
             }
         }
 
-        // 2. Рандом навыков
+        // 2. Рандом навыков (АДЕКВАТНОЕ КОЛИЧЕСТВО)
         const skillKeys = Object.keys(this.skillsDB);
-        const skillLimit = this.isUnlimited ? skillKeys.length : 4;
+        // Если безлимит: случайно от 2 до 5 навыков. Если лимит: строго до 4.
+        const skillCount = this.isUnlimited 
+            ? Math.floor(Math.random() * 4) + 2 // от 2 до 5
+            : Math.min(4, skillKeys.length); 
+            
         const shuffledSkills = [...skillKeys].sort(() => 0.5 - Math.random());
-        this.mySkills = shuffledSkills.slice(0, skillLimit);
+        this.mySkills = shuffledSkills.slice(0, skillCount);
 
-        // 3. Рандом перков
+        // 3. Рандом перков (АДЕКВАТНОЕ КОЛИЧЕСТВО)
         const perkKeys = Object.keys(this.perksDB);
-        const perkLimit = this.isUnlimited ? perkKeys.length : 2;
+        // Если безлимит: случайно от 1 до 3 перков. Если лимит: строго до 2.
+        const perkCount = this.isUnlimited
+            ? Math.floor(Math.random() * 3) + 1 // от 1 до 3
+            : Math.min(2, perkKeys.length);
+
         const shuffledPerks = [...perkKeys].sort(() => 0.5 - Math.random());
-        this.myPerks = shuffledPerks.slice(0, perkLimit);
+        this.myPerks = shuffledPerks.slice(0, perkCount);
 
         Object.keys(this.perksDB).forEach(k => this.perksDB[k].picked = false);
         this.myPerks.forEach(name => this.perksDB[name].picked = true);
@@ -352,8 +363,12 @@ class CharacterEditor {
         let freePoints = this.isUnlimited ? 10 : 3;
         if (this.mySkills.length > 0) {
             if (this.isUnlimited) {
-                this.mySkills.forEach(name => this.skillsDB[name].val = Math.floor(Math.random() * 9) - 4);
+                // В безлимите кидаем рандомные значения от -4 до +4 для выбранных навыков
+                this.mySkills.forEach(name => {
+                    this.skillsDB[name].val = Math.floor(Math.random() * 9) - 4;
+                });
             } else {
+                // В обычном режиме раскидываем 3 очка
                 for (let i = 0; i < freePoints; i++) {
                     const rSkill = this.mySkills[Math.floor(Math.random() * this.mySkills.length)];
                     if (this.skillsDB[rSkill].val < 4) this.skillsDB[rSkill].val += 1;
@@ -362,15 +377,18 @@ class CharacterEditor {
             }
         }
 
+        // Обнуляем оставшиеся очки, так как мы их потратили
         this.points.charPoints = 0;
         this.points.freePoints = 0;
 
+        // Отрисовка
         this.renderStats();
         this.renderSkills();
         this.renderPerks();
         this.renderPicked();
         this.updateDisplay();
 
+        // Анимация
         const btn = document.getElementById('randomBtn');
         if (btn) {
             btn.classList.add('shaking');
