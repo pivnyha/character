@@ -45,11 +45,18 @@ body {
     background: var(--bg-dark);
     color: var(--text-main);
     min-height: 100vh;
-    padding: 10px 10px 50px; /* Отступ снизу для статус-бара */
+    padding: 10px 10px 58px; /* Отступ снизу под статус-бар 48px + отступ */
     background-image:
         radial-gradient(ellipse at 20% 50%, rgba(143, 168, 112, 0.03) 0%, transparent 60%),
         radial-gradient(ellipse at 80% 50%, rgba(143, 168, 112, 0.03) 0%, transparent 60%),
         repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.008) 2px, rgba(255,255,255,0.008) 4px);
+    
+    /* Блокировка прокрутки при наведении */
+    overflow-x: hidden;
+}
+
+body.no-scroll {
+    overflow: hidden;
 }
 
 .container {
@@ -121,7 +128,7 @@ header {
     50% { opacity: 0.3; }
 }
 
-/* ===== ИКОНКИ (КОМПАКТНЫЕ) ===== */
+/* ===== ИКОНКИ ===== */
 .icon {
     width: 18px;
     height: 18px;
@@ -720,20 +727,20 @@ header {
     justify-content: center;
 }
 
-/* ===== СТАТУС-БАР ===== */
+/* ===== СТАТУС-БАР (УВЕЛИЧЕН) ===== */
 .status-bar {
     position: fixed;
     bottom: 0; left: 0; right: 0;
-    height: 36px;
+    height: 48px; /* УВЕЛИЧЕН */
     background: var(--bg-panel);
     border-top: 1px solid var(--border-mid);
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 20px;
+    gap: 24px;
     padding: 0 24px;
     font-family: var(--font-mono);
-    font-size: 11px;
+    font-size: 13px; /* УВЕЛИЧЕН */
     letter-spacing: 1.5px;
     color: var(--text-dim);
     z-index: 900;
@@ -743,33 +750,33 @@ header {
 .status-item {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
 }
 
 .status-divider {
     width: 1px;
-    height: 16px;
+    height: 20px; /* УВЕЛИЧЕН */
     background: var(--border-mid);
     opacity: 0.6;
 }
 
 .status-led {
-    width: 6px;
-    height: 6px;
+    width: 8px; /* УВЕЛИЧЕН */
+    height: 8px;
     border-radius: 50%;
     background: var(--led-green);
-    box-shadow: 0 0 6px var(--led-green);
+    box-shadow: 0 0 8px var(--led-green);
     animation: pulse-led 2s infinite;
 }
 
 .status-led.warn {
     background: var(--led-amber);
-    box-shadow: 0 0 6px var(--led-amber);
+    box-shadow: 0 0 8px var(--led-amber);
 }
 
 .status-led.error {
     background: var(--led-red);
-    box-shadow: 0 0 6px var(--led-red);
+    box-shadow: 0 0 8px var(--led-red);
 }
 
 .status-label {
@@ -780,6 +787,7 @@ header {
 .status-value {
     color: var(--text-main);
     font-weight: 700;
+    font-size: 14px; /* УВЕЛИЧЕН */
 }
 
 .status-value.highlight {
@@ -789,13 +797,13 @@ header {
 
 .status-dots {
     display: flex;
-    gap: 4px;
+    gap: 5px;
     margin: 0 4px;
 }
 
 .status-dots .dot {
-    width: 6px;
-    height: 6px;
+    width: 8px; /* УВЕЛИЧЕН */
+    height: 8px;
     border-radius: 50%;
     background: var(--border-mid);
     transition: all 0.2s ease;
@@ -803,7 +811,7 @@ header {
 
 .status-dots .dot.filled {
     background: var(--accent);
-    box-shadow: 0 0 6px var(--accent);
+    box-shadow: 0 0 8px var(--accent);
 }
 
 .status-dots .dot.full {
@@ -841,16 +849,17 @@ header {
     .actions { flex-direction: column; }
     .btn { width: 100%; text-align: center; padding: 12px; }
     .stat-badge { font-size: 10px; padding: 4px 10px; }
+    
     .status-bar {
-        height: 30px;
-        font-size: 9px;
-        gap: 10px;
+        height: 40px;
+        font-size: 10px;
+        gap: 12px;
         padding: 0 10px;
-        letter-spacing: 1px;
     }
     .status-label { display: none; }
-    .status-divider { height: 12px; }
-    .status-value { font-size: 10px; }
+    .status-divider { height: 16px; }
+    .status-value { font-size: 11px; }
+    .status-dots .dot { width: 6px; height: 6px; }
 }
 
 /* ===== СКРОЛЛБАР ===== */
