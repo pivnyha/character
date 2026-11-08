@@ -32,7 +32,7 @@
             </button>
         </nav>
 
-        <!-- ВКЛАДКА 1 -->
+        <!-- ВКЛАДКА 1: ХАРАКТЕРИСТИКИ -->
         <section id="characteristics" class="tab-content active">
             <div class="tab-header">
                 <div class="tab-title">
@@ -48,7 +48,7 @@
             <div class="stats-grid" id="characteristicsGrid"></div>
         </section>
 
-        <!-- ВКЛАДКА 2 -->
+        <!-- ВКЛАДКА 2: НАВЫКИ И ПЕРКИ -->
         <section id="skills" class="tab-content">
             <div class="tab-header">
                 <div class="tab-title">
@@ -95,15 +95,17 @@
             </div>
         </section>
 
-        <!-- ПАНЕЛЬ УПРАВЛЕНИЯ (ВЫНЕСЕНА ИЗ ВКЛАДОК) -->
-<label class="hardware-toggle" title="Безлимитный режим">
-    <input type="checkbox" id="unlimitedToggle">
-    <div class="hw-base">
-        <div class="hw-lever"></div>
-    </div>
-    <span class="toggle-label">БЕЗ ЛИМИТОВ</span>
-</label>
+        <!-- НИЖНЯЯ ПАНЕЛЬ (КНОПКИ) -->
+        <footer class="actions">
+            <!-- ЛЕВО: Кнопка лимитов -->
+            <div class="action-left">
+                <button id="unlimitedBtn" class="btn btn-toggle">
+                    <svg class="icon"><use href="icons.svg#i-shield"/></svg>
+                    <span id="unlimitedText">ЛИМИТЫ ВКЛ</span>
+                </button>
+            </div>
 
+            <!-- ЦЕНТР: Кнопка Готово -->
             <div class="action-center">
                 <button id="doneBtn" class="btn btn-success">
                     <svg class="icon"><use href="icons.svg#i-done"/></svg>
@@ -111,6 +113,7 @@
                 </button>
             </div>
 
+            <!-- ПРАВО: Рандом -->
             <div class="action-right">
                 <button id="randomBtn" class="btn btn-random">
                     <svg class="icon"><use href="icons.svg#i-luck"/></svg>
@@ -122,6 +125,7 @@
         <div id="savedMessage" class="message hidden">✔ ПЕРСОНАЖ СОХРАНЕН</div>
     </div>
 
+    <!-- МОДАЛЬНОЕ ОКНО РЕЗУЛЬТАТА -->
     <div id="resultModal" class="modal hidden">
         <div class="modal-content">
             <div class="modal-header">
@@ -140,6 +144,7 @@
         </div>
     </div>
 
+    <!-- СТАТУС-БАР СНИЗУ -->
     <footer class="status-bar">
         <div class="status-item">
             <span class="status-led" id="statusLed"></span>
@@ -170,7 +175,5 @@
     </footer>
 
     <script src="script.js"></script>
-</body>
-</html>
 </body>
 </html>
