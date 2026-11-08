@@ -39,7 +39,7 @@ class CharacterEditor {
         this.start();
     }
 
-    // --- АУДИО ДВИЖОК ---
+    // ===== АУДИО ДВИЖОК (WEB AUDIO API) =====
     initAudio() {
         if (!this.audioCtx) {
             this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -66,8 +66,8 @@ class CharacterEditor {
         if (this.volume <= 0) return;
         this.initAudio();
         
-        // Белый шум для щелчка
-        const bufferSize = this.audioCtx.sampleRate * 0.05;
+        // Очень короткий шумовой буфер (0.015 сек) для четкого щелчка
+        const bufferSize = this.audioCtx.sampleRate * 0.015;
         const buffer = this.audioCtx.createBuffer(1, bufferSize, this.audioCtx.sampleRate);
         const data = buffer.getChannelData(0);
         
@@ -78,14 +78,14 @@ class CharacterEditor {
         const noise = this.audioCtx.createBufferSource();
         noise.buffer = buffer;
         
-        // Фильтр для глухого звука
+        // Фильтр высоких частот для "деревянного" стука
         const filter = this.audioCtx.createBiquadFilter();
-        filter.type = 'lowpass';
-        filter.frequency.value = 800;
+        filter.type = 'highpass';
+        filter.frequency.value = 1500; 
         
         const gain = this.audioCtx.createGain();
-        gain.gain.setValueAtTime(this.volume * 0.8, this.audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, this.audioCtx.currentTime + 0.04);
+        gain.gain.setValueAtTime(this.volume * 0.6, this.audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.audioCtx.currentTime + 0.01);
         
         noise.connect(filter);
         filter.connect(gain);
@@ -110,6 +110,7 @@ class CharacterEditor {
         osc.stop(this.audioCtx.currentTime + 0.2);
     }
 
+    // ===== НАСТРОЙКИ ЗВУКА =====
     setupAudioSettings() {
         const toggle = document.getElementById('settingsToggle');
         const panel = document.getElementById('settingsPanel');
@@ -117,7 +118,9 @@ class CharacterEditor {
         const valueDisplay = document.getElementById('volumeValue');
 
         if (toggle && panel) {
-            toggle.addEventListener('click', () => panel.classList.toggle('hidden'));
+            toggle.addEventListener('click', () => {
+                panel.classList.toggle('hidden');
+            });
         }
 
         if (slider && valueDisplay) {
@@ -127,7 +130,7 @@ class CharacterEditor {
             });
         }
 
-        // Отключение звука при уходе со вкладки
+        // Отключение звука при сворачивании вкладки
         document.addEventListener('visibilitychange', () => {
             if (document.hidden) {
                 if (this.audioCtx && this.audioCtx.state === 'running') this.audioCtx.suspend();
@@ -137,7 +140,7 @@ class CharacterEditor {
         });
     }
 
-    // --- ОТРИСОВКА ---
+    // ===== ИНИЦИАЛИЗАЦИЯ =====
     start() {
         this.renderStats();
         this.renderSkills();
@@ -401,11 +404,16 @@ class CharacterEditor {
         
         const typeChar = () => {
             if (i < desc.length) {
-                textEl.textContent += desc.charAt(i);
+                const char = desc.charAt(i);
+                textEl.textContent += char;
+                
+                // Звук на буквы, с вероятностью 60% (чтобы был стук, а не очередь)
+                if (char !== ' ' && Math.random() > 0.4) {
+                    this.playTypewriter();
+                }
+                
                 i++;
-                // Звук печатной машинки на каждый второй символ
-                if (i % 2 === 0) this.playTypewriter();
-                this.typeTimeout = setTimeout(typeChar, 30);
+                this.typeTimeout = setTimeout(typeChar, 45);
             }
         };
         
@@ -649,7 +657,5 @@ class CharacterEditor {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    window.editor = new CharacterEditor();
-});
     window.editor = new CharacterEditor();
 });
