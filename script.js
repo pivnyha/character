@@ -4,7 +4,6 @@ class CharacterEditor {
             'Сила': 0, 'Удача': 0, 'Внимательность': 0, 'Ловкость': 0, 'Харизма': 0
         };
 
-        // Навык "Интеллект" удален
         this.skillsDB = {
             'Стрельба': { val: 0, desc: '+1 на атаки дальнего боя', type: 'combat' },
             'Ближний бой': { val: 0, desc: '+1 на атаки в рукопашном бою', type: 'combat' },
@@ -31,7 +30,6 @@ class CharacterEditor {
         this.mySkills = [];
         this.myPerks = [];
         
-        // Базовые настройки
         this.points = { 
             charPoints: 2, 
             freePoints: 3, 
@@ -54,7 +52,6 @@ class CharacterEditor {
         this.listeners();
     }
 
-    // ===== ХАРАКТЕРИСТИКИ =====
     renderStats() {
         const grid = document.getElementById('characteristicsGrid');
         if (!grid) return;
@@ -92,7 +89,6 @@ class CharacterEditor {
         this.updateDisplay();
     }
 
-    // ===== НАВЫКИ =====
     renderSkills() {
         const container = document.getElementById('allSkillsList');
         if (!container) return;
@@ -113,10 +109,8 @@ class CharacterEditor {
                 const el = document.createElement('div');
                 el.className = `skill-item ${picked ? 'selected' : ''}`;
                 el.innerHTML = `<span class="skill-name">${name}</span>`;
-                
                 el.addEventListener('mouseenter', () => this.showDesc(name, data.desc, 'skill'));
                 el.addEventListener('mouseleave', () => this.hideDesc());
-                
                 if (!picked) el.addEventListener('click', () => this.pickSkill(name));
                 group.appendChild(el);
             });
@@ -141,7 +135,6 @@ class CharacterEditor {
         this.updateDisplay();
     }
 
-    // ===== ПЕРКИ =====
     renderPerks() {
         const container = document.getElementById('allPerksList');
         if (!container) return;
@@ -152,10 +145,8 @@ class CharacterEditor {
             const el = document.createElement('div');
             el.className = `skill-item ${picked ? 'selected' : ''}`;
             el.innerHTML = `<span class="skill-name">${name}</span>`;
-            
             el.addEventListener('mouseenter', () => this.showDesc(name, data.desc, 'perk'));
             el.addEventListener('mouseleave', () => this.hideDesc());
-            
             if (!picked) el.addEventListener('click', () => this.pickPerk(name));
             container.appendChild(el);
         });
@@ -182,7 +173,6 @@ class CharacterEditor {
         this.updateDisplay();
     }
 
-    // ===== ВЫБРАННОЕ =====
     renderPicked() {
         const container = document.getElementById('selectedList');
         if (!container) return;
@@ -194,7 +184,6 @@ class CharacterEditor {
             return;
         }
 
-        // Отрисовка навыков
         this.mySkills.forEach(name => {
             const data = this.skillsDB[name];
             if (!data) return;
@@ -214,7 +203,6 @@ class CharacterEditor {
             container.appendChild(el);
         });
 
-        // Отрисовка перков
         this.myPerks.forEach(name => {
             const data = this.perksDB[name];
             if (!data) return;
@@ -230,7 +218,6 @@ class CharacterEditor {
             container.appendChild(el);
         });
 
-        // Слушатели кнопок удаления
         container.querySelectorAll('.selected-remove').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -239,7 +226,6 @@ class CharacterEditor {
             });
         });
 
-        // Слушатели кнопок распределения
         container.querySelectorAll('.dist-up, .dist-down').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -291,7 +277,6 @@ class CharacterEditor {
         this.updateDisplay();
     }
 
-    // ===== ОПИСАНИЕ =====
     showDesc(name, desc, type) {
         const area = document.getElementById('descriptionContent');
         const placeholder = document.querySelector('.description-placeholder');
@@ -316,42 +301,37 @@ class CharacterEditor {
         document.body.classList.remove('no-scroll');
     }
 
-        // ===== РАНДОМАЙЗЕР =====
     randomize() {
         this.resetAll();
 
-        // 1. Рандом характеристик
-        let statPoints = this.isUnlimited ? 10 : 2;
+        // 1. Характеристики
         const statKeys = Object.keys(this.stats);
-        
         if (this.isUnlimited) {
-            // В безлимите кидаем рандом от -4 до +4, но не всем подряд, а рандомным
             statKeys.forEach(key => this.stats[key] = Math.floor(Math.random() * 9) - 4);
         } else {
-            // Обычный режим: 2 очка
-            for (let i = 0; i < statPoints; i++) {
+            for (let i = 0; i < 2; i++) {
                 const rKey = statKeys[Math.floor(Math.random() * statKeys.length)];
                 if (this.stats[rKey] < 4) this.stats[rKey] += 1;
                 else i--;
             }
         }
 
-        // 2. Рандом навыков (АДЕКВАТНОЕ КОЛИЧЕСТВО)
+        // 2. Навыки (строго рандомное количество)
         const skillKeys = Object.keys(this.skillsDB);
-        // Если безлимит: случайно от 2 до 5 навыков. Если лимит: строго до 4.
+        // В безлимите выбираем от 2 до 4 навыков. В лимите - до 4.
         const skillCount = this.isUnlimited 
-            ? Math.floor(Math.random() * 4) + 2 // от 2 до 5
-            : Math.min(4, skillKeys.length); 
+            ? Math.floor(Math.random() * 3) + 2 // 2, 3 или 4
+            : 4; 
             
         const shuffledSkills = [...skillKeys].sort(() => 0.5 - Math.random());
         this.mySkills = shuffledSkills.slice(0, skillCount);
 
-        // 3. Рандом перков (АДЕКВАТНОЕ КОЛИЧЕСТВО)
+        // 3. Перки (строго рандомное количество)
         const perkKeys = Object.keys(this.perksDB);
-        // Если безлимит: случайно от 1 до 3 перков. Если лимит: строго до 2.
+        // В безлимите выбираем от 1 до 3 перков. В лимите - до 2.
         const perkCount = this.isUnlimited
-            ? Math.floor(Math.random() * 3) + 1 // от 1 до 3
-            : Math.min(2, perkKeys.length);
+            ? Math.floor(Math.random() * 3) + 1 // 1, 2 или 3
+            : 2;
 
         const shuffledPerks = [...perkKeys].sort(() => 0.5 - Math.random());
         this.myPerks = shuffledPerks.slice(0, perkCount);
@@ -359,17 +339,14 @@ class CharacterEditor {
         Object.keys(this.perksDB).forEach(k => this.perksDB[k].picked = false);
         this.myPerks.forEach(name => this.perksDB[name].picked = true);
 
-        // 4. Рандом очков навыков
-        let freePoints = this.isUnlimited ? 10 : 3;
+        // 4. Распределение очков
         if (this.mySkills.length > 0) {
             if (this.isUnlimited) {
-                // В безлимите кидаем рандомные значения от -4 до +4 для выбранных навыков
                 this.mySkills.forEach(name => {
                     this.skillsDB[name].val = Math.floor(Math.random() * 9) - 4;
                 });
             } else {
-                // В обычном режиме раскидываем 3 очка
-                for (let i = 0; i < freePoints; i++) {
+                for (let i = 0; i < 3; i++) {
                     const rSkill = this.mySkills[Math.floor(Math.random() * this.mySkills.length)];
                     if (this.skillsDB[rSkill].val < 4) this.skillsDB[rSkill].val += 1;
                     else i--;
@@ -377,18 +354,15 @@ class CharacterEditor {
             }
         }
 
-        // Обнуляем оставшиеся очки, так как мы их потратили
         this.points.charPoints = 0;
         this.points.freePoints = 0;
 
-        // Отрисовка
         this.renderStats();
         this.renderSkills();
         this.renderPerks();
         this.renderPicked();
         this.updateDisplay();
 
-        // Анимация
         const btn = document.getElementById('randomBtn');
         if (btn) {
             btn.classList.add('shaking');
@@ -396,7 +370,6 @@ class CharacterEditor {
         }
     }
 
-    // ===== UI =====
     updateDisplay() {
         const charEl = document.getElementById('charPointsDisplay');
         const freeEl = document.getElementById('skillPointsDisplay');
@@ -458,7 +431,6 @@ class CharacterEditor {
         }
     }
 
-    // ===== СОБЫТИЯ =====
     listeners() {
         document.querySelectorAll('.tab-btn').forEach(btn => {
             btn.addEventListener('click', function() {
@@ -477,7 +449,6 @@ class CharacterEditor {
             this.changeStat(btn.dataset.name, btn.classList.contains('stat-up') ? 1 : -1);
         });
 
-        // Кнопка лимитов
         const unlimBtn = document.getElementById('unlimitedBtn');
         const unlimText = document.getElementById('unlimitedText');
         if (unlimBtn) {
@@ -521,7 +492,6 @@ class CharacterEditor {
         });
     }
 
-    // ===== РЕЗУЛЬТАТ =====
     showResult() {
         const body = document.getElementById('resultBody');
         if (!body) return;
@@ -540,7 +510,6 @@ class CharacterEditor {
         document.getElementById('resultModal').classList.remove('hidden');
     }
 
-    // ===== СБРОС =====
     resetAll() {
         Object.keys(this.stats).forEach(k => this.stats[k] = 0);
         Object.keys(this.skillsDB).forEach(k => this.skillsDB[k].val = 0);
