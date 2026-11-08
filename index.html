@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>4 очка</title>
+    <!-- МЕНЯЕМ НАЗВАНИЕ ВКЛАДКИ -->
+    <title>Редактор персонажа</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,7 +15,8 @@
         <header>
             <div class="logo">
                 <svg class="icon"><use href="icons.svg#i-logo"/></svg>
-                <span class="logo-text">4 ОЧКА</span>
+                <!-- МЕНЯЕМ НАЗВАНИЕ В ШАПКЕ -->
+                <span class="logo-text">РЕДАКТОР ПЕРСОНАЖА</span>
             </div>
             <div class="header-right">
                 <div class="status-led"></div>
@@ -32,7 +34,6 @@
             </button>
         </nav>
 
-        <!-- ВКЛАДКА 1: ХАРАКТЕРИСТИКИ -->
         <section id="characteristics" class="tab-content active">
             <div class="tab-header">
                 <div class="tab-title">
@@ -48,7 +49,6 @@
             <div class="stats-grid" id="characteristicsGrid"></div>
         </section>
 
-        <!-- ВКЛАДКА 2: НАВЫКИ И ПЕРКИ -->
         <section id="skills" class="tab-content">
             <div class="tab-header">
                 <div class="tab-title">
@@ -95,9 +95,7 @@
             </div>
         </section>
 
-        <!-- НИЖНЯЯ ПАНЕЛЬ (КНОПКИ) -->
         <footer class="actions">
-            <!-- ЛЕВО: Кнопка лимитов -->
             <div class="action-left">
                 <button id="unlimitedBtn" class="btn btn-toggle">
                     <svg class="icon"><use href="icons.svg#i-shield"/></svg>
@@ -105,7 +103,6 @@
                 </button>
             </div>
 
-            <!-- ЦЕНТР: Кнопка Готово -->
             <div class="action-center">
                 <button id="doneBtn" class="btn btn-success">
                     <svg class="icon"><use href="icons.svg#i-done"/></svg>
@@ -113,7 +110,6 @@
                 </button>
             </div>
 
-            <!-- ПРАВО: Рандом -->
             <div class="action-right">
                 <button id="randomBtn" class="btn btn-random">
                     <svg class="icon"><use href="icons.svg#i-luck"/></svg>
@@ -125,7 +121,6 @@
         <div id="savedMessage" class="message hidden">✔ ПЕРСОНАЖ СОХРАНЕН</div>
     </div>
 
-    <!-- МОДАЛЬНОЕ ОКНО РЕЗУЛЬТАТА -->
     <div id="resultModal" class="modal hidden">
         <div class="modal-content">
             <div class="modal-header">
@@ -144,7 +139,6 @@
         </div>
     </div>
 
-    <!-- СТАТУС-БАР СНИЗУ -->
     <footer class="status-bar">
         <div class="status-item">
             <span class="status-led" id="statusLed"></span>
@@ -174,6 +168,16 @@
         </div>
     </footer>
 
-    <script src="script.js"></script>
+    <!-- СКРЫТЫЕ ЗВУКИ -->
+    <!-- Звук клика (механический переключатель) -->
+    <audio id="sfx-click" src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3" preload="auto"></audio>
+    <!-- Звук выбора (защелка) -->
+    <audio id="sfx-pick" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3" preload="auto"></audio>
+    <!-- Звук ошибки (глухой стук) -->
+    <audio id="sfx-error" src="https://assets.mixkit.co/active_storage/sfx/2573/2573-preview.mp3" preload="auto"></audio>
+    <!-- Звук печатной машинки -->
+    <audio id="sfx-type" src="https://assets.mixkit.co/active_storage/sfx/2563/2563-preview.mp3" preload="auto"></audio>
+
+    <script src="script.js?v=3"></script>
 </body>
 </html>
