@@ -32,21 +32,21 @@ class CharacterEditor {
         
         this.points = { charPoints: 2, freePoints: 3, skillLimit: 4, totalLimit: 4 };
         this.isUnlimited = false;
-        
-        // Переменная для отмены печати, если увели мышь
         this.typeTimeout = null;
 
         this.resetAll();
         this.start();
     }
 
-    // --- ЗВУКИ ---
     playSound(id) {
         const audio = document.getElementById(id);
         if (audio) {
-            audio.currentTime = 0; // Сброс в начало
-            audio.volume = 0.3;    // Не слишком громко
-            audio.play().catch(() => {}); // Игнорируем ошибки автовоспроизведения
+            audio.currentTime = 0;
+            audio.volume = 0.3;
+            const playPromise = audio.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(() => {});
+            }
         }
     }
 
@@ -83,18 +83,25 @@ class CharacterEditor {
         const next = cur + delta;
         
         if (!this.isUnlimited) {
-            if (next < -4 || next > 4) return this.playSound('sfx-error');
+            if (next < -4 || next > 4) {
+                this.playSound('sfx-error');
+                return;
+            }
             if (delta > 0 && this.points.charPoints <= 0) {
                 this.playSound('sfx-error');
-                return this.showMsg('Нет очков характеристик!', 'error');
+                this.showMsg('Нет очков характеристик!', 'error');
+                return;
             }
             if (delta < 0) this.points.charPoints += 1;
             else this.points.charPoints -= 1;
         } else {
-            if (next < -99 || next > 99) return this.playSound('sfx-error');
+            if (next < -99 || next > 99) {
+                this.playSound('sfx-error');
+                return;
+            }
         }
 
-        this.playSound('sfx-click'); // Звук клика
+        this.playSound('sfx-click');
         this.stats[name] = next;
         this.renderStats();
         this.updateDisplay();
@@ -137,16 +144,18 @@ class CharacterEditor {
         if (!this.isUnlimited) {
             if (total >= this.points.totalLimit) {
                 this.playSound('sfx-error');
-                return this.showMsg('Максимум 4 выбора!', 'error');
+                this.showMsg('Максимум 4 выбора!', 'error');
+                return;
             }
             if (this.mySkills.length >= this.points.skillLimit) {
                 this.playSound('sfx-error');
-                return this.showMsg('Максимум 4 навыка!', 'error');
+                this.showMsg('Максимум 4 навыка!', 'error');
+                return;
             }
         }
         if (this.mySkills.includes(name)) return;
         
-        this.playSound('sfx-pick'); // Звук выбора
+        this.playSound('sfx-pick');
         this.mySkills.push(name);
         this.renderSkills();
         this.renderPicked();
@@ -182,7 +191,8 @@ class CharacterEditor {
             const total = this.mySkills.length + this.myPerks.length;
             if (!this.isUnlimited && total >= this.points.totalLimit) {
                 this.playSound('sfx-error');
-                return this.showMsg('Максимум 4 выбора!', 'error');
+                this.showMsg('Максимум 4 выбора!', 'error');
+                return;
             }
             this.playSound('sfx-pick');
             perk.picked = true;
@@ -286,15 +296,22 @@ class CharacterEditor {
         const next = skill.val + delta;
         
         if (!this.isUnlimited) {
-            if (next < -4 || next > 4) return this.playSound('sfx-error');
+            if (next < -4 || next > 4) {
+                this.playSound('sfx-error');
+                return;
+            }
             if (delta > 0 && this.points.freePoints <= 0) {
                 this.playSound('sfx-error');
-                return this.showMsg('Нет очков!', 'error');
+                this.showMsg('Нет очков!', 'error');
+                return;
             }
             if (delta < 0) this.points.freePoints += 1;
             else this.points.freePoints -= 1;
         } else {
-            if (next < -99 || next > 99) return this.playSound('sfx-error');
+            if (next < -99 || next > 99) {
+                this.playSound('sfx-error');
+                return;
+            }
         }
 
         this.playSound('sfx-click');
@@ -303,17 +320,14 @@ class CharacterEditor {
         this.updateDisplay();
     }
 
-    // --- ЭФФЕКТ ПЕЧАТНОЙ МАШИНКИ ---
     showDesc(name, desc, type) {
         const area = document.getElementById('descriptionContent');
         const placeholder = document.querySelector('.description-placeholder');
         if (!area) return;
         if (placeholder) placeholder.style.display = 'none';
         
-        // Очищаем старый таймер, если он был
         clearTimeout(this.typeTimeout);
 
-        // Начальная структура (без текста описания)
         area.innerHTML = `
             <div class="description-type">${type === 'skill' ? '📋 НАВЫК' : '🏅 ПЕРК'}</div>
             <div class="description-name">${name}</div>
@@ -322,7 +336,6 @@ class CharacterEditor {
         area.style.display = 'block';
         document.body.classList.add('no-scroll');
 
-        // Запуск печати
         const textEl = document.getElementById('typewriter-text');
         let i = 0;
         
@@ -330,9 +343,8 @@ class CharacterEditor {
             if (i < desc.length) {
                 textEl.textContent += desc.charAt(i);
                 i++;
-                // Воспроизводим звук печати (каждый 3-й символ, чтобы не спамить)
                 if (i % 3 === 0) this.playSound('sfx-type');
-                this.typeTimeout = setTimeout(typeChar, 25); // Скорость печати
+                this.typeTimeout = setTimeout(typeChar, 25);
             }
         };
         
@@ -340,7 +352,7 @@ class CharacterEditor {
     }
 
     hideDesc() {
-        clearTimeout(this.typeTimeout); // Останавливаем печать, если увели мышь
+        clearTimeout(this.typeTimeout);
         const area = document.getElementById('descriptionContent');
         const placeholder = document.querySelector('.description-placeholder');
         if (!area) return;
