@@ -18,36 +18,95 @@ class CharacterEditor {
         };
 
         this.perksDB = {
-            'Нежное обаяние': { picked: false, desc: 'Персонажи женского пола к вам более расположены: охотнее идут навстречу, легче верят и склонны трактовать ваши поступки в лучшую сторону. +1 к броскам на убеждение, обман или обаяние против женщин.' },
-            'Твердое слово': { picked: false, desc: 'Персонажи мужского пола к вам более расположены: охотнее идут навстречу, легче верят и склонны трактовать ваши поступки в лучшую сторону. +1 к броскам на убеждение, обман или обаяние против мужчин.' },
+            'Нежное обаяние': { picked: false, desc: 'Персонажи женского пола к вам более расположены: охотнее идут навстречу, легче верят и склонны трактовать ваши поступки в лучшую сторону.' },
+            'Твердое слово': { picked: false, desc: 'Персонажи мужского пола к вам более расположены: охотнее идут навстречу, легче верят и склонны трактовать ваши поступки в лучшую сторону.' },
             'Ответка': { picked: false, desc: 'Увернувшись от удара, получаешь +1 к следующей атаке против обидчика.' },
             'Крепкий орешек': { picked: false, desc: 'Ваш персонаж получает дополнительные 20ХП.' },
-            'Мастер-торговец': { picked: false, desc: 'Ваш персонаж имеет больший шанс получить скидку и доп валюты при продаже. (зависит от харизмы)' },
+            'Мастер-торговец': { picked: false, desc: 'Ваш персонаж имеет больший шанс получить скидку и доп валюты при продаже.' },
             'Химик': { picked: false, desc: 'При употреблении препаратов или боевых стимуляторов его действия продляются на 1 ход.' },
             'Голос за кадром': { picked: false, desc: 'ГМ может дать расплывчатую подсказку игроку' }
         };
 
         this.mySkills = [];
         this.myPerks = [];
-        
         this.points = { charPoints: 2, freePoints: 3, skillLimit: 4, totalLimit: 4 };
         this.isUnlimited = false;
         this.typeTimeout = null;
+        
+        // Настройки звука
+        this.volume = 0.3;
+        this.audioCtx = null;
 
         this.resetAll();
         this.start();
     }
 
-    playSound(id) {
-        const audio = document.getElementById(id);
-        if (audio) {
-            audio.currentTime = 0;
-            audio.volume = 0.3;
-            const playPromise = audio.play();
-            if (playPromise !== undefined) {
-                playPromise.catch(() => {});
-            }
+    // --- АУДИО-ДВИЖОК ---
+    initAudio() {
+        if (!this.audioCtx) {
+            this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         }
+    }
+
+    playClick() {
+        if (this.volume <= 0) return;
+        this.initAudio();
+        const osc = this.audioCtx.createOscillator();
+        const gain = this.audioCtx.createGain();
+        
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(150, this.audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(40, this.audioCtx.currentTime + 0.05);
+        
+        gain.gain.setValueAtTime(this.volume, this.audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.audioCtx.currentTime + 0.05);
+        
+        osc.connect(gain);
+        gain.connect(this.audioCtx.destination);
+        
+        osc.start();
+        osc.stop(this.audioCtx.currentTime + 0.05);
+    }
+
+    playTypewriter() {
+        if (this.volume <= 0) return;
+        this.initAudio();
+        const osc = this.audioCtx.createOscillator();
+        const gain = this.audioCtx.createGain();
+        
+        // Глухой низкий стук
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(100, this.audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(30, this.audioCtx.currentTime + 0.03);
+        
+        gain.gain.setValueAtTime(this.volume * 0.6, this.audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.audioCtx.currentTime + 0.03);
+        
+        osc.connect(gain);
+        gain.connect(this.audioCtx.destination);
+        
+        osc.start();
+        osc.stop(this.audioCtx.currentTime + 0.03);
+    }
+
+    playError() {
+        if (this.volume <= 0) return;
+        this.initAudio();
+        const osc = this.audioCtx.createOscillator();
+        const gain = this.audioCtx.createGain();
+        
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(80, this.audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(60, this.audioCtx.currentTime + 0.2);
+        
+        gain.gain.setValueAtTime(this.volume * 0.5, this.audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.audioCtx.currentTime + 0.2);
+        
+        osc.connect(gain);
+        gain.connect(this.audioCtx.destination);
+        
+        osc.start();
+        osc.stop(this.audioCtx.currentTime + 0.2);
     }
 
     start() {
@@ -57,6 +116,7 @@ class CharacterEditor {
         this.renderPicked();
         this.updateDisplay();
         this.listeners();
+        this.setupAudioSettings();
     }
 
     renderStats() {
@@ -83,25 +143,18 @@ class CharacterEditor {
         const next = cur + delta;
         
         if (!this.isUnlimited) {
-            if (next < -4 || next > 4) {
-                this.playSound('sfx-error');
-                return;
-            }
+            if (next < -4 || next > 4) { this.playError(); return; }
             if (delta > 0 && this.points.charPoints <= 0) {
-                this.playSound('sfx-error');
-                this.showMsg('Нет очков характеристик!', 'error');
-                return;
+                this.playError();
+                return this.showMsg('Нет очков характеристик!', 'error');
             }
             if (delta < 0) this.points.charPoints += 1;
             else this.points.charPoints -= 1;
         } else {
-            if (next < -99 || next > 99) {
-                this.playSound('sfx-error');
-                return;
-            }
+            if (next < -99 || next > 99) { this.playError(); return; }
         }
 
-        this.playSound('sfx-click');
+        this.playClick();
         this.stats[name] = next;
         this.renderStats();
         this.updateDisplay();
@@ -142,20 +195,12 @@ class CharacterEditor {
     pickSkill(name) {
         const total = this.mySkills.length + this.myPerks.length;
         if (!this.isUnlimited) {
-            if (total >= this.points.totalLimit) {
-                this.playSound('sfx-error');
-                this.showMsg('Максимум 4 выбора!', 'error');
-                return;
-            }
-            if (this.mySkills.length >= this.points.skillLimit) {
-                this.playSound('sfx-error');
-                this.showMsg('Максимум 4 навыка!', 'error');
-                return;
-            }
+            if (total >= this.points.totalLimit) { this.playError(); return this.showMsg('Максимум 4 выбора!', 'error'); }
+            if (this.mySkills.length >= this.points.skillLimit) { this.playError(); return this.showMsg('Максимум 4 навыка!', 'error'); }
         }
         if (this.mySkills.includes(name)) return;
         
-        this.playSound('sfx-pick');
+        this.playClick();
         this.mySkills.push(name);
         this.renderSkills();
         this.renderPicked();
@@ -184,17 +229,13 @@ class CharacterEditor {
         if (!perk) return;
 
         if (perk.picked) {
-            this.playSound('sfx-pick');
+            this.playClick();
             perk.picked = false;
             this.myPerks = this.myPerks.filter(p => p !== name);
         } else {
             const total = this.mySkills.length + this.myPerks.length;
-            if (!this.isUnlimited && total >= this.points.totalLimit) {
-                this.playSound('sfx-error');
-                this.showMsg('Максимум 4 выбора!', 'error');
-                return;
-            }
-            this.playSound('sfx-pick');
+            if (!this.isUnlimited && total >= this.points.totalLimit) { this.playError(); return this.showMsg('Максимум 4 выбора!', 'error'); }
+            this.playClick();
             perk.picked = true;
             this.myPerks.push(name);
         }
@@ -252,7 +293,7 @@ class CharacterEditor {
         container.querySelectorAll('.selected-remove').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                this.playSound('sfx-click');
+                this.playClick();
                 if (btn.dataset.type === 'skill') this.unpickSkill(btn.dataset.name);
                 else this.unpickPerk(btn.dataset.name);
             });
@@ -296,25 +337,15 @@ class CharacterEditor {
         const next = skill.val + delta;
         
         if (!this.isUnlimited) {
-            if (next < -4 || next > 4) {
-                this.playSound('sfx-error');
-                return;
-            }
-            if (delta > 0 && this.points.freePoints <= 0) {
-                this.playSound('sfx-error');
-                this.showMsg('Нет очков!', 'error');
-                return;
-            }
+            if (next < -4 || next > 4) { this.playError(); return; }
+            if (delta > 0 && this.points.freePoints <= 0) { this.playError(); return this.showMsg('Нет очков!', 'error'); }
             if (delta < 0) this.points.freePoints += 1;
             else this.points.freePoints -= 1;
         } else {
-            if (next < -99 || next > 99) {
-                this.playSound('sfx-error');
-                return;
-            }
+            if (next < -99 || next > 99) { this.playError(); return; }
         }
 
-        this.playSound('sfx-click');
+        this.playClick();
         skill.val = next;
         this.renderPicked();
         this.updateDisplay();
@@ -343,8 +374,8 @@ class CharacterEditor {
             if (i < desc.length) {
                 textEl.textContent += desc.charAt(i);
                 i++;
-                if (i % 3 === 0) this.playSound('sfx-type');
-                this.typeTimeout = setTimeout(typeChar, 25);
+                if (i % 2 === 0) this.playTypewriter();
+                this.typeTimeout = setTimeout(typeChar, 30);
             }
         };
         
@@ -362,7 +393,7 @@ class CharacterEditor {
     }
 
     randomize() {
-        this.playSound('sfx-click');
+        this.playClick();
         this.resetAll();
 
         const statKeys = Object.keys(this.stats);
@@ -391,9 +422,7 @@ class CharacterEditor {
 
         if (this.mySkills.length > 0) {
             if (this.isUnlimited) {
-                this.mySkills.forEach(name => {
-                    this.skillsDB[name].val = Math.floor(Math.random() * 9) - 4;
-                });
+                this.mySkills.forEach(name => { this.skillsDB[name].val = Math.floor(Math.random() * 9) - 4; });
             } else {
                 for (let i = 0; i < 3; i++) {
                     const rSkill = this.mySkills[Math.floor(Math.random() * this.mySkills.length)];
@@ -437,158 +466,4 @@ class CharacterEditor {
         const totalLimit = this.points.totalLimit;
         const free = this.points.freePoints;
 
-        const statusText = document.getElementById('statusText');
-        const statusLed = document.getElementById('statusLed');
-        
-        if (statusText && statusLed) {
-            if (this.isUnlimited) {
-                statusText.textContent = 'БЕЗЛИМИТ';
-                statusLed.className = 'status-led warn';
-            } else if (total >= totalLimit) {
-                statusText.textContent = 'МАКСИМУМ';
-                statusLed.className = 'status-led warn';
-            } else if (free <= 0) {
-                statusText.textContent = 'НЕТ ОЧКОВ';
-                statusLed.className = 'status-led warn';
-            } else {
-                statusText.textContent = 'ГОТОВ';
-                statusLed.className = 'status-led';
-            }
-        }
-
-        const dots = document.querySelectorAll('#statusDots .dot');
-        dots.forEach((dot, i) => {
-            dot.className = 'dot';
-            if (this.isUnlimited) {
-                dot.classList.add('full');
-            } else if (i < total) {
-                dot.classList.add('filled');
-                if (i >= totalLimit - 1) dot.classList.add('full');
-            }
-        });
-
-        const statusSelected = document.getElementById('statusSelected');
-        if (statusSelected) statusSelected.textContent = this.isUnlimited ? total : `${total}/${totalLimit}`;
-
-        const statusPoints = document.getElementById('statusPoints');
-        if (statusPoints) statusPoints.textContent = this.isUnlimited ? '∞' : free;
-
-        const statusSector = document.getElementById('statusSector');
-        if (statusSector) {
-            const isStats = document.querySelector('.tab-btn.active')?.dataset.tab === 'characteristics';
-            statusSector.textContent = isStats ? '01' : '02';
-        }
-    }
-
-    listeners() {
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                if (window.editor) window.editor.playSound('sfx-click');
-                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                this.classList.add('active');
-                const target = document.getElementById(this.dataset.tab);
-                if (target) target.classList.add('active');
-                if (window.editor) window.editor.updateStatusBar();
-            });
-        });
-
-        document.getElementById('characteristicsGrid')?.addEventListener('click', (e) => {
-            const btn = e.target.closest('button');
-            if (!btn) return;
-            this.changeStat(btn.dataset.name, btn.classList.contains('stat-up') ? 1 : -1);
-        });
-
-        const unlimBtn = document.getElementById('unlimitedBtn');
-        const unlimText = document.getElementById('unlimitedText');
-        if (unlimBtn) {
-            unlimBtn.addEventListener('click', () => {
-                this.playSound('sfx-click');
-                this.isUnlimited = !this.isUnlimited;
-                
-                if (this.isUnlimited) {
-                    unlimBtn.classList.add('active');
-                    unlimText.textContent = 'БЕЗ ЛИМИТОВ';
-                    this.showMsg('БЕЗЛИМИТНЫЙ РЕЖИМ ВКЛЮЧЕН', 'success');
-                    this.points.charPoints = 999;
-                    this.points.freePoints = 999;
-                } else {
-                    unlimBtn.classList.remove('active');
-                    unlimText.textContent = 'ЛИМИТЫ ВКЛ';
-                    this.showMsg('ЛИМИТЫ ВОССТАНОВЛЕНЫ', 'error');
-                    this.resetAll();
-                }
-                
-                this.renderStats();
-                this.renderPicked();
-                this.updateDisplay();
-            });
-        }
-
-        document.getElementById('randomBtn')?.addEventListener('click', () => this.randomize());
-
-        document.getElementById('doneBtn')?.addEventListener('click', () => {
-            this.playSound('sfx-pick');
-            this.showResult();
-        });
-        
-        document.getElementById('closeModalBtn')?.addEventListener('click', () => {
-            this.playSound('sfx-click');
-            document.getElementById('resultModal').classList.add('hidden');
-        });
-
-        document.getElementById('resultModal')?.addEventListener('click', (e) => {
-            if (e.target === e.currentTarget) e.currentTarget.classList.add('hidden');
-        });
-        
-        document.getElementById('copyBtn')?.addEventListener('click', () => {
-            this.playSound('sfx-click');
-            const text = document.getElementById('resultBody').textContent;
-            navigator.clipboard.writeText(text).then(() => this.showMsg('📋 Скопировано!', 'success'));
-        });
-    }
-
-    showResult() {
-        const body = document.getElementById('resultBody');
-        if (!body) return;
-        let text = '📋 ХАРАКТЕРИСТИКИ:\n';
-        Object.entries(this.stats).forEach(([n, v]) => text += `  ${n}: ${v > 0 ? '+' : ''}${v}\n`);
-        
-        if (this.mySkills.length) {
-            text += '\n🎯 НАВЫКИ:\n';
-            this.mySkills.forEach(n => text += `  ${n}: ${this.skillsDB[n].val > 0 ? '+' : ''}${this.skillsDB[n].val}\n`);
-        }
-        if (this.myPerks.length) {
-            text += '\n🏅 ПЕРКИ:\n';
-            this.myPerks.forEach(n => text += `  ${n}\n`);
-        }
-        body.textContent = text;
-        document.getElementById('resultModal').classList.remove('hidden');
-    }
-
-    resetAll() {
-        Object.keys(this.stats).forEach(k => this.stats[k] = 0);
-        Object.keys(this.skillsDB).forEach(k => this.skillsDB[k].val = 0);
-        Object.keys(this.perksDB).forEach(k => this.perksDB[k].picked = false);
-        this.mySkills = [];
-        this.myPerks = [];
-        this.points.charPoints = 2;
-        this.points.freePoints = 3;
-    }
-
-    showMsg(text, type = 'info') {
-        const msg = document.getElementById('savedMessage');
-        if (!msg) return;
-        msg.textContent = text;
-        msg.className = 'message';
-        msg.style.borderColor = type === 'error' ? 'var(--accent-warn)' : 'var(--accent)';
-        msg.style.color = type === 'error' ? 'var(--accent-warn)' : 'var(--accent)';
-        msg.classList.remove('hidden');
-        clearTimeout(this._timer);
-        this._timer = setTimeout(() => msg.classList.add('hidden'), 3000);
-    }
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    window.editor = new CharacterEditor();
-});
+        const statusText = document.getElementById('statusText
