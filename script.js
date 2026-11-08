@@ -9,7 +9,7 @@ class CharacterEditor {
             'Харизма': 0
         };
 
-        // ===== ВСЕ НАВЫКИ =====
+        // ===== ВСЕ НАВЫКИ (Интеллект УДАЛЁН) =====
         this.skillsDB = {
             'Стрельба': { val: 0, desc: '+1 на атаки дальнего боя', type: 'combat' },
             'Ближний бой': { val: 0, desc: '+1 на атаки в рукопашном бою', type: 'combat' },
@@ -20,8 +20,7 @@ class CharacterEditor {
             'Ремонт': { val: 0, desc: '+1 к броску на починку', type: 'spec' },
             'Медицина': { val: 0, desc: '+1 к броскам связанные с медициной', type: 'spec' },
             'Диагностика': { val: 0, desc: '+1 на бросок связанный с поиском поломок, дефектов', type: 'spec' },
-            'Вождение': { val: 0, desc: '+1 к управлению наземным транспортом', type: 'spec' },
-            'Интеллект': { val: 0, desc: 'Дает создавать более совершенные предметы', type: 'spec' }
+            'Вождение': { val: 0, desc: '+1 к управлению наземным транспортом', type: 'spec' }
         };
 
         // ===== ВСЕ ПЕРКИ =====
@@ -47,7 +46,6 @@ class CharacterEditor {
             totalLimit: 4
         };
 
-        // Режим безлимита
         this.isUnlimited = false;
 
         this.resetAll();
@@ -87,7 +85,6 @@ class CharacterEditor {
         const cur = this.stats[name];
         const next = cur + delta;
         
-        // Если не безлимит, проверяем лимиты
         if (!this.isUnlimited) {
             if (next < -4 || next > 4) return;
             if (delta > 0 && this.points.charPoints <= 0) {
@@ -97,7 +94,6 @@ class CharacterEditor {
             if (delta < 0) this.points.charPoints += 1;
             else this.points.charPoints -= 1;
         } else {
-            // В безлимите можно от -99 до +99 (или без ограничений, но чтоб не сломать, поставим -99/+99)
             if (next < -99 || next > 99) return;
         }
 
@@ -131,7 +127,6 @@ class CharacterEditor {
                 el.dataset.name = name;
                 el.innerHTML = `<span class="skill-name">${name}</span>`;
                 
-                // События наведения для описания
                 el.addEventListener('mouseenter', () => this.showDesc(name, data.desc, 'skill'));
                 el.addEventListener('mouseleave', () => this.hideDesc());
 
@@ -354,82 +349,70 @@ class CharacterEditor {
 
     // ===== РАНДОМАЙЗЕР =====
     randomize() {
-        this.resetAll(); // Очищаем всё перед рандомом
+        this.resetAll();
 
-        // 1. Рандом характеристик (2 очка распределения)
         let statPoints = this.isUnlimited ? 10 : 2;
         const statKeys = Object.keys(this.stats);
         
-        // Если безлимит, рандомно ставим значения от -4 до +4
         if (this.isUnlimited) {
             statKeys.forEach(key => {
-                this.stats[key] = Math.floor(Math.random() * 9) - 4; // от -4 до 4
+                this.stats[key] = Math.floor(Math.random() * 9) - 4;
             });
         } else {
-            // Обычный режим: распределяем 2 очка
             for (let i = 0; i < statPoints; i++) {
                 const randomKey = statKeys[Math.floor(Math.random() * statKeys.length)];
                 if (this.stats[randomKey] < 4) {
                     this.stats[randomKey] += 1;
                 } else {
-                    i--; // Если выпало 4, пробуем еще раз
+                    i--;
                 }
             }
         }
 
-        // 2. Рандом навыков (выбираем до 4, если безлимит — все)
         const skillKeys = Object.keys(this.skillsDB);
         const skillLimit = this.isUnlimited ? skillKeys.length : 4;
         const shuffledSkills = [...skillKeys].sort(() => 0.5 - Math.random());
         
         this.mySkills = shuffledSkills.slice(0, skillLimit);
 
-        // 3. Рандом перков (выбираем до 2, если безлимит — все)
         const perkKeys = Object.keys(this.perksDB);
         const perkLimit = this.isUnlimited ? perkKeys.length : 2;
         const shuffledPerks = [...perkKeys].sort(() => 0.5 - Math.random());
         
         this.myPerks = shuffledPerks.slice(0, perkLimit);
 
-        // Отмечаем выбранные перки в базе
         Object.keys(this.perksDB).forEach(k => this.perksDB[k].picked = false);
         this.myPerks.forEach(name => this.perksDB[name].picked = true);
 
-        // 4. Рандом распределения очков навыков
         let freePoints = this.isUnlimited ? 10 : 3;
         const availableSkills = [...this.mySkills];
         
         if (availableSkills.length > 0) {
             if (this.isUnlimited) {
-                // В безлимите рандомно ставим значения от -4 до 4
                 this.mySkills.forEach(name => {
                     this.skillsDB[name].val = Math.floor(Math.random() * 9) - 4;
                 });
             } else {
-                // Обычный режим: распределяем 3 очка
                 for (let i = 0; i < freePoints; i++) {
                     const randomSkill = availableSkills[Math.floor(Math.random() * availableSkills.length)];
                     if (this.skillsDB[randomSkill].val < 4) {
                         this.skillsDB[randomSkill].val += 1;
                     } else {
-                        i--; // Пробуем еще раз
+                        i--;
                     }
                 }
             }
         }
 
-        // Сбрасываем свободные очки, так как мы их уже потратили
         this.points.charPoints = 0;
         this.points.freePoints = 0;
 
-        // Обновляем интерфейс
         this.renderStats();
         this.renderSkills();
         this.renderPerks();
         this.renderPicked();
         this.updateDisplay();
 
-        // Анимация тряски кнопки
         const btn = document.getElementById('randomBtn');
         if (btn) {
             btn.classList.add('shaking');
@@ -526,13 +509,11 @@ class CharacterEditor {
         document.getElementById('unlimitedToggle')?.addEventListener('change', (e) => {
             this.isUnlimited = e.target.checked;
             
-            // Если включили безлимит — сбрасываем проверки, но оставляем значения
             if (this.isUnlimited) {
                 this.points.charPoints = 999;
                 this.points.freePoints = 999;
                 this.showMsg('БЕЗЛИМИТНЫЙ РЕЖИМ ВКЛЮЧЕН', 'success');
             } else {
-                // Если выключили — сбрасываем всё до базовых значений
                 this.resetAll();
                 this.showMsg('ЛИМИТЫ ВОССТАНОВЛЕНЫ', 'error');
             }
@@ -543,104 +524,4 @@ class CharacterEditor {
         });
 
         // Кнопка рандома
-        document.getElementById('randomBtn')?.addEventListener('click', () => {
-            this.randomize();
-        });
-
-        document.getElementById('doneBtn')?.addEventListener('click', () => {
-            this.showResult();
-        });
-
-        document.getElementById('closeModalBtn')?.addEventListener('click', () => {
-            document.getElementById('resultModal').classList.add('hidden');
-        });
-
-        document.getElementById('resultModal')?.addEventListener('click', (e) => {
-            if (e.target === e.currentTarget) {
-                document.getElementById('resultModal').classList.add('hidden');
-            }
-        });
-
-        document.getElementById('copyBtn')?.addEventListener('click', () => {
-            const text = document.getElementById('resultBody').textContent;
-            if (navigator.clipboard) {
-                navigator.clipboard.writeText(text).then(() => {
-                    this.showMsg('📋 Скопировано!', 'success');
-                }).catch(() => this.fallbackCopy(text));
-            } else {
-                this.fallbackCopy(text);
-            }
-        });
-    }
-
-    fallbackCopy(text) {
-        const ta = document.createElement('textarea');
-        ta.value = text;
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand('copy');
-        document.body.removeChild(ta);
-        this.showMsg('📋 Скопировано!', 'success');
-    }
-
-    showResult() {
-        const body = document.getElementById('resultBody');
-        if (!body) return;
-        let text = '📋 ХАРАКТЕРИСТИКИ:\n';
-        Object.entries(this.stats).forEach(([name, value]) => {
-            text += `  ${name}: ${value > 0 ? '+' : ''}${value}\n`;
-        });
-        if (this.mySkills.length) {
-            text += '\n🎯 НАВЫКИ:\n';
-            this.mySkills.forEach(name => {
-                const val = this.skillsDB[name].val;
-                text += `  ${name}: ${val > 0 ? '+' : ''}${val}\n`;
-            });
-        }
-        if (this.myPerks.length) {
-            text += '\n🏅 ПЕРКИ:\n';
-            this.myPerks.forEach(name => {
-                text += `  ${name}\n`;
-            });
-        }
-        body.textContent = text;
-        document.getElementById('resultModal').classList.remove('hidden');
-    }
-
-    // ===== СБРОС =====
-    resetAll() {
-        Object.keys(this.stats).forEach(k => this.stats[k] = 0);
-        Object.keys(this.skillsDB).forEach(k => {
-            this.skillsDB[k].val = 0;
-        });
-        Object.keys(this.perksDB).forEach(k => {
-            this.perksDB[k].picked = false;
-        });
-        this.mySkills = [];
-        this.myPerks = [];
-        this.points.charPoints = 2;
-        this.points.freePoints = 3;
-        // Внимание: isUnlimited не сбрасываем, чтобы тумблер оставался включенным, если его включили
-    }
-
-    showMsg(text, type = 'info') {
-        const msg = document.getElementById('savedMessage');
-        if (!msg) return;
-        msg.textContent = text;
-        msg.className = 'message';
-        if (type === 'error') {
-            msg.style.borderColor = 'var(--accent-warn)';
-            msg.style.color = 'var(--accent-warn)';
-        } else {
-            msg.style.borderColor = 'var(--accent)';
-            msg.style.color = 'var(--accent)';
-        }
-        msg.classList.remove('hidden');
-        clearTimeout(this._timer);
-        this._timer = setTimeout(() => msg.classList.add('hidden'), 3000);
-    }
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    window.editor = new CharacterEditor();
-});
+        document.getElementById('
