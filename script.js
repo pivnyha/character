@@ -39,7 +39,7 @@ class CharacterEditor {
         this.start();
     }
 
-    // --- ЗВУКИ (Web Audio API) ---
+    // --- АУДИО ДВИЖОК ---
     initAudio() {
         if (!this.audioCtx) {
             this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -65,17 +65,33 @@ class CharacterEditor {
     playTypewriter() {
         if (this.volume <= 0) return;
         this.initAudio();
-        const osc = this.audioCtx.createOscillator();
+        
+        // Белый шум для щелчка
+        const bufferSize = this.audioCtx.sampleRate * 0.05;
+        const buffer = this.audioCtx.createBuffer(1, bufferSize, this.audioCtx.sampleRate);
+        const data = buffer.getChannelData(0);
+        
+        for (let i = 0; i < bufferSize; i++) {
+            data[i] = Math.random() * 2 - 1;
+        }
+        
+        const noise = this.audioCtx.createBufferSource();
+        noise.buffer = buffer;
+        
+        // Фильтр для глухого звука
+        const filter = this.audioCtx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.value = 800;
+        
         const gain = this.audioCtx.createGain();
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(100, this.audioCtx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(30, this.audioCtx.currentTime + 0.03);
-        gain.gain.setValueAtTime(this.volume * 0.6, this.audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, this.audioCtx.currentTime + 0.03);
-        osc.connect(gain);
+        gain.gain.setValueAtTime(this.volume * 0.8, this.audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.audioCtx.currentTime + 0.04);
+        
+        noise.connect(filter);
+        filter.connect(gain);
         gain.connect(this.audioCtx.destination);
-        osc.start();
-        osc.stop(this.audioCtx.currentTime + 0.03);
+        
+        noise.start();
     }
 
     playError() {
@@ -111,6 +127,7 @@ class CharacterEditor {
             });
         }
 
+        // Отключение звука при уходе со вкладки
         document.addEventListener('visibilitychange', () => {
             if (document.hidden) {
                 if (this.audioCtx && this.audioCtx.state === 'running') this.audioCtx.suspend();
@@ -386,6 +403,7 @@ class CharacterEditor {
             if (i < desc.length) {
                 textEl.textContent += desc.charAt(i);
                 i++;
+                // Звук печатной машинки на каждый второй символ
                 if (i % 2 === 0) this.playTypewriter();
                 this.typeTimeout = setTimeout(typeChar, 30);
             }
@@ -631,5 +649,7 @@ class CharacterEditor {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    window.editor = new CharacterEditor();
+});
     window.editor = new CharacterEditor();
 });
