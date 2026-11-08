@@ -30,7 +30,15 @@ class CharacterEditor {
 
         this.mySkills = [];
         this.myPerks = [];
-        this.points = { charPoints: 2, freePoints: 3, skillLimit: 4, totalLimit: 4 };
+        
+        // Базовые настройки
+        this.points = { 
+            charPoints: 2, 
+            freePoints: 3, 
+            skillLimit: 4, 
+            totalLimit: 4 
+        };
+        
         this.isUnlimited = false;
 
         this.resetAll();
@@ -46,6 +54,7 @@ class CharacterEditor {
         this.listeners();
     }
 
+    // ===== ХАРАКТЕРИСТИКИ =====
     renderStats() {
         const grid = document.getElementById('characteristicsGrid');
         if (!grid) return;
@@ -68,6 +77,7 @@ class CharacterEditor {
     changeStat(name, delta) {
         const cur = this.stats[name];
         const next = cur + delta;
+        
         if (!this.isUnlimited) {
             if (next < -4 || next > 4) return;
             if (delta > 0 && this.points.charPoints <= 0) return this.showMsg('Нет очков характеристик!', 'error');
@@ -76,11 +86,13 @@ class CharacterEditor {
         } else {
             if (next < -99 || next > 99) return;
         }
+
         this.stats[name] = next;
         this.renderStats();
         this.updateDisplay();
     }
 
+    // ===== НАВЫКИ =====
     renderSkills() {
         const container = document.getElementById('allSkillsList');
         if (!container) return;
@@ -101,37 +113,49 @@ class CharacterEditor {
                 const el = document.createElement('div');
                 el.className = `skill-item ${picked ? 'selected' : ''}`;
                 el.innerHTML = `<span class="skill-name">${name}</span>`;
+                
                 el.addEventListener('mouseenter', () => this.showDesc(name, data.desc, 'skill'));
                 el.addEventListener('mouseleave', () => this.hideDesc());
+                
                 if (!picked) el.addEventListener('click', () => this.pickSkill(name));
                 group.appendChild(el);
             });
             return group;
         };
+
         if (combat.length) container.appendChild(buildGroup('⚔ БОЕВЫЕ', combat));
         if (spec.length) container.appendChild(buildGroup('🔧 СПЕЦИАЛИЗАЦИЯ', spec));
     }
 
     pickSkill(name) {
-        if (!this.isUnlimited && this.mySkills.length >= this.points.skillLimit) return this.showMsg('Максимум 4 навыка!', 'error');
+        const total = this.mySkills.length + this.myPerks.length;
+        if (!this.isUnlimited) {
+            if (total >= this.points.totalLimit) return this.showMsg('Максимум 4 выбора!', 'error');
+            if (this.mySkills.length >= this.points.skillLimit) return this.showMsg('Максимум 4 навыка!', 'error');
+        }
         if (this.mySkills.includes(name)) return;
+        
         this.mySkills.push(name);
         this.renderSkills();
         this.renderPicked();
         this.updateDisplay();
     }
 
+    // ===== ПЕРКИ =====
     renderPerks() {
         const container = document.getElementById('allPerksList');
         if (!container) return;
         container.innerHTML = '';
+        
         Object.entries(this.perksDB).forEach(([name, data]) => {
             const picked = this.myPerks.includes(name);
             const el = document.createElement('div');
             el.className = `skill-item ${picked ? 'selected' : ''}`;
             el.innerHTML = `<span class="skill-name">${name}</span>`;
+            
             el.addEventListener('mouseenter', () => this.showDesc(name, data.desc, 'perk'));
             el.addEventListener('mouseleave', () => this.hideDesc());
+            
             if (!picked) el.addEventListener('click', () => this.pickPerk(name));
             container.appendChild(el);
         });
@@ -139,30 +163,41 @@ class CharacterEditor {
 
     pickPerk(name) {
         const perk = this.perksDB[name];
+        if (!perk) return;
+
         if (perk.picked) {
             perk.picked = false;
             this.myPerks = this.myPerks.filter(p => p !== name);
         } else {
-            if (!this.isUnlimited && this.mySkills.length + this.myPerks.length >= this.points.totalLimit) return this.showMsg('Максимум 4 выбора!', 'error');
+            const total = this.mySkills.length + this.myPerks.length;
+            if (!this.isUnlimited && total >= this.points.totalLimit) {
+                return this.showMsg('Максимум 4 выбора!', 'error');
+            }
             perk.picked = true;
             this.myPerks.push(name);
         }
+
         this.renderPerks();
         this.renderPicked();
         this.updateDisplay();
     }
 
+    // ===== ВЫБРАННОЕ =====
     renderPicked() {
         const container = document.getElementById('selectedList');
         if (!container) return;
         container.innerHTML = '';
-        if (this.mySkills.length + this.myPerks.length === 0) {
+
+        const total = this.mySkills.length + this.myPerks.length;
+        if (total === 0) {
             container.innerHTML = '<div class="empty-message">Ничего не выбрано</div>';
             return;
         }
 
+        // Отрисовка навыков
         this.mySkills.forEach(name => {
             const data = this.skillsDB[name];
+            if (!data) return;
             const el = document.createElement('div');
             el.className = 'selected-item';
             el.innerHTML = `
@@ -179,7 +214,10 @@ class CharacterEditor {
             container.appendChild(el);
         });
 
+        // Отрисовка перков
         this.myPerks.forEach(name => {
+            const data = this.perksDB[name];
+            if (!data) return;
             const el = document.createElement('div');
             el.className = 'selected-item perk-item-selected';
             el.innerHTML = `
@@ -192,6 +230,7 @@ class CharacterEditor {
             container.appendChild(el);
         });
 
+        // Слушатели кнопок удаления
         container.querySelectorAll('.selected-remove').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -200,6 +239,7 @@ class CharacterEditor {
             });
         });
 
+        // Слушатели кнопок распределения
         container.querySelectorAll('.dist-up, .dist-down').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -211,7 +251,11 @@ class CharacterEditor {
     unpickSkill(name) {
         const idx = this.mySkills.indexOf(name);
         if (idx === -1) return;
-        this.skillsDB[name].val = 0;
+        const data = this.skillsDB[name];
+        if (data && data.val !== 0) {
+            if (!this.isUnlimited) this.points.freePoints += data.val;
+            data.val = 0;
+        }
         this.mySkills.splice(idx, 1);
         this.renderSkills();
         this.renderPicked();
@@ -232,6 +276,7 @@ class CharacterEditor {
         const skill = this.skillsDB[name];
         if (!skill) return;
         const next = skill.val + delta;
+        
         if (!this.isUnlimited) {
             if (next < -4 || next > 4) return;
             if (delta > 0 && this.points.freePoints <= 0) return this.showMsg('Нет очков!', 'error');
@@ -240,17 +285,24 @@ class CharacterEditor {
         } else {
             if (next < -99 || next > 99) return;
         }
+
         skill.val = next;
         this.renderPicked();
         this.updateDisplay();
     }
 
+    // ===== ОПИСАНИЕ =====
     showDesc(name, desc, type) {
         const area = document.getElementById('descriptionContent');
         const placeholder = document.querySelector('.description-placeholder');
         if (!area) return;
         if (placeholder) placeholder.style.display = 'none';
-        area.innerHTML = `<div class="description-type">${type === 'skill' ? '📋 НАВЫК' : '🏅 ПЕРК'}</div><div class="description-name">${name}</div><div class="description-text">${desc}</div>`;
+        
+        area.innerHTML = `
+            <div class="description-type">${type === 'skill' ? '📋 НАВЫК' : '🏅 ПЕРК'}</div>
+            <div class="description-name">${name}</div>
+            <div class="description-text">${desc}</div>
+        `;
         area.style.display = 'block';
         document.body.classList.add('no-scroll');
     }
@@ -264,6 +316,69 @@ class CharacterEditor {
         document.body.classList.remove('no-scroll');
     }
 
+    // ===== РАНДОМАЙЗЕР =====
+    randomize() {
+        this.resetAll();
+
+        // 1. Рандом характеристик
+        let statPoints = this.isUnlimited ? 10 : 2;
+        const statKeys = Object.keys(this.stats);
+        if (this.isUnlimited) {
+            statKeys.forEach(key => this.stats[key] = Math.floor(Math.random() * 9) - 4);
+        } else {
+            for (let i = 0; i < statPoints; i++) {
+                const rKey = statKeys[Math.floor(Math.random() * statKeys.length)];
+                if (this.stats[rKey] < 4) this.stats[rKey] += 1;
+                else i--;
+            }
+        }
+
+        // 2. Рандом навыков
+        const skillKeys = Object.keys(this.skillsDB);
+        const skillLimit = this.isUnlimited ? skillKeys.length : 4;
+        const shuffledSkills = [...skillKeys].sort(() => 0.5 - Math.random());
+        this.mySkills = shuffledSkills.slice(0, skillLimit);
+
+        // 3. Рандом перков
+        const perkKeys = Object.keys(this.perksDB);
+        const perkLimit = this.isUnlimited ? perkKeys.length : 2;
+        const shuffledPerks = [...perkKeys].sort(() => 0.5 - Math.random());
+        this.myPerks = shuffledPerks.slice(0, perkLimit);
+
+        Object.keys(this.perksDB).forEach(k => this.perksDB[k].picked = false);
+        this.myPerks.forEach(name => this.perksDB[name].picked = true);
+
+        // 4. Рандом очков навыков
+        let freePoints = this.isUnlimited ? 10 : 3;
+        if (this.mySkills.length > 0) {
+            if (this.isUnlimited) {
+                this.mySkills.forEach(name => this.skillsDB[name].val = Math.floor(Math.random() * 9) - 4);
+            } else {
+                for (let i = 0; i < freePoints; i++) {
+                    const rSkill = this.mySkills[Math.floor(Math.random() * this.mySkills.length)];
+                    if (this.skillsDB[rSkill].val < 4) this.skillsDB[rSkill].val += 1;
+                    else i--;
+                }
+            }
+        }
+
+        this.points.charPoints = 0;
+        this.points.freePoints = 0;
+
+        this.renderStats();
+        this.renderSkills();
+        this.renderPerks();
+        this.renderPicked();
+        this.updateDisplay();
+
+        const btn = document.getElementById('randomBtn');
+        if (btn) {
+            btn.classList.add('shaking');
+            setTimeout(() => btn.classList.remove('shaking'), 400);
+        }
+    }
+
+    // ===== UI =====
     updateDisplay() {
         const charEl = document.getElementById('charPointsDisplay');
         const freeEl = document.getElementById('skillPointsDisplay');
@@ -279,6 +394,9 @@ class CharacterEditor {
 
     updateStatusBar() {
         const total = this.mySkills.length + this.myPerks.length;
+        const totalLimit = this.points.totalLimit;
+        const free = this.points.freePoints;
+
         const statusText = document.getElementById('statusText');
         const statusLed = document.getElementById('statusLed');
         
@@ -286,8 +404,11 @@ class CharacterEditor {
             if (this.isUnlimited) {
                 statusText.textContent = 'БЕЗЛИМИТ';
                 statusLed.className = 'status-led warn';
-            } else if (total >= this.points.totalLimit) {
+            } else if (total >= totalLimit) {
                 statusText.textContent = 'МАКСИМУМ';
+                statusLed.className = 'status-led warn';
+            } else if (free <= 0) {
+                statusText.textContent = 'НЕТ ОЧКОВ';
                 statusLed.className = 'status-led warn';
             } else {
                 statusText.textContent = 'ГОТОВ';
@@ -298,28 +419,36 @@ class CharacterEditor {
         const dots = document.querySelectorAll('#statusDots .dot');
         dots.forEach((dot, i) => {
             dot.className = 'dot';
-            if (this.isUnlimited) dot.classList.add('full');
-            else if (i < total) {
+            if (this.isUnlimited) {
+                dot.classList.add('full');
+            } else if (i < total) {
                 dot.classList.add('filled');
-                if (i >= this.points.totalLimit - 1) dot.classList.add('full');
+                if (i >= totalLimit - 1) dot.classList.add('full');
             }
         });
 
         const statusSelected = document.getElementById('statusSelected');
-        if (statusSelected) statusSelected.textContent = this.isUnlimited ? total : `${total}/${this.points.totalLimit}`;
+        if (statusSelected) statusSelected.textContent = this.isUnlimited ? total : `${total}/${totalLimit}`;
+
         const statusPoints = document.getElementById('statusPoints');
-        if (statusPoints) statusPoints.textContent = this.isUnlimited ? '∞' : this.points.freePoints;
+        if (statusPoints) statusPoints.textContent = this.isUnlimited ? '∞' : free;
+
         const statusSector = document.getElementById('statusSector');
-        if (statusSector) statusSector.textContent = document.querySelector('.tab-btn.active')?.dataset.tab === 'characteristics' ? '01' : '02';
+        if (statusSector) {
+            const isStats = document.querySelector('.tab-btn.active')?.dataset.tab === 'characteristics';
+            statusSector.textContent = isStats ? '01' : '02';
+        }
     }
 
+    // ===== СОБЫТИЯ =====
     listeners() {
         document.querySelectorAll('.tab-btn').forEach(btn => {
             btn.addEventListener('click', function() {
                 document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
                 document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
                 this.classList.add('active');
-                document.getElementById(this.dataset.tab).classList.add('active');
+                const target = document.getElementById(this.dataset.tab);
+                if (target) target.classList.add('active');
                 if (window.editor) window.editor.updateStatusBar();
             });
         });
@@ -330,35 +459,43 @@ class CharacterEditor {
             this.changeStat(btn.dataset.name, btn.classList.contains('stat-up') ? 1 : -1);
         });
 
-        document.getElementById('unlimitedToggle')?.addEventListener('change', (e) => {
-            this.isUnlimited = e.target.checked;
-            this.showMsg(this.isUnlimited ? 'БЕЗЛИМИТ ВКЛЮЧЕН' : 'ЛИМИТЫ ВКЛЮЧЕНЫ', this.isUnlimited ? 'success' : 'error');
-            this.renderStats();
-            this.renderPicked();
-            this.updateDisplay();
-        });
+        // Кнопка лимитов
+        const unlimBtn = document.getElementById('unlimitedBtn');
+        const unlimText = document.getElementById('unlimitedText');
+        if (unlimBtn) {
+            unlimBtn.addEventListener('click', () => {
+                this.isUnlimited = !this.isUnlimited;
+                
+                if (this.isUnlimited) {
+                    unlimBtn.classList.add('active');
+                    unlimText.textContent = 'БЕЗ ЛИМИТОВ';
+                    this.showMsg('БЕЗЛИМИТНЫЙ РЕЖИМ ВКЛЮЧЕН', 'success');
+                    this.points.charPoints = 999;
+                    this.points.freePoints = 999;
+                } else {
+                    unlimBtn.classList.remove('active');
+                    unlimText.textContent = 'ЛИМИТЫ ВКЛ';
+                    this.showMsg('ЛИМИТЫ ВОССТАНОВЛЕНЫ', 'error');
+                    this.resetAll();
+                }
+                
+                this.renderStats();
+                this.renderPicked();
+                this.updateDisplay();
+            });
+        }
 
-        document.getElementById('randomBtn')?.addEventListener('click', () => {
-            this.resetAll();
-            // Простой рандом для примера
-            const skillKeys = Object.keys(this.skillsDB);
-            const randomSkill = skillKeys[Math.floor(Math.random() * skillKeys.length)];
-            this.mySkills.push(randomSkill);
-            this.skillsDB[randomSkill].val = 3;
-            
-            this.renderStats();
-            this.renderSkills();
-            this.renderPicked();
-            this.updateDisplay();
-            
-            const btn = document.getElementById('randomBtn');
-            btn.classList.add('shaking');
-            setTimeout(() => btn.classList.remove('shaking'), 400);
-        });
+        document.getElementById('randomBtn')?.addEventListener('click', () => this.randomize());
 
         document.getElementById('doneBtn')?.addEventListener('click', () => this.showResult());
-        document.getElementById('closeModalBtn')?.addEventListener('click', () => document.getElementById('resultModal').classList.add('hidden'));
-        document.getElementById('resultModal')?.addEventListener('click', (e) => { if (e.target === e.currentTarget) e.currentTarget.classList.add('hidden'); });
+        
+        document.getElementById('closeModalBtn')?.addEventListener('click', () => {
+            document.getElementById('resultModal').classList.add('hidden');
+        });
+
+        document.getElementById('resultModal')?.addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) e.currentTarget.classList.add('hidden');
+        });
         
         document.getElementById('copyBtn')?.addEventListener('click', () => {
             const text = document.getElementById('resultBody').textContent;
@@ -366,11 +503,13 @@ class CharacterEditor {
         });
     }
 
+    // ===== РЕЗУЛЬТАТ =====
     showResult() {
         const body = document.getElementById('resultBody');
         if (!body) return;
         let text = '📋 ХАРАКТЕРИСТИКИ:\n';
         Object.entries(this.stats).forEach(([n, v]) => text += `  ${n}: ${v > 0 ? '+' : ''}${v}\n`);
+        
         if (this.mySkills.length) {
             text += '\n🎯 НАВЫКИ:\n';
             this.mySkills.forEach(n => text += `  ${n}: ${this.skillsDB[n].val > 0 ? '+' : ''}${this.skillsDB[n].val}\n`);
@@ -383,6 +522,7 @@ class CharacterEditor {
         document.getElementById('resultModal').classList.remove('hidden');
     }
 
+    // ===== СБРОС =====
     resetAll() {
         Object.keys(this.stats).forEach(k => this.stats[k] = 0);
         Object.keys(this.skillsDB).forEach(k => this.skillsDB[k].val = 0);
