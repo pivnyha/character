@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Редактор персонажа</title>
+    <title>4 очка</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -11,7 +11,7 @@
         <header>
             <div class="logo">
                 <span class="logo-icon">⚔</span>
-                <span class="logo-text">4_04KA</span>
+                <span class="logo-text">4 ОЧКА</span>
             </div>
             <div class="header-right">
                 <div class="status-led"></div>
@@ -92,6 +92,44 @@
             </div>
         </div>
     </div>
+
+    <!-- ===== ФОНОВАЯ МУЗЫКА ===== -->
+    <audio id="bgMusic" loop autoplay>
+        <source src="https://cdn.pixabay.com/download/audio/2022/03/10/audio_c8c8c8c8c8.mp3" type="audio/mpeg">
+    </audio>
+    <button id="musicToggle" class="btn" style="position: fixed; bottom: 20px; right: 20px; z-index: 999; padding: 8px 16px; font-size: 14px; background: rgba(26,26,26,0.85); border: 1px solid #6b8c42; color: #d4d4d4; border-radius: 4px; cursor: pointer; font-family: 'Share Tech Mono', monospace; letter-spacing: 1px;">🔊 МУЗЫКА</button>
+
+    <script>
+        (function() {
+            const audio = document.getElementById('bgMusic');
+            const toggleBtn = document.getElementById('musicToggle');
+            let isPlaying = false;
+            
+            audio.volume = 0.2;
+            audio.loop = true;
+            
+            audio.play().then(() => {
+                isPlaying = true;
+                toggleBtn.textContent = '🔊 МУЗЫКА';
+            }).catch(() => {
+                isPlaying = false;
+                toggleBtn.textContent = '🔇 МУЗЫКА';
+            });
+            
+            toggleBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (isPlaying) {
+                    audio.pause();
+                    toggleBtn.textContent = '🔇 МУЗЫКА';
+                    isPlaying = false;
+                } else {
+                    audio.play().catch(() => {});
+                    toggleBtn.textContent = '🔊 МУЗЫКА';
+                    isPlaying = true;
+                }
+            });
+        })();
+    </script>
 
     <script src="script.js"></script>
 </body>
