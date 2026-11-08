@@ -1,183 +1,161 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- МЕНЯЕМ НАЗВАНИЕ ВКЛАДКИ -->
-    <title>Редактор персонажа</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;700&family=Roboto+Condensed:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-</head>
-<body>
-    <div class="container">
-        <header>
-            <div class="logo">
-                <svg class="icon"><use href="icons.svg#i-logo"/></svg>
-                <!-- МЕНЯЕМ НАЗВАНИЕ В ШАПКЕ -->
-                <span class="logo-text">РЕДАКТОР ПЕРСОНАЖА</span>
-            </div>
-            <div class="header-right">
-                <div class="status-led"></div>
-            </div>
-        </header>
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none;">
+    <defs>
+        <!-- ХАРАКТЕРИСТИКИ -->
+        <symbol id="i-strength" viewBox="0 0 24 24">
+            <rect x="4" y="10" width="16" height="4" fill="currentColor"/>
+            <rect x="6" y="6" width="4" height="12" fill="currentColor"/>
+            <rect x="14" y="6" width="4" height="12" fill="currentColor"/>
+        </symbol>
+        <symbol id="i-luck" viewBox="0 0 24 24">
+            <rect x="4" y="4" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"/>
+            <rect x="8" y="8" width="3" height="3" fill="currentColor"/>
+            <rect x="13" y="13" width="3" height="3" fill="currentColor"/>
+        </symbol>
+        <symbol id="i-attention" viewBox="0 0 24 24">
+            <rect x="3" y="7" width="18" height="10" fill="none" stroke="currentColor" stroke-width="2"/>
+            <rect x="10" y="10" width="4" height="4" fill="currentColor"/>
+        </symbol>
+        <symbol id="i-agility" viewBox="0 0 24 24">
+            <polygon points="13,3 5,14 11,14 9,21 19,10 13,10" fill="currentColor"/>
+        </symbol>
+        <symbol id="i-charisma" viewBox="0 0 24 24">
+            <rect x="8" y="3" width="8" height="8" fill="currentColor"/>
+            <rect x="4" y="13" width="16" height="8" fill="currentColor"/>
+        </symbol>
 
-        <nav class="tabs">
-            <button class="tab-btn active" data-tab="characteristics">
-                <svg class="icon"><use href="icons.svg#i-stats"/></svg>
-                ХАРАКТЕРИСТИКИ
-            </button>
-            <button class="tab-btn" data-tab="skills">
-                <svg class="icon"><use href="icons.svg#i-skills"/></svg>
-                НАВЫКИ И ПЕРКИ
-            </button>
-        </nav>
+        <!-- НАВЫКИ -->
+        <symbol id="i-shooting" viewBox="0 0 24 24">
+            <rect x="11" y="2" width="2" height="6" fill="currentColor"/>
+            <rect x="11" y="16" width="2" height="6" fill="currentColor"/>
+            <rect x="2" y="11" width="6" height="2" fill="currentColor"/>
+            <rect x="16" y="11" width="6" height="2" fill="currentColor"/>
+            <rect x="9" y="9" width="6" height="6" fill="none" stroke="currentColor" stroke-width="1.5"/>
+        </symbol>
+        <symbol id="i-melee" viewBox="0 0 24 24">
+            <rect x="6" y="8" width="12" height="4" fill="currentColor"/>
+            <rect x="8" y="12" width="8" height="8" fill="currentColor"/>
+        </symbol>
+        <symbol id="i-fencing" viewBox="0 0 24 24">
+            <rect x="4" y="4" width="3" height="16" transform="rotate(45 5.5 12)" fill="currentColor"/>
+            <rect x="17" y="4" width="3" height="16" transform="rotate(-45 18.5 12)" fill="currentColor"/>
+        </symbol>
+        <symbol id="i-heavy" viewBox="0 0 24 24">
+            <rect x="9" y="3" width="6" height="10" fill="currentColor"/>
+            <rect x="11" y="13" width="2" height="8" fill="currentColor"/>
+            <rect x="6" y="17" width="12" height="2" fill="currentColor"/>
+        </symbol>
+        <symbol id="i-hack" viewBox="0 0 24 24">
+            <rect x="5" y="5" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2"/>
+            <rect x="15" y="15" width="6" height="2" fill="currentColor"/>
+            <rect x="15" y="18" width="2" height="2" fill="currentColor"/>
+        </symbol>
+        <symbol id="i-craft" viewBox="0 0 24 24">
+            <rect x="6" y="6" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"/>
+            <rect x="10" y="10" width="4" height="4" fill="currentColor"/>
+        </symbol>
+        <symbol id="i-repair" viewBox="0 0 24 24">
+            <rect x="9" y="12" width="6" height="9" fill="currentColor"/>
+            <rect x="6" y="4" width="12" height="8" fill="currentColor"/>
+        </symbol>
+        <symbol id="i-medicine" viewBox="0 0 24 24">
+            <rect x="10" y="3" width="4" height="18" fill="currentColor"/>
+            <rect x="3" y="10" width="18" height="4" fill="currentColor"/>
+        </symbol>
+        <symbol id="i-diagnose" viewBox="0 0 24 24">
+            <rect x="4" y="4" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"/>
+            <rect x="14" y="14" width="7" height="3" transform="rotate(45 17 15)" fill="currentColor"/>
+        </symbol>
+        <symbol id="i-driving" viewBox="0 0 24 24">
+            <rect x="3" y="9" width="18" height="6" fill="none" stroke="currentColor" stroke-width="2"/>
+            <rect x="10" y="9" width="4" height="6" fill="currentColor"/>
+        </symbol>
+        <symbol id="i-intellect" viewBox="0 0 24 24">
+            <rect x="4" y="4" width="6" height="6" fill="currentColor"/>
+            <rect x="14" y="4" width="6" height="6" fill="currentColor"/>
+            <rect x="4" y="14" width="6" height="6" fill="currentColor"/>
+            <rect x="14" y="14" width="6" height="6" fill="currentColor"/>
+        </symbol>
 
-        <section id="characteristics" class="tab-content active">
-            <div class="tab-header">
-                <div class="tab-title">
-                    <svg class="icon"><use href="icons.svg#i-stats"/></svg>
-                    ХАРАКТЕРИСТИКИ
-                </div>
-                <div class="tab-stats">
-                    <span class="stat-badge">MIN -4</span>
-                    <span class="stat-badge">MAX +4</span>
-                    <span class="stat-badge highlight" id="charPointsDisplay">ОЧКОВ: 2</span>
-                </div>
-            </div>
-            <div class="stats-grid" id="characteristicsGrid"></div>
-        </section>
+        <!-- ПЕРКИ -->
+        <symbol id="i-charm" viewBox="0 0 24 24">
+            <rect x="8" y="4" width="8" height="6" fill="currentColor"/>
+            <rect x="6" y="10" width="12" height="8" fill="currentColor"/>
+        </symbol>
+        <symbol id="i-shield" viewBox="0 0 24 24">
+            <path d="M12 2 L20 6 L20 14 L12 22 L4 14 L4 6 Z" fill="none" stroke="currentColor" stroke-width="2"/>
+        </symbol>
+        <symbol id="i-trade" viewBox="0 0 24 24">
+            <rect x="4" y="10" width="16" height="4" fill="currentColor"/>
+            <rect x="6" y="6" width="4" height="4" fill="currentColor"/>
+            <rect x="14" y="14" width="4" height="4" fill="currentColor"/>
+        </symbol>
+        <symbol id="i-chem" viewBox="0 0 24 24">
+            <rect x="9" y="3" width="6" height="3" fill="currentColor"/>
+            <rect x="8" y="6" width="8" height="15" fill="none" stroke="currentColor" stroke-width="2"/>
+            <rect x="10" y="13" width="4" height="6" fill="currentColor"/>
+        </symbol>
+        <symbol id="i-voice" viewBox="0 0 24 24">
+            <rect x="4" y="9" width="6" height="6" fill="currentColor"/>
+            <rect x="12" y="11" width="4" height="2" fill="currentColor"/>
+            <rect x="14" y="8" width="2" height="8" fill="currentColor"/>
+            <rect x="18" y="6" width="2" height="12" fill="currentColor"/>
+        </symbol>
 
-        <section id="skills" class="tab-content">
-            <div class="tab-header">
-                <div class="tab-title">
-                    <svg class="icon"><use href="icons.svg#i-skills"/></svg>
-                    НАВЫКИ И ПЕРКИ
-                </div>
-                <div class="tab-stats">
-                    <span class="stat-badge" id="selectedDisplay">ВЫБРАНО: 0/4</span>
-                    <span class="stat-badge highlight" id="skillPointsDisplay">ОЧКОВ: 3</span>
-                </div>
-            </div>
-
-            <div class="skills-container">
-                <div class="skills-layout">
-                    <div class="skills-column">
-                        <div class="column-title">
-                            <svg class="icon"><use href="icons.svg#i-skills"/></svg>
-                            НАВЫКИ
-                        </div>
-                        <div class="skills-list" id="allSkillsList"></div>
-                    </div>
-
-                    <div class="skills-column">
-                        <div class="column-title">
-                            <svg class="icon"><use href="icons.svg#i-picked"/></svg>
-                            ПЕРКИ
-                        </div>
-                        <div class="skills-list" id="allPerksList"></div>
-                    </div>
-
-                    <div class="skills-column">
-                        <div class="column-title">
-                            <svg class="icon"><use href="icons.svg#i-done"/></svg>
-                            ВЫБРАННОЕ
-                        </div>
-                        <div class="skills-list" id="selectedList"></div>
-                    </div>
-                </div>
-
-                <div class="description-area" id="descriptionArea">
-                    <div class="description-placeholder">Наведите на навык или перк для описания</div>
-                    <div class="description-content" id="descriptionContent"></div>
-                </div>
-            </div>
-        </section>
-
-        <footer class="actions">
-            <div class="action-left">
-                <button id="unlimitedBtn" class="btn btn-toggle">
-                    <svg class="icon"><use href="icons.svg#i-shield"/></svg>
-                    <span id="unlimitedText">ЛИМИТЫ ВКЛ</span>
-                </button>
-            </div>
-
-            <div class="action-center">
-                <button id="doneBtn" class="btn btn-success">
-                    <svg class="icon"><use href="icons.svg#i-done"/></svg>
-                    ГОТОВО
-                </button>
-            </div>
-
-            <div class="action-right">
-                <button id="randomBtn" class="btn btn-random">
-                    <svg class="icon"><use href="icons.svg#i-luck"/></svg>
-                    РАНДОМ
-                </button>
-            </div>
-        </footer>
-
-        <div id="savedMessage" class="message hidden">✔ ПЕРСОНАЖ СОХРАНЕН</div>
-    </div>
-
-    <div id="resultModal" class="modal hidden">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>📜 ХАРАКТЕРИСТИКИ ПЕРСОНАЖА</h2>
-                <button class="modal-close" id="closeModalBtn">
-                    <svg class="icon"><use href="icons.svg#i-close"/></svg>
-                </button>
-            </div>
-            <div class="modal-body" id="resultBody"></div>
-            <div class="modal-footer">
-                <button id="copyBtn" class="btn btn-primary">
-                    <svg class="icon"><use href="icons.svg#i-copy"/></svg>
-                    КОПИРОВАТЬ
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <footer class="status-bar">
-        <div class="status-item">
-            <span class="status-led" id="statusLed"></span>
-            <span class="status-label">СТАТУС:</span>
-            <span class="status-value" id="statusText">ГОТОВ</span>
-        </div>
-        <div class="status-divider"></div>
-        <div class="status-item">
-            <span class="status-label">ВЫБРАНО:</span>
-            <span class="status-dots" id="statusDots">
-                <span class="dot"></span>
-                <span class="dot"></span>
-                <span class="dot"></span>
-                <span class="dot"></span>
-            </span>
-            <span class="status-value" id="statusSelected">0/4</span>
-        </div>
-        <div class="status-divider"></div>
-        <div class="status-item">
-            <span class="status-label">ОЧКОВ:</span>
-            <span class="status-value highlight" id="statusPoints">2</span>
-        </div>
-        <div class="status-divider"></div>
-        <div class="status-item">
-            <span class="status-label">СЕКТОР:</span>
-            <span class="status-value" id="statusSector">01</span>
-        </div>
-    </footer>
-
-    <!-- СКРЫТЫЕ ЗВУКИ -->
-    <!-- Звук клика (механический переключатель) -->
-    <audio id="sfx-click" src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3" preload="auto"></audio>
-    <!-- Звук выбора (защелка) -->
-    <audio id="sfx-pick" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3" preload="auto"></audio>
-    <!-- Звук ошибки (глухой стук) -->
-    <audio id="sfx-error" src="https://assets.mixkit.co/active_storage/sfx/2573/2573-preview.mp3" preload="auto"></audio>
-    <!-- Звук печатной машинки -->
-    <audio id="sfx-type" src="https://assets.mixkit.co/active_storage/sfx/2563/2563-preview.mp3" preload="auto"></audio>
-
-    <script src="script.js?v=3"></script>
-</body>
-</html>
+        <!-- ИНТЕРФЕЙС -->
+        <symbol id="i-stats" viewBox="0 0 24 24">
+            <rect x="4" y="3" width="16" height="18" fill="none" stroke="currentColor" stroke-width="2"/>
+            <rect x="8" y="8" width="8" height="2" fill="currentColor"/>
+            <rect x="8" y="12" width="8" height="2" fill="currentColor"/>
+            <rect x="8" y="16" width="5" height="2" fill="currentColor"/>
+        </symbol>
+        <symbol id="i-skills" viewBox="0 0 24 24">
+            <rect x="3" y="3" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"/>
+            <rect x="8" y="8" width="8" height="8" fill="none" stroke="currentColor" stroke-width="2"/>
+            <rect x="11" y="11" width="2" height="2" fill="currentColor"/>
+        </symbol>
+        <symbol id="i-perks" viewBox="0 0 24 24">
+            <rect x="8" y="3" width="8" height="8" fill="currentColor"/>
+            <rect x="9" y="11" width="6" height="10" fill="currentColor"/>
+        </symbol>
+        <symbol id="i-picked" viewBox="0 0 24 24">
+            <polygon points="13,3 5,14 11,14 9,21 19,10 13,10" fill="currentColor"/>
+        </symbol>
+        <symbol id="i-done" viewBox="0 0 24 24">
+            <polyline points="4,12 10,18 20,6" fill="none" stroke="currentColor" stroke-width="3"/>
+        </symbol>
+        <symbol id="i-copy" viewBox="0 0 24 24">
+            <rect x="8" y="8" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"/>
+            <rect x="4" y="4" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"/>
+        </symbol>
+        <symbol id="i-close" viewBox="0 0 24 24">
+            <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="2.5"/>
+            <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-width="2.5"/>
+        </symbol>
+        <symbol id="i-remove" viewBox="0 0 24 24">
+            <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="2.5"/>
+            <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-width="2.5"/>
+        </symbol>
+        <symbol id="i-plus" viewBox="0 0 24 24">
+            <line x1="12" y1="4" x2="12" y2="20" stroke="currentColor" stroke-width="2.5"/>
+            <line x1="4" y1="12" x2="20" y2="12" stroke="currentColor" stroke-width="2.5"/>
+        </symbol>
+        <symbol id="i-minus" viewBox="0 0 24 24">
+            <line x1="4" y1="12" x2="20" y2="12" stroke="currentColor" stroke-width="2.5"/>
+        </symbol>
+        <symbol id="i-logo" viewBox="0 0 24 24">
+            <rect x="3" y="3" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"/>
+            <rect x="9" y="9" width="6" height="6" fill="currentColor"/>
+        </symbol>
+        <symbol id="i-music-on" viewBox="0 0 24 24">
+            <rect x="4" y="9" width="6" height="6" fill="currentColor"/>
+            <rect x="12" y="11" width="4" height="2" fill="currentColor"/>
+            <rect x="14" y="8" width="2" height="8" fill="currentColor"/>
+            <rect x="18" y="6" width="2" height="12" fill="currentColor"/>
+        </symbol>
+        <symbol id="i-music-off" viewBox="0 0 24 24">
+            <rect x="4" y="9" width="6" height="6" fill="currentColor"/>
+            <line x1="14" y1="8" x2="20" y2="16" stroke="currentColor" stroke-width="2.5"/>
+            <line x1="20" y1="8" x2="14" y2="16" stroke="currentColor" stroke-width="2.5"/>
+        </symbol>
+    </defs>
+</svg>
