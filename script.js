@@ -32,7 +32,11 @@ class CharacterEditor {
         this.points = { charPoints: 2, freePoints: 3, skillLimit: 4, totalLimit: 4 };
         this.isUnlimited = false;
         this.typeTimeout = null;
-        this.volume = 0.3;
+        
+        // Загружаем сохраненную громкость (по умолчанию 0.3)
+        const savedVolume = localStorage.getItem('editorVolume');
+        this.volume = savedVolume !== null ? parseFloat(savedVolume) : 0.3;
+        
         this.audioCtx = null;
 
         this.resetAll();
@@ -124,9 +128,15 @@ class CharacterEditor {
         }
 
         if (slider && valueDisplay) {
+            // Устанавливаем ползунок в сохраненное значение при загрузке
+            slider.value = this.volume;
+            valueDisplay.textContent = Math.round(this.volume * 100) + '%';
+
+            // При изменении ползунка — обновляем звук и сохраняем в localStorage
             slider.addEventListener('input', (e) => {
                 this.volume = parseFloat(e.target.value);
                 valueDisplay.textContent = Math.round(this.volume * 100) + '%';
+                localStorage.setItem('editorVolume', this.volume);
             });
         }
 
@@ -407,7 +417,7 @@ class CharacterEditor {
                 const char = desc.charAt(i);
                 textEl.textContent += char;
                 
-                // Звук на буквы, с вероятностью 60% (чтобы был стук, а не очередь)
+                // Звук на буквы с вероятностью 60% (чтобы был стук, а не очередь)
                 if (char !== ' ' && Math.random() > 0.4) {
                     this.playTypewriter();
                 }
