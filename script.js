@@ -9,7 +9,7 @@ class CharacterEditor {
             'Харизма': 0
         };
 
-        // ===== ВСЕ НАВЫКИ (УДАЛЕНЫ: Кража, Скрытность) =====
+        // ===== ВСЕ НАВЫКИ =====
         this.skillsDB = {
             'Стрельба': { val: 0, desc: '+1 на атаки дальнего боя', type: 'combat' },
             'Ближний бой': { val: 0, desc: '+1 на атаки в рукопашном бою', type: 'combat' },
@@ -24,7 +24,7 @@ class CharacterEditor {
             'Интеллект': { val: 0, desc: 'Дает создавать более совершенные предметы', type: 'spec' }
         };
 
-        // ===== ВСЕ ПЕРКИ (УДАЛЕНЫ: Плохая компания, Таинственный незнакомец, Грамотный подход, Ты видел это?!) =====
+        // ===== ВСЕ ПЕРКИ =====
         this.perksDB = {
             'Нежное обаяние': { picked: false, desc: 'Персонажи женского пола к вам более расположены: охотнее идут навстречу, легче верят и склонны трактовать ваши поступки в лучшую сторону. +1 к броскам на убеждение, обман или обаяние против женщин.' },
             'Твердое слово': { picked: false, desc: 'Персонажи мужского пола к вам более расположены: охотнее идут навстречу, легче верят и склонны трактовать ваши поступки в лучшую сторону. +1 к броскам на убеждение, обман или обаяние против мужчин.' },
@@ -47,9 +47,7 @@ class CharacterEditor {
             totalLimit: 4
         };
 
-        // ===== ПРИ ЗАХОДЕ ОЧИЩАЕМ ВСЁ =====
         this.resetAll();
-
         this.start();
     }
 
@@ -321,6 +319,8 @@ class CharacterEditor {
             <div class="description-text">${desc}</div>
         `;
         area.style.display = 'block';
+        // Блокировка прокрутки страницы
+        document.body.classList.add('no-scroll');
     }
 
     hideDesc() {
@@ -330,6 +330,8 @@ class CharacterEditor {
         if (placeholder) placeholder.style.display = 'block';
         area.style.display = 'none';
         area.innerHTML = '';
+        // Разблокировка прокрутки страницы
+        document.body.classList.remove('no-scroll');
     }
 
     // ===== UI =====
@@ -338,9 +340,61 @@ class CharacterEditor {
         const freeEl = document.getElementById('skillPointsDisplay');
         const selEl = document.getElementById('selectedDisplay');
         const total = this.mySkills.length + this.myPerks.length;
+        
         if (charEl) charEl.textContent = `ОЧКОВ: ${this.points.charPoints}`;
         if (freeEl) freeEl.textContent = `ОЧКОВ: ${this.points.freePoints}`;
         if (selEl) selEl.textContent = `ВЫБРАНО: ${total}/${this.points.totalLimit}`;
+        
+        // Обновляем статус-бар
+        this.updateStatusBar();
+    }
+
+    updateStatusBar() {
+        const total = this.mySkills.length + this.myPerks.length;
+        const totalLimit = this.points.totalLimit;
+        const free = this.points.freePoints;
+
+        // Текст статуса
+        const statusText = document.getElementById('statusText');
+        const statusLed = document.getElementById('statusLed');
+        if (statusText && statusLed) {
+            if (total >= totalLimit) {
+                statusText.textContent = 'МАКСИМУМ';
+                statusLed.className = 'status-led warn';
+            } else if (free <= 0) {
+                statusText.textContent = 'НЕТ ОЧКОВ';
+                statusLed.className = 'status-led warn';
+            } else {
+                statusText.textContent = 'ГОТОВ';
+                statusLed.className = 'status-led';
+            }
+        }
+
+        // Точки выбора
+        const dots = document.querySelectorAll('#statusDots .dot');
+        dots.forEach((dot, i) => {
+            dot.className = 'dot';
+            if (i < total) {
+                dot.classList.add('filled');
+                if (i >= totalLimit - 1) dot.classList.add('full');
+            }
+        });
+
+        // Число выбрано
+        const statusSelected = document.getElementById('statusSelected');
+        if (statusSelected) statusSelected.textContent = `${total}/${totalLimit}`;
+
+        // Очки
+        const statusPoints = document.getElementById('statusPoints');
+        if (statusPoints) statusPoints.textContent = free;
+
+        // Сектор
+        const statusSector = document.getElementById('statusSector');
+        if (statusSector) {
+            const activeTab = document.querySelector('.tab-btn.active');
+            const isStats = activeTab?.dataset.tab === 'characteristics';
+            statusSector.textContent = isStats ? '01' : '02';
+        }
     }
 
     // ===== СОБЫТИЯ =====
@@ -352,6 +406,8 @@ class CharacterEditor {
                 this.classList.add('active');
                 const target = document.getElementById(this.dataset.tab);
                 if (target) target.classList.add('active');
+                // Обновляем статус-бар при переключении вкладки
+                if (window.editor) window.editor.updateStatusBar();
             });
         });
 
@@ -424,7 +480,7 @@ class CharacterEditor {
         document.getElementById('resultModal').classList.remove('hidden');
     }
 
-    // ===== ПОЛНЫЙ СБРОС =====
+    // ===== СБРОС =====
     resetAll() {
         Object.keys(this.stats).forEach(k => this.stats[k] = 0);
         Object.keys(this.skillsDB).forEach(k => {
@@ -446,11 +502,11 @@ class CharacterEditor {
         msg.textContent = text;
         msg.className = 'message';
         if (type === 'error') {
-            msg.style.borderColor = '#8c3a3a';
-            msg.style.color = '#e74c3c';
+            msg.style.borderColor = 'var(--accent-warn)';
+            msg.style.color = 'var(--accent-warn)';
         } else {
-            msg.style.borderColor = 'var(--accent-green)';
-            msg.style.color = 'var(--accent-green-bright)';
+            msg.style.borderColor = 'var(--accent)';
+            msg.style.color = 'var(--accent)';
         }
         msg.classList.remove('hidden');
         clearTimeout(this._timer);
@@ -459,5 +515,5 @@ class CharacterEditor {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    new CharacterEditor();
+    window.editor = new CharacterEditor();
 });
