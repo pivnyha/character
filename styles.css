@@ -1,3 +1,6 @@
+/* ========================================
+   ПОСТАПОКАЛИПСИС СНГ — УНИВЕРСАЛЬНЫЙ СТИЛЬ
+   ======================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;700&family=Roboto+Condensed:wght@400;700&family=Share+Tech+Mono&display=swap');
 
@@ -20,7 +23,6 @@
     --accent:       #8fa870;
     --accent-warm:  #c9a84c;
     --accent-warn:  #b85c38;
-    --accent-soft:  #5a6e4a;
 
     --text-main:    #c8ccc0;
     --text-dim:     #6e7268;
@@ -43,7 +45,7 @@ body {
     background: var(--bg-dark);
     color: var(--text-main);
     min-height: 100vh;
-    padding: 10px 10px 46px;
+    padding: 10px 10px 50px; /* Отступ снизу для статус-бара */
     background-image:
         radial-gradient(ellipse at 20% 50%, rgba(143, 168, 112, 0.03) 0%, transparent 60%),
         radial-gradient(ellipse at 80% 50%, rgba(143, 168, 112, 0.03) 0%, transparent 60%),
@@ -119,6 +121,23 @@ header {
     50% { opacity: 0.3; }
 }
 
+/* ===== ИКОНКИ (КОМПАКТНЫЕ) ===== */
+.icon {
+    width: 18px;
+    height: 18px;
+    display: inline-block;
+    vertical-align: middle;
+    color: var(--text-bright);
+    flex-shrink: 0;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.btn .icon { width: 16px; height: 16px; }
+.column-title .icon { width: 16px; height: 16px; color: var(--accent); }
+.tab-btn .icon { width: 16px; height: 16px; }
+.tab-title .icon { width: 18px; height: 18px; color: var(--accent); }
+.logo .icon { width: 22px; height: 22px; color: var(--accent); }
+
 /* ===== ВКЛАДКИ ===== */
 .tabs {
     display: flex;
@@ -155,61 +174,6 @@ header {
     color: var(--text-bright);
     border-bottom-color: var(--accent);
     background: rgba(143, 168, 112, 0.06);
-}
-
-/* ===== ИКОНКИ ===== */
-.icon {
-    width: 8px;
-    height: 8px;
-    display: inline-block;
-    vertical-align: middle;
-    color: var(--text-bright);
-    flex-shrink: 0;
-    transition: color 0.2s ease, transform 0.2s ease;
-}
-
-/* Размеры */
-.icon-sm { width: 16px; height: 16px; }
-.icon-md { width: 20px; height: 20px; }
-.icon-lg { width: 24px; height: 24px; }
-
-/* В кнопках */
-.btn .icon {
-    width: 16px;
-    height: 16px;
-}
-
-/* В заголовках колонок */
-.column-title .icon {
-    width: 16px;
-    height: 16px;
-    color: var(--accent);
-}
-
-/* В табах */
-.tab-btn .icon {
-    width: 16px;
-    height: 16px;
-}
-
-/* В заголовках вкладок */
-.tab-title .icon {
-    width: 18px;
-    height: 18px;
-    color: var(--accent);
-}
-
-/* В логотипе */
-.logo .icon {
-    width: 22px;
-    height: 22px;
-    color: var(--accent);
-}
-
-/* В статус-баре */
-.status-bar .icon {
-    width: 14px;
-    height: 14px;
 }
 
 /* ===== КОНТЕНТ ===== */
@@ -476,4 +440,428 @@ header {
 .selected-name {
     font-family: var(--font-title);
     font-size: 13px;
-    font
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.selected-item.perk-item-selected {
+    border-color: var(--accent-warm);
+}
+
+.selected-item.perk-item-selected .selected-name {
+    color: var(--accent-warm);
+}
+
+.selected-remove {
+    color: var(--accent-warn);
+    cursor: pointer;
+    font-size: 14px;
+    padding: 0 4px;
+    transition: color 0.2s;
+    font-weight: 700;
+    background: none;
+    border: none;
+}
+
+.selected-remove:hover {
+    color: #e74c3c;
+}
+
+.perk-check {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--accent-warm);
+    text-align: center;
+    letter-spacing: 1px;
+    padding: 4px 0;
+}
+
+.distribute-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding-top: 4px;
+}
+
+.distribute-controls button {
+    width: 26px;
+    height: 26px;
+    border: 1px solid var(--border-mid);
+    background: var(--bg-panel);
+    color: var(--text-dim);
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+}
+
+.distribute-controls button:hover {
+    background: var(--bg-hover);
+    border-color: var(--border-lit);
+    color: var(--text-bright);
+}
+
+.dist-value {
+    font-family: var(--font-mono);
+    font-size: 18px;
+    font-weight: 700;
+    min-width: 30px;
+    text-align: center;
+    color: var(--text-bright);
+}
+
+.dist-value.negative { color: var(--accent-warn); }
+.dist-value.positive { color: var(--accent); }
+
+.empty-message {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    text-align: center;
+    padding: 30px 10px;
+}
+
+/* ===== ОПИСАНИЕ ===== */
+.description-area {
+    background: var(--bg-panel);
+    border: 1px solid var(--border-dim);
+    padding: 16px 20px;
+    min-height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    clip-path: polygon(0 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%);
+}
+
+.description-placeholder {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-dim);
+    text-align: center;
+    letter-spacing: 1px;
+}
+
+.description-content {
+    display: none;
+    width: 100%;
+    animation: fadeIn 0.2s ease;
+}
+
+.description-content .description-type {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 2px;
+    margin-bottom: 4px;
+}
+
+.description-content .description-name {
+    font-family: var(--font-title);
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-bright);
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+}
+
+.description-content .description-text {
+    font-family: var(--font-main);
+    font-size: 14px;
+    color: var(--text-main);
+    line-height: 1.5;
+}
+
+/* ===== КНОПКИ ===== */
+.actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-dim);
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.btn {
+    font-family: var(--font-title);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    padding: 10px 30px;
+    border: 1px solid var(--border-mid);
+    background: var(--bg-card);
+    color: var(--text-main);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    clip-path: polygon(0 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%);
+}
+
+.btn:hover {
+    background: var(--bg-hover);
+    color: var(--text-bright);
+    border-color: var(--border-lit);
+}
+
+.btn-success:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.btn-primary:hover {
+    border-color: var(--accent-warm);
+    color: var(--accent-warm);
+}
+
+/* ===== СООБЩЕНИЯ ===== */
+.message {
+    margin-top: 15px;
+    padding: 10px 18px;
+    background: var(--bg-panel);
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-align: center;
+}
+
+.message.hidden { display: none; }
+.message.error {
+    border-color: var(--accent-warn);
+    color: var(--accent-warn);
+}
+
+/* ===== МОДАЛЬНОЕ ОКНО ===== */
+.modal {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+}
+
+.modal.hidden { display: none; }
+
+.modal-content {
+    background: var(--bg-panel);
+    border: 1px solid var(--border-lit);
+    max-width: 700px;
+    width: 95%;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9);
+    clip-path: polygon(0 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border-dim);
+}
+
+.modal-header h2 {
+    font-family: var(--font-title);
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: var(--text-bright);
+    text-transform: uppercase;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-close:hover { color: var(--accent-warn); }
+
+.modal-body {
+    padding: 20px 24px;
+    overflow-y: auto;
+    flex: 1;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    line-height: 1.8;
+    color: var(--text-main);
+    white-space: pre-wrap;
+}
+
+.modal-footer {
+    padding: 16px 24px;
+    border-top: 1px solid var(--border-dim);
+    display: flex;
+    justify-content: center;
+}
+
+/* ===== СТАТУС-БАР ===== */
+.status-bar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: 36px;
+    background: var(--bg-panel);
+    border-top: 1px solid var(--border-mid);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    padding: 0 24px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    color: var(--text-dim);
+    z-index: 900;
+    backdrop-filter: blur(6px);
+}
+
+.status-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.status-divider {
+    width: 1px;
+    height: 16px;
+    background: var(--border-mid);
+    opacity: 0.6;
+}
+
+.status-led {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--led-green);
+    box-shadow: 0 0 6px var(--led-green);
+    animation: pulse-led 2s infinite;
+}
+
+.status-led.warn {
+    background: var(--led-amber);
+    box-shadow: 0 0 6px var(--led-amber);
+}
+
+.status-led.error {
+    background: var(--led-red);
+    box-shadow: 0 0 6px var(--led-red);
+}
+
+.status-label {
+    color: var(--text-dark);
+    letter-spacing: 1.5px;
+}
+
+.status-value {
+    color: var(--text-main);
+    font-weight: 700;
+}
+
+.status-value.highlight {
+    color: var(--accent-warm);
+    text-shadow: 0 0 8px rgba(201, 168, 76, 0.3);
+}
+
+.status-dots {
+    display: flex;
+    gap: 4px;
+    margin: 0 4px;
+}
+
+.status-dots .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--border-mid);
+    transition: all 0.2s ease;
+}
+
+.status-dots .dot.filled {
+    background: var(--accent);
+    box-shadow: 0 0 6px var(--accent);
+}
+
+.status-dots .dot.full {
+    background: var(--accent-warm);
+    box-shadow: 0 0 8px var(--accent-warm);
+}
+
+/* ===== АДАПТИВ ===== */
+@media (max-width: 900px) {
+    .skills-layout {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    .skills-column {
+        min-height: auto;
+        max-height: 300px;
+    }
+}
+
+@media (max-width: 768px) {
+    .container { padding: 12px 14px 18px; }
+    header { flex-direction: column; align-items: stretch; gap: 12px; }
+    .header-right { justify-content: space-between; }
+    .logo-text { font-size: 18px; letter-spacing: 3px; }
+    .tabs { gap: 2px; }
+    .tab-btn {
+        font-size: 11px;
+        padding: 10px 14px;
+        letter-spacing: 1px;
+        flex: 1;
+        justify-content: center;
+    }
+    .stats-grid { grid-template-columns: 1fr; }
+    .tab-header { flex-direction: column; align-items: flex-start; gap: 8px; }
+    .actions { flex-direction: column; }
+    .btn { width: 100%; text-align: center; padding: 12px; }
+    .stat-badge { font-size: 10px; padding: 4px 10px; }
+    .status-bar {
+        height: 30px;
+        font-size: 9px;
+        gap: 10px;
+        padding: 0 10px;
+        letter-spacing: 1px;
+    }
+    .status-label { display: none; }
+    .status-divider { height: 12px; }
+    .status-value { font-size: 10px; }
+}
+
+/* ===== СКРОЛЛБАР ===== */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track { background: var(--bg-dark); }
+::-webkit-scrollbar-thumb {
+    background: var(--border-mid);
+    border-radius: 2px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--border-lit); }
