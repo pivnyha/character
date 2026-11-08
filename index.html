@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- МЕНЯЕМ НАЗВАНИЕ ВКЛАДКИ -->
     <title>Редактор персонажа</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -11,11 +10,25 @@
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;700&family=Roboto+Condensed:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!-- ИКОНКА НАСТРОЕК (ШЕСТЕРЕНКА) -->
+    <div class="settings-toggle" id="settingsToggle" title="Настройки звука">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </svg>
+    </div>
+
+    <!-- ПАНЕЛЬ НАСТРОЕК -->
+    <div class="settings-panel hidden" id="settingsPanel">
+        <div class="settings-title">ГРОМКОСТЬ ЗВУКОВ</div>
+        <input type="range" id="volumeSlider" min="0" max="1" step="0.1" value="0.3">
+        <div class="settings-value" id="volumeValue">30%</div>
+    </div>
+
     <div class="container">
         <header>
             <div class="logo">
                 <svg class="icon"><use href="icons.svg#i-logo"/></svg>
-                <!-- МЕНЯЕМ НАЗВАНИЕ В ШАПКЕ -->
                 <span class="logo-text">РЕДАКТОР ПЕРСОНАЖА</span>
             </div>
             <div class="header-right">
@@ -168,16 +181,6 @@
         </div>
     </footer>
 
-    <!-- СКРЫТЫЕ ЗВУКИ -->
-    <!-- Звук клика (механический переключатель) -->
-    <audio id="sfx-click" src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3" preload="auto"></audio>
-    <!-- Звук выбора (защелка) -->
-    <audio id="sfx-pick" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3" preload="auto"></audio>
-    <!-- Звук ошибки (глухой стук) -->
-    <audio id="sfx-error" src="https://assets.mixkit.co/active_storage/sfx/2573/2573-preview.mp3" preload="auto"></audio>
-    <!-- Звук печатной машинки -->
-    <audio id="sfx-type" src="https://assets.mixkit.co/active_storage/sfx/2563/2563-preview.mp3" preload="auto"></audio>
-
-    <script src="script.js?v=3"></script>
+    <script src="script.js?v=4"></script>
 </body>
 </html>
