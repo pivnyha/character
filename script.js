@@ -30,17 +30,24 @@ class CharacterEditor {
         this.mySkills = [];
         this.myPerks = [];
         
-        this.points = { 
-            charPoints: 2, 
-            freePoints: 3, 
-            skillLimit: 4, 
-            totalLimit: 4 
-        };
-        
+        this.points = { charPoints: 2, freePoints: 3, skillLimit: 4, totalLimit: 4 };
         this.isUnlimited = false;
+        
+        // Переменная для отмены печати, если увели мышь
+        this.typeTimeout = null;
 
         this.resetAll();
         this.start();
+    }
+
+    // --- ЗВУКИ ---
+    playSound(id) {
+        const audio = document.getElementById(id);
+        if (audio) {
+            audio.currentTime = 0; // Сброс в начало
+            audio.volume = 0.3;    // Не слишком громко
+            audio.play().catch(() => {}); // Игнорируем ошибки автовоспроизведения
+        }
     }
 
     start() {
@@ -76,14 +83,18 @@ class CharacterEditor {
         const next = cur + delta;
         
         if (!this.isUnlimited) {
-            if (next < -4 || next > 4) return;
-            if (delta > 0 && this.points.charPoints <= 0) return this.showMsg('Нет очков характеристик!', 'error');
+            if (next < -4 || next > 4) return this.playSound('sfx-error');
+            if (delta > 0 && this.points.charPoints <= 0) {
+                this.playSound('sfx-error');
+                return this.showMsg('Нет очков характеристик!', 'error');
+            }
             if (delta < 0) this.points.charPoints += 1;
             else this.points.charPoints -= 1;
         } else {
-            if (next < -99 || next > 99) return;
+            if (next < -99 || next > 99) return this.playSound('sfx-error');
         }
 
+        this.playSound('sfx-click'); // Звук клика
         this.stats[name] = next;
         this.renderStats();
         this.updateDisplay();
@@ -124,11 +135,18 @@ class CharacterEditor {
     pickSkill(name) {
         const total = this.mySkills.length + this.myPerks.length;
         if (!this.isUnlimited) {
-            if (total >= this.points.totalLimit) return this.showMsg('Максимум 4 выбора!', 'error');
-            if (this.mySkills.length >= this.points.skillLimit) return this.showMsg('Максимум 4 навыка!', 'error');
+            if (total >= this.points.totalLimit) {
+                this.playSound('sfx-error');
+                return this.showMsg('Максимум 4 выбора!', 'error');
+            }
+            if (this.mySkills.length >= this.points.skillLimit) {
+                this.playSound('sfx-error');
+                return this.showMsg('Максимум 4 навыка!', 'error');
+            }
         }
         if (this.mySkills.includes(name)) return;
         
+        this.playSound('sfx-pick'); // Звук выбора
         this.mySkills.push(name);
         this.renderSkills();
         this.renderPicked();
@@ -157,13 +175,16 @@ class CharacterEditor {
         if (!perk) return;
 
         if (perk.picked) {
+            this.playSound('sfx-pick');
             perk.picked = false;
             this.myPerks = this.myPerks.filter(p => p !== name);
         } else {
             const total = this.mySkills.length + this.myPerks.length;
             if (!this.isUnlimited && total >= this.points.totalLimit) {
+                this.playSound('sfx-error');
                 return this.showMsg('Максимум 4 выбора!', 'error');
             }
+            this.playSound('sfx-pick');
             perk.picked = true;
             this.myPerks.push(name);
         }
@@ -221,6 +242,7 @@ class CharacterEditor {
         container.querySelectorAll('.selected-remove').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
+                this.playSound('sfx-click');
                 if (btn.dataset.type === 'skill') this.unpickSkill(btn.dataset.name);
                 else this.unpickPerk(btn.dataset.name);
             });
@@ -264,35 +286,61 @@ class CharacterEditor {
         const next = skill.val + delta;
         
         if (!this.isUnlimited) {
-            if (next < -4 || next > 4) return;
-            if (delta > 0 && this.points.freePoints <= 0) return this.showMsg('Нет очков!', 'error');
+            if (next < -4 || next > 4) return this.playSound('sfx-error');
+            if (delta > 0 && this.points.freePoints <= 0) {
+                this.playSound('sfx-error');
+                return this.showMsg('Нет очков!', 'error');
+            }
             if (delta < 0) this.points.freePoints += 1;
             else this.points.freePoints -= 1;
         } else {
-            if (next < -99 || next > 99) return;
+            if (next < -99 || next > 99) return this.playSound('sfx-error');
         }
 
+        this.playSound('sfx-click');
         skill.val = next;
         this.renderPicked();
         this.updateDisplay();
     }
 
+    // --- ЭФФЕКТ ПЕЧАТНОЙ МАШИНКИ ---
     showDesc(name, desc, type) {
         const area = document.getElementById('descriptionContent');
         const placeholder = document.querySelector('.description-placeholder');
         if (!area) return;
         if (placeholder) placeholder.style.display = 'none';
         
+        // Очищаем старый таймер, если он был
+        clearTimeout(this.typeTimeout);
+
+        // Начальная структура (без текста описания)
         area.innerHTML = `
             <div class="description-type">${type === 'skill' ? '📋 НАВЫК' : '🏅 ПЕРК'}</div>
             <div class="description-name">${name}</div>
-            <div class="description-text">${desc}</div>
+            <div class="description-text" id="typewriter-text"></div>
         `;
         area.style.display = 'block';
         document.body.classList.add('no-scroll');
+
+        // Запуск печати
+        const textEl = document.getElementById('typewriter-text');
+        let i = 0;
+        
+        const typeChar = () => {
+            if (i < desc.length) {
+                textEl.textContent += desc.charAt(i);
+                i++;
+                // Воспроизводим звук печати (каждый 3-й символ, чтобы не спамить)
+                if (i % 3 === 0) this.playSound('sfx-type');
+                this.typeTimeout = setTimeout(typeChar, 25); // Скорость печати
+            }
+        };
+        
+        typeChar();
     }
 
     hideDesc() {
+        clearTimeout(this.typeTimeout); // Останавливаем печать, если увели мышь
         const area = document.getElementById('descriptionContent');
         const placeholder = document.querySelector('.description-placeholder');
         if (!area) return;
@@ -302,9 +350,9 @@ class CharacterEditor {
     }
 
     randomize() {
+        this.playSound('sfx-click');
         this.resetAll();
 
-        // 1. Характеристики
         const statKeys = Object.keys(this.stats);
         if (this.isUnlimited) {
             statKeys.forEach(key => this.stats[key] = Math.floor(Math.random() * 9) - 4);
@@ -316,30 +364,19 @@ class CharacterEditor {
             }
         }
 
-        // 2. Навыки (строго рандомное количество)
         const skillKeys = Object.keys(this.skillsDB);
-        // В безлимите выбираем от 2 до 4 навыков. В лимите - до 4.
-        const skillCount = this.isUnlimited 
-            ? Math.floor(Math.random() * 3) + 2 // 2, 3 или 4
-            : 4; 
-            
+        const skillCount = this.isUnlimited ? Math.floor(Math.random() * 3) + 2 : 4; 
         const shuffledSkills = [...skillKeys].sort(() => 0.5 - Math.random());
         this.mySkills = shuffledSkills.slice(0, skillCount);
 
-        // 3. Перки (строго рандомное количество)
         const perkKeys = Object.keys(this.perksDB);
-        // В безлимите выбираем от 1 до 3 перков. В лимите - до 2.
-        const perkCount = this.isUnlimited
-            ? Math.floor(Math.random() * 3) + 1 // 1, 2 или 3
-            : 2;
-
+        const perkCount = this.isUnlimited ? Math.floor(Math.random() * 3) + 1 : 2;
         const shuffledPerks = [...perkKeys].sort(() => 0.5 - Math.random());
         this.myPerks = shuffledPerks.slice(0, perkCount);
 
         Object.keys(this.perksDB).forEach(k => this.perksDB[k].picked = false);
         this.myPerks.forEach(name => this.perksDB[name].picked = true);
 
-        // 4. Распределение очков
         if (this.mySkills.length > 0) {
             if (this.isUnlimited) {
                 this.mySkills.forEach(name => {
@@ -434,6 +471,7 @@ class CharacterEditor {
     listeners() {
         document.querySelectorAll('.tab-btn').forEach(btn => {
             btn.addEventListener('click', function() {
+                if (window.editor) window.editor.playSound('sfx-click');
                 document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
                 document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
                 this.classList.add('active');
@@ -453,6 +491,7 @@ class CharacterEditor {
         const unlimText = document.getElementById('unlimitedText');
         if (unlimBtn) {
             unlimBtn.addEventListener('click', () => {
+                this.playSound('sfx-click');
                 this.isUnlimited = !this.isUnlimited;
                 
                 if (this.isUnlimited) {
@@ -476,9 +515,13 @@ class CharacterEditor {
 
         document.getElementById('randomBtn')?.addEventListener('click', () => this.randomize());
 
-        document.getElementById('doneBtn')?.addEventListener('click', () => this.showResult());
+        document.getElementById('doneBtn')?.addEventListener('click', () => {
+            this.playSound('sfx-pick');
+            this.showResult();
+        });
         
         document.getElementById('closeModalBtn')?.addEventListener('click', () => {
+            this.playSound('sfx-click');
             document.getElementById('resultModal').classList.add('hidden');
         });
 
@@ -487,6 +530,7 @@ class CharacterEditor {
         });
         
         document.getElementById('copyBtn')?.addEventListener('click', () => {
+            this.playSound('sfx-click');
             const text = document.getElementById('resultBody').textContent;
             navigator.clipboard.writeText(text).then(() => this.showMsg('📋 Скопировано!', 'success'));
         });
