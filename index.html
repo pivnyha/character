@@ -5,12 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>4 очка</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;700&family=Roboto+Condensed:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container">
         <header>
             <div class="logo">
-                <span class="logo-icon">⚔</span>
+                <svg class="icon icon-lg"><use href="icons.svg#i-logo"/></svg>
                 <span class="logo-text">4 ОЧКА</span>
             </div>
             <div class="header-right">
@@ -20,16 +23,21 @@
 
         <nav class="tabs">
             <button class="tab-btn active" data-tab="characteristics">
-                <span class="tab-icon">📋</span> ХАРАКТЕРИСТИКИ
+                <svg class="icon"><use href="icons.svg#i-stats"/></svg>
+                ХАРАКТЕРИСТИКИ
             </button>
             <button class="tab-btn" data-tab="skills">
-                <span class="tab-icon">🎯</span> НАВЫКИ И ПЕРКИ
+                <svg class="icon"><use href="icons.svg#i-skills"/></svg>
+                НАВЫКИ И ПЕРКИ
             </button>
         </nav>
 
         <section id="characteristics" class="tab-content active">
             <div class="tab-header">
-                <div class="tab-title">📋 ХАРАКТЕРИСТИКИ</div>
+                <div class="tab-title">
+                    <svg class="icon"><use href="icons.svg#i-stats"/></svg>
+                    ХАРАКТЕРИСТИКИ
+                </div>
                 <div class="tab-stats">
                     <span class="stat-badge">MIN -4</span>
                     <span class="stat-badge">MAX +4</span>
@@ -41,7 +49,10 @@
 
         <section id="skills" class="tab-content">
             <div class="tab-header">
-                <div class="tab-title">🎯 НАВЫКИ И ПЕРКИ</div>
+                <div class="tab-title">
+                    <svg class="icon"><use href="icons.svg#i-skills"/></svg>
+                    НАВЫКИ И ПЕРКИ
+                </div>
                 <div class="tab-stats">
                     <span class="stat-badge" id="selectedDisplay">ВЫБРАНО: 0/4</span>
                     <span class="stat-badge highlight" id="skillPointsDisplay">ОЧКОВ: 3</span>
@@ -51,17 +62,26 @@
             <div class="skills-container">
                 <div class="skills-layout">
                     <div class="skills-column">
-                        <div class="column-title">📋 НАВЫКИ</div>
+                        <div class="column-title">
+                            <svg class="icon"><use href="icons.svg#i-skills"/></svg>
+                            НАВЫКИ
+                        </div>
                         <div class="skills-list" id="allSkillsList"></div>
                     </div>
 
                     <div class="skills-column">
-                        <div class="column-title">🏅 ПЕРКИ</div>
+                        <div class="column-title">
+                            <svg class="icon"><use href="icons.svg#i-perks"/></svg>
+                            ПЕРКИ
+                        </div>
                         <div class="skills-list" id="allPerksList"></div>
                     </div>
 
                     <div class="skills-column">
-                        <div class="column-title">⚡ ВЫБРАННОЕ</div>
+                        <div class="column-title">
+                            <svg class="icon"><use href="icons.svg#i-picked"/></svg>
+                            ВЫБРАННОЕ
+                        </div>
                         <div class="skills-list" id="selectedList"></div>
                     </div>
                 </div>
@@ -74,7 +94,10 @@
         </section>
 
         <footer class="actions">
-            <button id="doneBtn" class="btn btn-success">✅ ГОТОВО</button>
+            <button id="doneBtn" class="btn btn-success">
+                <svg class="icon"><use href="icons.svg#i-done"/></svg>
+                ГОТОВО
+            </button>
         </footer>
 
         <div id="savedMessage" class="message hidden">✔ ПЕРСОНАЖ СОХРАНЕН</div>
@@ -84,52 +107,58 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h2>📜 ХАРАКТЕРИСТИКИ ПЕРСОНАЖА</h2>
-                <button class="modal-close" id="closeModalBtn">✕</button>
+                <button class="modal-close" id="closeModalBtn">
+                    <svg class="icon"><use href="icons.svg#i-close"/></svg>
+                </button>
             </div>
             <div class="modal-body" id="resultBody"></div>
             <div class="modal-footer">
-                <button id="copyBtn" class="btn btn-primary">📋 КОПИРОВАТЬ</button>
+                <button id="copyBtn" class="btn btn-primary">
+                    <svg class="icon"><use href="icons.svg#i-copy"/></svg>
+                    КОПИРОВАТЬ
+                </button>
             </div>
         </div>
     </div>
 
-    <!-- ===== ФОНОВАЯ МУЗЫКА ===== -->
-    <audio id="bgMusic" loop autoplay>
+    <!-- ===== СТАТУС-БАР ===== -->
+    <footer class="status-bar">
+        <div class="status-item">
+            <span class="status-led" id="statusLed"></span>
+            <span class="status-label">СТАТУС:</span>
+            <span class="status-value" id="statusText">ГОТОВ</span>
+        </div>
+        <div class="status-divider"></div>
+        <div class="status-item">
+            <span class="status-label">ВЫБРАНО:</span>
+            <span class="status-dots" id="statusDots">
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+            </span>
+            <span class="status-value" id="statusSelected">0/4</span>
+        </div>
+        <div class="status-divider"></div>
+        <div class="status-item">
+            <span class="status-label">ОЧКОВ:</span>
+            <span class="status-value highlight" id="statusPoints">2</span>
+        </div>
+        <div class="status-divider"></div>
+        <div class="status-item">
+            <span class="status-label">СЕКТОР:</span>
+            <span class="status-value" id="statusSector">01</span>
+        </div>
+    </footer>
+
+    <!-- ===== МУЗЫКА ===== -->
+    <audio id="bgMusic" loop>
         <source src="https://cdn.pixabay.com/download/audio/2022/03/10/audio_c8c8c8c8c8.mp3" type="audio/mpeg">
     </audio>
-    <button id="musicToggle" class="btn" style="position: fixed; bottom: 20px; right: 20px; z-index: 999; padding: 8px 16px; font-size: 14px; background: rgba(26,26,26,0.85); border: 1px solid #6b8c42; color: #d4d4d4; border-radius: 4px; cursor: pointer; font-family: 'Share Tech Mono', monospace; letter-spacing: 1px;">🔊 МУЗЫКА</button>
-
-    <script>
-        (function() {
-            const audio = document.getElementById('bgMusic');
-            const toggleBtn = document.getElementById('musicToggle');
-            let isPlaying = false;
-            
-            audio.volume = 0.2;
-            audio.loop = true;
-            
-            audio.play().then(() => {
-                isPlaying = true;
-                toggleBtn.textContent = '🔊 МУЗЫКА';
-            }).catch(() => {
-                isPlaying = false;
-                toggleBtn.textContent = '🔇 МУЗЫКА';
-            });
-            
-            toggleBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                if (isPlaying) {
-                    audio.pause();
-                    toggleBtn.textContent = '🔇 МУЗЫКА';
-                    isPlaying = false;
-                } else {
-                    audio.play().catch(() => {});
-                    toggleBtn.textContent = '🔊 МУЗЫКА';
-                    isPlaying = true;
-                }
-            });
-        })();
-    </script>
+    <button id="musicToggle" class="btn music-toggle">
+        <svg class="icon"><use href="icons.svg#i-music-off"/></svg>
+        МУЗЫКА
+    </button>
 
     <script src="script.js"></script>
 </body>
