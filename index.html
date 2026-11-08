@@ -32,6 +32,7 @@
             </button>
         </nav>
 
+        <!-- ВКЛАДКА 1 -->
         <section id="characteristics" class="tab-content active">
             <div class="tab-header">
                 <div class="tab-title">
@@ -47,6 +48,7 @@
             <div class="stats-grid" id="characteristicsGrid"></div>
         </section>
 
+        <!-- ВКЛАДКА 2 -->
         <section id="skills" class="tab-content">
             <div class="tab-header">
                 <div class="tab-title">
@@ -93,9 +95,8 @@
             </div>
         </section>
 
-        <!-- ===== НИЖНЯЯ ПАНЕЛЬ ===== -->
+        <!-- ПАНЕЛЬ УПРАВЛЕНИЯ (ВЫНЕСЕНА ИЗ ВКЛАДОК) -->
         <footer class="actions">
-            <!-- ЛЕВО: Тумблер -->
             <div class="action-left">
                 <label class="hardware-toggle" title="Безлимитный режим">
                     <input type="checkbox" id="unlimitedToggle">
@@ -108,7 +109,6 @@
                 </label>
             </div>
 
-            <!-- ЦЕНТР: Кнопка Готово -->
             <div class="action-center">
                 <button id="doneBtn" class="btn btn-success">
                     <svg class="icon"><use href="icons.svg#i-done"/></svg>
@@ -116,7 +116,6 @@
                 </button>
             </div>
 
-            <!-- ПРАВО: Рандом -->
             <div class="action-right">
                 <button id="randomBtn" class="btn btn-random">
                     <svg class="icon"><use href="icons.svg#i-luck"/></svg>
@@ -146,7 +145,6 @@
         </div>
     </div>
 
-    <!-- ===== СТАТУС-БАР ===== -->
     <footer class="status-bar">
         <div class="status-item">
             <span class="status-led" id="statusLed"></span>
@@ -179,104 +177,5 @@
     <script src="script.js"></script>
 </body>
 </html>
-                        <div class="column-title">
-                            <svg class="icon"><use href="icons.svg#i-done"/></svg>
-                            ВЫБРАННОЕ
-                        </div>
-                        <div class="skills-list" id="selectedList"></div>
-                    </div>
-                </div>
-
-                <div class="description-area" id="descriptionArea">
-                    <div class="description-placeholder">Наведите на навык или перк для описания</div>
-                    <div class="description-content" id="descriptionContent"></div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ===== НИЖНЯЯ ПАНЕЛЬ ===== -->
-        <footer class="actions">
-            <!-- ЛЕВО: Тумблер -->
-            <div class="action-left">
-                <label class="hardware-toggle" title="Безлимитный режим">
-                    <input type="checkbox" id="unlimitedToggle">
-                    <div class="hw-base">
-                        <div class="hw-nut"></div>
-                        <div class="hw-lever"></div>
-                        <div class="hw-plate">ON / OFF</div>
-                    </div>
-                    <span class="toggle-label">БЕЗ ЛИМИТОВ</span>
-                </label>
-            </div>
-
-            <!-- ЦЕНТР: Кнопка Готово -->
-            <div class="action-center">
-                <button id="doneBtn" class="btn btn-success">
-                    <svg class="icon"><use href="icons.svg#i-done"/></svg>
-                    ГОТОВО
-                </button>
-            </div>
-
-            <!-- ПРАВО: Рандом -->
-            <div class="action-right">
-                <button id="randomBtn" class="btn btn-random">
-                    <svg class="icon"><use href="icons.svg#i-luck"/></svg>
-                    РАНДОМ
-                </button>
-            </div>
-        </footer>
-
-        <div id="savedMessage" class="message hidden">✔ ПЕРСОНАЖ СОХРАНЕН</div>
-    </div>
-
-    <div id="resultModal" class="modal hidden">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>📜 ХАРАКТЕРИСТИКИ ПЕРСОНАЖА</h2>
-                <button class="modal-close" id="closeModalBtn">
-                    <svg class="icon"><use href="icons.svg#i-close"/></svg>
-                </button>
-            </div>
-            <div class="modal-body" id="resultBody"></div>
-            <div class="modal-footer">
-                <button id="copyBtn" class="btn btn-primary">
-                    <svg class="icon"><use href="icons.svg#i-copy"/></svg>
-                    КОПИРОВАТЬ
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- ===== СТАТУС-БАР ===== -->
-    <footer class="status-bar">
-        <div class="status-item">
-            <span class="status-led" id="statusLed"></span>
-            <span class="status-label">СТАТУС:</span>
-            <span class="status-value" id="statusText">ГОТОВ</span>
-        </div>
-        <div class="status-divider"></div>
-        <div class="status-item">
-            <span class="status-label">ВЫБРАНО:</span>
-            <span class="status-dots" id="statusDots">
-                <span class="dot"></span>
-                <span class="dot"></span>
-                <span class="dot"></span>
-                <span class="dot"></span>
-            </span>
-            <span class="status-value" id="statusSelected">0/4</span>
-        </div>
-        <div class="status-divider"></div>
-        <div class="status-item">
-            <span class="status-label">ОЧКОВ:</span>
-            <span class="status-value highlight" id="statusPoints">2</span>
-        </div>
-        <div class="status-divider"></div>
-        <div class="status-item">
-            <span class="status-label">СЕКТОР:</span>
-            <span class="status-value" id="statusSector">01</span>
-        </div>
-    </footer>
-
-    <script src="script.js"></script>
 </body>
 </html>
