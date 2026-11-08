@@ -157,10 +157,10 @@ header {
     background: rgba(143, 168, 112, 0.06);
 }
 
-/* ===== ИКОНКИ (УМЕНЬШЕНЫ) ===== */
+/* ===== ИКОНКИ ===== */
 .icon {
-    width: 14px;
-    height: 14px;
+    width: 18px;
+    height: 18px;
     display: inline-block;
     vertical-align: middle;
     color: var(--text-bright);
@@ -168,41 +168,48 @@ header {
     transition: color 0.2s ease, transform 0.2s ease;
 }
 
-.icon-sm { width: 12px; height: 12px; }
-.icon-md { width: 18px; height: 18px; }
-.icon-lg { width: 22px; height: 22px; }
+/* Размеры */
+.icon-sm { width: 16px; height: 16px; }
+.icon-md { width: 20px; height: 20px; }
+.icon-lg { width: 24px; height: 24px; }
 
-/* В кнопках иконки чуть меньше */
+/* В кнопках */
 .btn .icon {
-    width: 12px;
-    height: 12px;
+    width: 16px;
+    height: 16px;
 }
 
-/* В заголовках колонок — мелкие */
+/* В заголовках колонок */
 .column-title .icon {
-    width: 12px;
-    height: 12px;
+    width: 16px;
+    height: 16px;
     color: var(--accent);
 }
 
-/* В табах — мелкие */
+/* В табах */
 .tab-btn .icon {
-    width: 12px;
-    height: 12px;
+    width: 16px;
+    height: 16px;
 }
 
 /* В заголовках вкладок */
 .tab-title .icon {
-    width: 14px;
-    height: 14px;
+    width: 18px;
+    height: 18px;
     color: var(--accent);
 }
 
-/* В логотипе — чуть крупнее */
+/* В логотипе */
 .logo .icon {
-    width: 20px;
-    height: 20px;
+    width: 22px;
+    height: 22px;
     color: var(--accent);
+}
+
+/* В статус-баре */
+.status-bar .icon {
+    width: 14px;
+    height: 14px;
 }
 
 /* ===== КОНТЕНТ ===== */
