@@ -93,27 +93,36 @@
             </div>
         </section>
 
-        <!-- ===== ПАНЕЛЬ УПРАВЛЕНИЯ (ТУМБЛЕР + РАНДОМ + ГОТОВО) ===== -->
+        <!-- ===== НИЖНЯЯ ПАНЕЛЬ ===== -->
         <footer class="actions">
-            <div class="control-panel">
-                <!-- Тумблер безлимита -->
-                <label class="toggle-switch" title="Безлимитный режим">
+            <!-- ЛЕВО: Тумблер -->
+            <div class="action-left">
+                <label class="hardware-toggle" title="Безлимитный режим">
                     <input type="checkbox" id="unlimitedToggle">
-                    <span class="slider"></span>
+                    <div class="hw-base">
+                        <div class="hw-nut"></div>
+                        <div class="hw-lever"></div>
+                        <div class="hw-plate">ON / OFF</div>
+                    </div>
                     <span class="toggle-label">БЕЗ ЛИМИТОВ</span>
                 </label>
+            </div>
 
-                <!-- Кнопка рандома -->
+            <!-- ЦЕНТР: Кнопка Готово -->
+            <div class="action-center">
+                <button id="doneBtn" class="btn btn-success">
+                    <svg class="icon"><use href="icons.svg#i-done"/></svg>
+                    ГОТОВО
+                </button>
+            </div>
+
+            <!-- ПРАВО: Рандом -->
+            <div class="action-right">
                 <button id="randomBtn" class="btn btn-random">
                     <svg class="icon"><use href="icons.svg#i-luck"/></svg>
                     РАНДОМ
                 </button>
             </div>
-
-            <button id="doneBtn" class="btn btn-success">
-                <svg class="icon"><use href="icons.svg#i-done"/></svg>
-                ГОТОВО
-            </button>
         </footer>
 
         <div id="savedMessage" class="message hidden">✔ ПЕРСОНАЖ СОХРАНЕН</div>
