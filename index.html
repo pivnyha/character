@@ -13,7 +13,7 @@
     <div class="container">
         <header>
             <div class="logo">
-                <svg class="icon icon-lg"><use href="icons.svg#i-logo"/></svg>
+                <svg class="icon icon-md"><use href="icons.svg#i-logo"/></svg>
                 <span class="logo-text">4 ОЧКА</span>
             </div>
             <div class="header-right">
@@ -23,11 +23,11 @@
 
         <nav class="tabs">
             <button class="tab-btn active" data-tab="characteristics">
-                <svg class="icon"><use href="icons.svg#i-stats"/></svg>
+                <svg class="icon icon-sm"><use href="icons.svg#i-stats"/></svg>
                 ХАРАКТЕРИСТИКИ
             </button>
             <button class="tab-btn" data-tab="skills">
-                <svg class="icon"><use href="icons.svg#i-skills"/></svg>
+                <svg class="icon icon-sm"><use href="icons.svg#i-skills"/></svg>
                 НАВЫКИ И ПЕРКИ
             </button>
         </nav>
@@ -35,7 +35,7 @@
         <section id="characteristics" class="tab-content active">
             <div class="tab-header">
                 <div class="tab-title">
-                    <svg class="icon"><use href="icons.svg#i-stats"/></svg>
+                    <svg class="icon icon-sm"><use href="icons.svg#i-stats"/></svg>
                     ХАРАКТЕРИСТИКИ
                 </div>
                 <div class="tab-stats">
@@ -50,7 +50,7 @@
         <section id="skills" class="tab-content">
             <div class="tab-header">
                 <div class="tab-title">
-                    <svg class="icon"><use href="icons.svg#i-skills"/></svg>
+                    <svg class="icon icon-sm"><use href="icons.svg#i-skills"/></svg>
                     НАВЫКИ И ПЕРКИ
                 </div>
                 <div class="tab-stats">
@@ -63,7 +63,7 @@
                 <div class="skills-layout">
                     <div class="skills-column">
                         <div class="column-title">
-                            <svg class="icon"><use href="icons.svg#i-skills"/></svg>
+                            <svg class="icon icon-sm"><use href="icons.svg#i-skills"/></svg>
                             НАВЫКИ
                         </div>
                         <div class="skills-list" id="allSkillsList"></div>
@@ -71,7 +71,7 @@
 
                     <div class="skills-column">
                         <div class="column-title">
-                            <svg class="icon"><use href="icons.svg#i-perks"/></svg>
+                            <svg class="icon icon-sm"><use href="icons.svg#i-picked"/></svg>
                             ПЕРКИ
                         </div>
                         <div class="skills-list" id="allPerksList"></div>
@@ -79,7 +79,7 @@
 
                     <div class="skills-column">
                         <div class="column-title">
-                            <svg class="icon"><use href="icons.svg#i-picked"/></svg>
+                            <svg class="icon icon-sm"><use href="icons.svg#i-done"/></svg>
                             ВЫБРАННОЕ
                         </div>
                         <div class="skills-list" id="selectedList"></div>
@@ -95,7 +95,7 @@
 
         <footer class="actions">
             <button id="doneBtn" class="btn btn-success">
-                <svg class="icon"><use href="icons.svg#i-done"/></svg>
+                <svg class="icon icon-sm"><use href="icons.svg#i-done"/></svg>
                 ГОТОВО
             </button>
         </footer>
@@ -108,13 +108,13 @@
             <div class="modal-header">
                 <h2>📜 ХАРАКТЕРИСТИКИ ПЕРСОНАЖА</h2>
                 <button class="modal-close" id="closeModalBtn">
-                    <svg class="icon"><use href="icons.svg#i-close"/></svg>
+                    <svg class="icon icon-sm"><use href="icons.svg#i-close"/></svg>
                 </button>
             </div>
             <div class="modal-body" id="resultBody"></div>
             <div class="modal-footer">
                 <button id="copyBtn" class="btn btn-primary">
-                    <svg class="icon"><use href="icons.svg#i-copy"/></svg>
+                    <svg class="icon icon-sm"><use href="icons.svg#i-copy"/></svg>
                     КОПИРОВАТЬ
                 </button>
             </div>
@@ -150,15 +150,6 @@
             <span class="status-value" id="statusSector">01</span>
         </div>
     </footer>
-
-    <!-- ===== МУЗЫКА ===== -->
-    <audio id="bgMusic" loop>
-        <source src="https://cdn.pixabay.com/download/audio/2022/03/10/audio_c8c8c8c8c8.mp3" type="audio/mpeg">
-    </audio>
-    <button id="musicToggle" class="btn music-toggle">
-        <svg class="icon"><use href="icons.svg#i-music-off"/></svg>
-        МУЗЫКА
-    </button>
 
     <script src="script.js"></script>
 </body>
