@@ -32,8 +32,6 @@ class CharacterEditor {
         this.points = { charPoints: 2, freePoints: 3, skillLimit: 4, totalLimit: 4 };
         this.isUnlimited = false;
         this.typeTimeout = null;
-        
-        // Настройки звука
         this.volume = 0.3;
         this.audioCtx = null;
 
@@ -41,7 +39,7 @@ class CharacterEditor {
         this.start();
     }
 
-    // --- АУДИО-ДВИЖОК ---
+    // --- ЗВУКИ (Web Audio API) ---
     initAudio() {
         if (!this.audioCtx) {
             this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -53,17 +51,13 @@ class CharacterEditor {
         this.initAudio();
         const osc = this.audioCtx.createOscillator();
         const gain = this.audioCtx.createGain();
-        
         osc.type = 'square';
         osc.frequency.setValueAtTime(150, this.audioCtx.currentTime);
         osc.frequency.exponentialRampToValueAtTime(40, this.audioCtx.currentTime + 0.05);
-        
         gain.gain.setValueAtTime(this.volume, this.audioCtx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.01, this.audioCtx.currentTime + 0.05);
-        
         osc.connect(gain);
         gain.connect(this.audioCtx.destination);
-        
         osc.start();
         osc.stop(this.audioCtx.currentTime + 0.05);
     }
@@ -73,18 +67,13 @@ class CharacterEditor {
         this.initAudio();
         const osc = this.audioCtx.createOscillator();
         const gain = this.audioCtx.createGain();
-        
-        // Глухой низкий стук
         osc.type = 'triangle';
         osc.frequency.setValueAtTime(100, this.audioCtx.currentTime);
         osc.frequency.exponentialRampToValueAtTime(30, this.audioCtx.currentTime + 0.03);
-        
         gain.gain.setValueAtTime(this.volume * 0.6, this.audioCtx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.01, this.audioCtx.currentTime + 0.03);
-        
         osc.connect(gain);
         gain.connect(this.audioCtx.destination);
-        
         osc.start();
         osc.stop(this.audioCtx.currentTime + 0.03);
     }
@@ -94,21 +83,44 @@ class CharacterEditor {
         this.initAudio();
         const osc = this.audioCtx.createOscillator();
         const gain = this.audioCtx.createGain();
-        
         osc.type = 'sawtooth';
         osc.frequency.setValueAtTime(80, this.audioCtx.currentTime);
         osc.frequency.exponentialRampToValueAtTime(60, this.audioCtx.currentTime + 0.2);
-        
         gain.gain.setValueAtTime(this.volume * 0.5, this.audioCtx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.01, this.audioCtx.currentTime + 0.2);
-        
         osc.connect(gain);
         gain.connect(this.audioCtx.destination);
-        
         osc.start();
         osc.stop(this.audioCtx.currentTime + 0.2);
     }
 
+    setupAudioSettings() {
+        const toggle = document.getElementById('settingsToggle');
+        const panel = document.getElementById('settingsPanel');
+        const slider = document.getElementById('volumeSlider');
+        const valueDisplay = document.getElementById('volumeValue');
+
+        if (toggle && panel) {
+            toggle.addEventListener('click', () => panel.classList.toggle('hidden'));
+        }
+
+        if (slider && valueDisplay) {
+            slider.addEventListener('input', (e) => {
+                this.volume = parseFloat(e.target.value);
+                valueDisplay.textContent = Math.round(this.volume * 100) + '%';
+            });
+        }
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                if (this.audioCtx && this.audioCtx.state === 'running') this.audioCtx.suspend();
+            } else {
+                if (this.audioCtx && this.audioCtx.state === 'suspended') this.audioCtx.resume();
+            }
+        });
+    }
+
+    // --- ОТРИСОВКА ---
     start() {
         this.renderStats();
         this.renderSkills();
@@ -466,4 +478,158 @@ class CharacterEditor {
         const totalLimit = this.points.totalLimit;
         const free = this.points.freePoints;
 
-        const statusText = document.getElementById('statusText
+        const statusText = document.getElementById('statusText');
+        const statusLed = document.getElementById('statusLed');
+        
+        if (statusText && statusLed) {
+            if (this.isUnlimited) {
+                statusText.textContent = 'БЕЗЛИМИТ';
+                statusLed.className = 'status-led warn';
+            } else if (total >= totalLimit) {
+                statusText.textContent = 'МАКСИМУМ';
+                statusLed.className = 'status-led warn';
+            } else if (free <= 0) {
+                statusText.textContent = 'НЕТ ОЧКОВ';
+                statusLed.className = 'status-led warn';
+            } else {
+                statusText.textContent = 'ГОТОВ';
+                statusLed.className = 'status-led';
+            }
+        }
+
+        const dots = document.querySelectorAll('#statusDots .dot');
+        dots.forEach((dot, i) => {
+            dot.className = 'dot';
+            if (this.isUnlimited) {
+                dot.classList.add('full');
+            } else if (i < total) {
+                dot.classList.add('filled');
+                if (i >= totalLimit - 1) dot.classList.add('full');
+            }
+        });
+
+        const statusSelected = document.getElementById('statusSelected');
+        if (statusSelected) statusSelected.textContent = this.isUnlimited ? total : `${total}/${totalLimit}`;
+
+        const statusPoints = document.getElementById('statusPoints');
+        if (statusPoints) statusPoints.textContent = this.isUnlimited ? '∞' : free;
+
+        const statusSector = document.getElementById('statusSector');
+        if (statusSector) {
+            const isStats = document.querySelector('.tab-btn.active')?.dataset.tab === 'characteristics';
+            statusSector.textContent = isStats ? '01' : '02';
+        }
+    }
+
+    listeners() {
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if (window.editor) window.editor.playClick();
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                this.classList.add('active');
+                const target = document.getElementById(this.dataset.tab);
+                if (target) target.classList.add('active');
+                if (window.editor) window.editor.updateStatusBar();
+            });
+        });
+
+        document.getElementById('characteristicsGrid')?.addEventListener('click', (e) => {
+            const btn = e.target.closest('button');
+            if (!btn) return;
+            this.changeStat(btn.dataset.name, btn.classList.contains('stat-up') ? 1 : -1);
+        });
+
+        const unlimBtn = document.getElementById('unlimitedBtn');
+        const unlimText = document.getElementById('unlimitedText');
+        if (unlimBtn) {
+            unlimBtn.addEventListener('click', () => {
+                this.playClick();
+                this.isUnlimited = !this.isUnlimited;
+                
+                if (this.isUnlimited) {
+                    unlimBtn.classList.add('active');
+                    unlimText.textContent = 'БЕЗ ЛИМИТОВ';
+                    this.showMsg('БЕЗЛИМИТНЫЙ РЕЖИМ ВКЛЮЧЕН', 'success');
+                    this.points.charPoints = 999;
+                    this.points.freePoints = 999;
+                } else {
+                    unlimBtn.classList.remove('active');
+                    unlimText.textContent = 'ЛИМИТЫ ВКЛ';
+                    this.showMsg('ЛИМИТЫ ВОССТАНОВЛЕНЫ', 'error');
+                    this.resetAll();
+                }
+                
+                this.renderStats();
+                this.renderPicked();
+                this.updateDisplay();
+            });
+        }
+
+        document.getElementById('randomBtn')?.addEventListener('click', () => this.randomize());
+
+        document.getElementById('doneBtn')?.addEventListener('click', () => {
+            this.playClick();
+            this.showResult();
+        });
+        
+        document.getElementById('closeModalBtn')?.addEventListener('click', () => {
+            this.playClick();
+            document.getElementById('resultModal').classList.add('hidden');
+        });
+
+        document.getElementById('resultModal')?.addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) e.currentTarget.classList.add('hidden');
+        });
+        
+        document.getElementById('copyBtn')?.addEventListener('click', () => {
+            this.playClick();
+            const text = document.getElementById('resultBody').textContent;
+            navigator.clipboard.writeText(text).then(() => this.showMsg('📋 Скопировано!', 'success'));
+        });
+    }
+
+    showResult() {
+        const body = document.getElementById('resultBody');
+        if (!body) return;
+        let text = '📋 ХАРАКТЕРИСТИКИ:\n';
+        Object.entries(this.stats).forEach(([n, v]) => text += `  ${n}: ${v > 0 ? '+' : ''}${v}\n`);
+        
+        if (this.mySkills.length) {
+            text += '\n🎯 НАВЫКИ:\n';
+            this.mySkills.forEach(n => text += `  ${n}: ${this.skillsDB[n].val > 0 ? '+' : ''}${this.skillsDB[n].val}\n`);
+        }
+        if (this.myPerks.length) {
+            text += '\n🏅 ПЕРКИ:\n';
+            this.myPerks.forEach(n => text += `  ${n}\n`);
+        }
+        body.textContent = text;
+        document.getElementById('resultModal').classList.remove('hidden');
+    }
+
+    resetAll() {
+        Object.keys(this.stats).forEach(k => this.stats[k] = 0);
+        Object.keys(this.skillsDB).forEach(k => this.skillsDB[k].val = 0);
+        Object.keys(this.perksDB).forEach(k => this.perksDB[k].picked = false);
+        this.mySkills = [];
+        this.myPerks = [];
+        this.points.charPoints = 2;
+        this.points.freePoints = 3;
+    }
+
+    showMsg(text, type = 'info') {
+        const msg = document.getElementById('savedMessage');
+        if (!msg) return;
+        msg.textContent = text;
+        msg.className = 'message';
+        msg.style.borderColor = type === 'error' ? 'var(--accent-warn)' : 'var(--accent)';
+        msg.style.color = type === 'error' ? 'var(--accent-warn)' : 'var(--accent)';
+        msg.classList.remove('hidden');
+        clearTimeout(this._timer);
+        this._timer = setTimeout(() => msg.classList.add('hidden'), 3000);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    window.editor = new CharacterEditor();
+});
