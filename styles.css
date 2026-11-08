@@ -873,64 +873,7 @@ header {
     box-shadow: 0 0 8px var(--accent-warm);
 }
 
-/* ===== АДАПТИВ ===== */
-@media (max-width: 900px) {
-    .skills-layout {
-        grid-template-columns: 1fr;
-        gap: 10px;
-    }
-    .skills-column {
-        min-height: auto;
-        max-height: 300px;
-    }
-}
-
-@media (max-width: 768px) {
-    .container { padding: 12px 14px 18px; }
-    header { flex-direction: column; align-items: stretch; gap: 12px; }
-    .header-right { justify-content: space-between; }
-    .logo-text { font-size: 18px; letter-spacing: 3px; }
-    .tabs { gap: 2px; }
-    .tab-btn {
-        font-size: 11px;
-        padding: 10px 14px;
-        letter-spacing: 1px;
-        flex: 1;
-        justify-content: center;
-    }
-    .stats-grid { grid-template-columns: 1fr; }
-    .tab-header { flex-direction: column; align-items: flex-start; gap: 8px; }
-    
-    .actions { flex-direction: column; align-items: stretch; }
-    .action-left, .action-center, .action-right { justify-content: center; width: 100%; }
-    .btn { width: 100%; text-align: center; padding: 12px; }
-    
-    .stat-badge { font-size: 10px; padding: 4px 10px; }
-    
-    .status-bar {
-        height: 40px;
-        font-size: 10px;
-        gap: 12px;
-        padding: 0 10px;
-    }
-    .status-label { display: none; }
-    .status-divider { height: 16px; }
-    .status-value { font-size: 11px; }
-    .status-dots .dot { width: 6px; height: 6px; }
-}
-
-/* ===== СКРОЛЛБАР ===== */
-::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-}
-
-::-webkit-scrollbar-track { background: var(--bg-dark); }
-::-webkit-scrollbar-thumb {
-    background: var(--border-mid);
-    border-radius: 2px;
-
-   /* ===== НАСТРОЙКИ ЗВУКА ===== */
+/* ===== НАСТРОЙКИ ЗВУКА ===== */
 .settings-toggle {
     position: fixed;
     top: 20px;
@@ -939,7 +882,6 @@ header {
     height: 40px;
     background: var(--bg-panel);
     border: 1px solid var(--border-mid);
-    border-radius: 2px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1023,5 +965,62 @@ header {
     color: var(--accent);
     text-align: right;
 }
+
+/* ===== АДАПТИВ ===== */
+@media (max-width: 900px) {
+    .skills-layout {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    .skills-column {
+        min-height: auto;
+        max-height: 300px;
+    }
+}
+
+@media (max-width: 768px) {
+    .container { padding: 12px 14px 18px; }
+    header { flex-direction: column; align-items: stretch; gap: 12px; }
+    .header-right { justify-content: space-between; }
+    .logo-text { font-size: 18px; letter-spacing: 3px; }
+    .tabs { gap: 2px; }
+    .tab-btn {
+        font-size: 11px;
+        padding: 10px 14px;
+        letter-spacing: 1px;
+        flex: 1;
+        justify-content: center;
+    }
+    .stats-grid { grid-template-columns: 1fr; }
+    .tab-header { flex-direction: column; align-items: flex-start; gap: 8px; }
+    
+    .actions { flex-direction: column; align-items: stretch; }
+    .action-left, .action-center, .action-right { justify-content: center; width: 100%; }
+    .btn { width: 100%; text-align: center; padding: 12px; }
+    
+    .stat-badge { font-size: 10px; padding: 4px 10px; }
+    
+    .status-bar {
+        height: 40px;
+        font-size: 10px;
+        gap: 12px;
+        padding: 0 10px;
+    }
+    .status-label { display: none; }
+    .status-divider { height: 16px; }
+    .status-value { font-size: 11px; }
+    .status-dots .dot { width: 6px; height: 6px; }
+}
+
+/* ===== СКРОЛЛБАР ===== */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track { background: var(--bg-dark); }
+::-webkit-scrollbar-thumb {
+    background: var(--border-mid);
+    border-radius: 2px;
 }
 ::-webkit-scrollbar-thumb:hover { background: var(--border-lit); }
