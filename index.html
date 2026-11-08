@@ -93,7 +93,23 @@
             </div>
         </section>
 
+        <!-- ===== ПАНЕЛЬ УПРАВЛЕНИЯ (ТУМБЛЕР + РАНДОМ + ГОТОВО) ===== -->
         <footer class="actions">
+            <div class="control-panel">
+                <!-- Тумблер безлимита -->
+                <label class="toggle-switch" title="Безлимитный режим">
+                    <input type="checkbox" id="unlimitedToggle">
+                    <span class="slider"></span>
+                    <span class="toggle-label">БЕЗ ЛИМИТОВ</span>
+                </label>
+
+                <!-- Кнопка рандома -->
+                <button id="randomBtn" class="btn btn-random">
+                    <svg class="icon"><use href="icons.svg#i-luck"/></svg>
+                    РАНДОМ
+                </button>
+            </div>
+
             <button id="doneBtn" class="btn btn-success">
                 <svg class="icon"><use href="icons.svg#i-done"/></svg>
                 ГОТОВО
