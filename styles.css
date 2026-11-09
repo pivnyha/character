@@ -1040,5 +1040,48 @@ header {
 .req-text {
     font-family: var(--font-mono);
     letter-spacing: 0;
+
+   /* ===== СТИЛИ ДЛЯ ПЕРКОВ С УСЛОВИЯМИ ===== */
+.skill-item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+}
+
+.perk-name {
+    font-family: var(--font-title);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    color: var(--text-main);
+    text-transform: uppercase;
+    width: 100%;
+}
+
+.perk-req {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--accent-warn);
+    letter-spacing: 0.5px;
+    background: rgba(184, 92, 56, 0.1);
+    padding: 3px 6px;
+    border: 1px solid rgba(184, 92, 56, 0.3);
+    width: 100%;
+    box-sizing: border-box;
+    clip-path: polygon(0 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%);
+}
+
+/* Заблокированные перки */
+.skill-item.locked {
+    opacity: 0.6;
+    cursor: not-allowed;
+    border-color: rgba(184, 92, 56, 0.4);
+}
+
+.skill-item.locked:hover {
+    background: var(--bg-card);
+    border-color: rgba(184, 92, 56, 0.6);
+}
     margin-left: 5px;
 }
