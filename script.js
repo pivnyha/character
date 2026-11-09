@@ -17,12 +17,47 @@ class CharacterEditor {
             'Вождение': { val: 0, desc: '+1 к управлению наземным транспортом', type: 'spec' }
         };
 
+        // Перки с требованиями и исключениями
         this.perksDB = {
-            'Нежное обаяние': { picked: false, desc: 'Персонажи женского пола к вам более расположены: охотнее идут навстречу, легче верят и склонны трактовать ваши поступки в лучшую сторону.' },
-            'Твердое слово': { picked: false, desc: 'Персонажи мужского пола к вам более расположены: охотнее идут навстречу, легче верят и склонны трактовать ваши поступки в лучшую сторону.' },
+            'Нежное обаяние': { 
+                picked: false, 
+                desc: 'Персонажи женского пола к вам более расположены: охотнее идут навстречу, легче верят и склонны трактовать ваши поступки в лучшую сторону.', 
+                req: { 'Харизма': 2 },
+                exclude: ['Твердое слово']
+            },
+            'Твердое слово': { 
+                picked: false, 
+                desc: 'Персонажи мужского пола к вам более расположены: охотнее идут навстречу, легче верят и склонны трактовать ваши поступки в лучшую сторону.', 
+                req: { 'Харизма': 2 },
+                exclude: ['Нежное обаяние']
+            },
+            'Мастер-торговец': { 
+                picked: false, 
+                desc: 'Ваш персонаж имеет больший шанс получить скидку и доп валюты при продаже.', 
+                req: { 'Харизма': 2 } 
+            },
+            'Запугивание': { 
+                picked: false, 
+                desc: 'Вместо убеждения можно запугивать. Работает через Силу, а не Харизму.', 
+                req: { 'Сила': 2 } 
+            },
+            'Шепот в голове': { 
+                picked: false, 
+                desc: 'При использовании ГМ дает вам три подсказки за главу.', 
+                req: { 'Внимательность': 2, 'Удача': 1 } 
+            },
+            'Кошачье зрение': { 
+                picked: false, 
+                desc: 'Персонаж лучше видит в темноте, что дает ему бафы в некоторых аспектах.', 
+                req: { 'Внимательность': 2 } 
+            },
+            'Мародер': { 
+                picked: false, 
+                desc: 'С большим шансом ты можешь найти что-то ценное в трупе или в хламе.', 
+                req: { 'Удача': 1, 'Внимательность': 1 } 
+            },
             'Ответка': { picked: false, desc: 'Увернувшись от удара, получаешь +1 к следующей атаке против обидчика.' },
             'Крепкий орешек': { picked: false, desc: 'Ваш персонаж получает дополнительные 20ХП.' },
-            'Мастер-торговец': { picked: false, desc: 'Ваш персонаж имеет больший шанс получить скидку и доп валюты при продаже.' },
             'Химик': { picked: false, desc: 'При употреблении препаратов или боевых стимуляторов его действия продляются на 1 ход.' },
             'Голос за кадром': { picked: false, desc: 'ГМ может дать расплывчатую подсказку игроку' }
         };
@@ -33,17 +68,15 @@ class CharacterEditor {
         this.isUnlimited = false;
         this.typeTimeout = null;
         
-        // Загружаем сохраненную громкость (по умолчанию 0.3)
         const savedVolume = localStorage.getItem('editorVolume');
         this.volume = savedVolume !== null ? parseFloat(savedVolume) : 0.3;
-        
         this.audioCtx = null;
 
         this.resetAll();
         this.start();
     }
 
-    // ===== АУДИО ДВИЖОК (WEB AUDIO API) =====
+    // ===== АУДИО =====
     initAudio() {
         if (!this.audioCtx) {
             this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -69,20 +102,14 @@ class CharacterEditor {
     playTypewriter() {
         if (this.volume <= 0) return;
         this.initAudio();
-        
-        // Очень короткий шумовой буфер (0.015 сек) для четкого щелчка
         const bufferSize = this.audioCtx.sampleRate * 0.015;
         const buffer = this.audioCtx.createBuffer(1, bufferSize, this.audioCtx.sampleRate);
         const data = buffer.getChannelData(0);
-        
-        for (let i = 0; i < bufferSize; i++) {
-            data[i] = Math.random() * 2 - 1;
-        }
+        for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
         
         const noise = this.audioCtx.createBufferSource();
         noise.buffer = buffer;
         
-        // Фильтр высоких частот для "деревянного" стука
         const filter = this.audioCtx.createBiquadFilter();
         filter.type = 'highpass';
         filter.frequency.value = 1500; 
@@ -94,7 +121,6 @@ class CharacterEditor {
         noise.connect(filter);
         filter.connect(gain);
         gain.connect(this.audioCtx.destination);
-        
         noise.start();
     }
 
@@ -114,25 +140,16 @@ class CharacterEditor {
         osc.stop(this.audioCtx.currentTime + 0.2);
     }
 
-    // ===== НАСТРОЙКИ ЗВУКА =====
     setupAudioSettings() {
         const toggle = document.getElementById('settingsToggle');
         const panel = document.getElementById('settingsPanel');
         const slider = document.getElementById('volumeSlider');
         const valueDisplay = document.getElementById('volumeValue');
 
-        if (toggle && panel) {
-            toggle.addEventListener('click', () => {
-                panel.classList.toggle('hidden');
-            });
-        }
-
+        if (toggle && panel) toggle.addEventListener('click', () => panel.classList.toggle('hidden'));
         if (slider && valueDisplay) {
-            // Устанавливаем ползунок в сохраненное значение при загрузке
             slider.value = this.volume;
             valueDisplay.textContent = Math.round(this.volume * 100) + '%';
-
-            // При изменении ползунка — обновляем звук и сохраняем в localStorage
             slider.addEventListener('input', (e) => {
                 this.volume = parseFloat(e.target.value);
                 valueDisplay.textContent = Math.round(this.volume * 100) + '%';
@@ -140,7 +157,6 @@ class CharacterEditor {
             });
         }
 
-        // Отключение звука при сворачивании вкладки
         document.addEventListener('visibilitychange', () => {
             if (document.hidden) {
                 if (this.audioCtx && this.audioCtx.state === 'running') this.audioCtx.suspend();
@@ -150,7 +166,6 @@ class CharacterEditor {
         });
     }
 
-    // ===== ИНИЦИАЛИЗАЦИЯ =====
     start() {
         this.renderStats();
         this.renderSkills();
@@ -161,6 +176,7 @@ class CharacterEditor {
         this.setupAudioSettings();
     }
 
+    // ===== ОТРИСОВКА =====
     renderStats() {
         const grid = document.getElementById('characteristicsGrid');
         if (!grid) return;
@@ -186,10 +202,7 @@ class CharacterEditor {
         
         if (!this.isUnlimited) {
             if (next < -4 || next > 4) { this.playError(); return; }
-            if (delta > 0 && this.points.charPoints <= 0) {
-                this.playError();
-                return this.showMsg('Нет очков характеристик!', 'error');
-            }
+            if (delta > 0 && this.points.charPoints <= 0) { this.playError(); return this.showMsg('Нет очков характеристик!', 'error'); }
             if (delta < 0) this.points.charPoints += 1;
             else this.points.charPoints -= 1;
         } else {
@@ -200,6 +213,9 @@ class CharacterEditor {
         this.stats[name] = next;
         this.renderStats();
         this.updateDisplay();
+        
+        // ВАЖНО: При смене статов перепроверяем доступность перков
+        this.renderPerks();
     }
 
     renderSkills() {
@@ -249,6 +265,7 @@ class CharacterEditor {
         this.updateDisplay();
     }
 
+    // ===== ПЕРКИ (С УСЛОВИЯМИ) =====
     renderPerks() {
         const container = document.getElementById('allPerksList');
         if (!container) return;
@@ -258,10 +275,54 @@ class CharacterEditor {
             const picked = this.myPerks.includes(name);
             const el = document.createElement('div');
             el.className = `skill-item ${picked ? 'selected' : ''}`;
-            el.innerHTML = `<span class="skill-name">${name}</span>`;
+            
+            // Проверка требований
+            let isLocked = false;
+            let reqText = '';
+            
+            if (!picked && data.req) {
+                const missing = [];
+                for (const [stat, value] of Object.entries(data.req)) {
+                    if (this.stats[stat] < value) {
+                        isLocked = true;
+                        missing.push(`${stat} ${value}`);
+                    }
+                }
+                if (isLocked) {
+                    el.classList.add('locked');
+                    reqText = `[Требует: ${missing.join(', ')}]`;
+                }
+            }
+
+            // Проверка исключений
+            if (!picked && data.exclude) {
+                const hasExcluded = data.exclude.some(ex => this.myPerks.includes(ex));
+                if (hasExcluded) {
+                    isLocked = true;
+                    el.classList.add('locked');
+                    reqText = `[Несовместимо с ${data.exclude[0]}]`;
+                }
+            }
+
+            el.innerHTML = `
+                <span class="skill-name">${name}</span>
+                ${reqText ? `<span class="req-text">${reqText}</span>` : ''}
+            `;
+
             el.addEventListener('mouseenter', () => this.showDesc(name, data.desc, 'perk'));
             el.addEventListener('mouseleave', () => this.hideDesc());
-            if (!picked) el.addEventListener('click', () => this.pickPerk(name));
+            
+            if (!picked) {
+                el.addEventListener('click', () => {
+                    if (isLocked) {
+                        this.playError();
+                        if (reqText) this.showMsg(`Не выполнены условия: ${reqText}`, 'error');
+                        return;
+                    }
+                    this.pickPerk(name);
+                });
+            }
+            
             container.appendChild(el);
         });
     }
@@ -277,6 +338,12 @@ class CharacterEditor {
         } else {
             const total = this.mySkills.length + this.myPerks.length;
             if (!this.isUnlimited && total >= this.points.totalLimit) { this.playError(); return this.showMsg('Максимум 4 выбора!', 'error'); }
+            
+            if (perk.exclude) {
+                const hasExcluded = perk.exclude.some(ex => this.myPerks.includes(ex));
+                if (hasExcluded) { this.playError(); return this.showMsg(`Несовместимо с ${perk.exclude[0]}`, 'error'); }
+            }
+
             this.playClick();
             perk.picked = true;
             this.myPerks.push(name);
@@ -400,7 +467,6 @@ class CharacterEditor {
         if (placeholder) placeholder.style.display = 'none';
         
         clearTimeout(this.typeTimeout);
-
         area.innerHTML = `
             <div class="description-type">${type === 'skill' ? '📋 НАВЫК' : '🏅 ПЕРК'}</div>
             <div class="description-name">${name}</div>
@@ -416,17 +482,11 @@ class CharacterEditor {
             if (i < desc.length) {
                 const char = desc.charAt(i);
                 textEl.textContent += char;
-                
-                // Звук на буквы с вероятностью 60% (чтобы был стук, а не очередь)
-                if (char !== ' ' && Math.random() > 0.4) {
-                    this.playTypewriter();
-                }
-                
+                if (char !== ' ' && Math.random() > 0.4) this.playTypewriter();
                 i++;
                 this.typeTimeout = setTimeout(typeChar, 45);
             }
         };
-        
         typeChar();
     }
 
@@ -460,13 +520,30 @@ class CharacterEditor {
         const shuffledSkills = [...skillKeys].sort(() => 0.5 - Math.random());
         this.mySkills = shuffledSkills.slice(0, skillCount);
 
+        // Рандом перков с учетом требований (упрощенный)
         const perkKeys = Object.keys(this.perksDB);
         const perkCount = this.isUnlimited ? Math.floor(Math.random() * 3) + 1 : 2;
         const shuffledPerks = [...perkKeys].sort(() => 0.5 - Math.random());
-        this.myPerks = shuffledPerks.slice(0, perkCount);
-
-        Object.keys(this.perksDB).forEach(k => this.perksDB[k].picked = false);
-        this.myPerks.forEach(name => this.perksDB[name].picked = true);
+        
+        this.myPerks = [];
+        let addedPerks = 0;
+        for (const perk of shuffledPerks) {
+            if (addedPerks >= perkCount) break;
+            const data = this.perksDB[perk];
+            // Проверка исключений
+            if (data.exclude && data.exclude.some(ex => this.myPerks.includes(ex))) continue;
+            // (Если безлимит, требования игнорируем, иначе проверяем)
+            if (!this.isUnlimited && data.req) {
+                let hasReq = true;
+                for (const [stat, val] of Object.entries(data.req)) {
+                    if (this.stats[stat] < val) hasReq = false;
+                }
+                if (!hasReq) continue;
+            }
+            this.myPerks.push(perk);
+            this.perksDB[perk].picked = true;
+            addedPerks++;
+        }
 
         if (this.mySkills.length > 0) {
             if (this.isUnlimited) {
@@ -597,6 +674,7 @@ class CharacterEditor {
                 }
                 
                 this.renderStats();
+                this.renderPerks();
                 this.renderPicked();
                 this.updateDisplay();
             });
