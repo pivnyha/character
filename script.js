@@ -17,7 +17,6 @@ class CharacterEditor {
             'Вождение': { val: 0, desc: '+1 к управлению наземным транспортом', type: 'spec' }
         };
 
-        // Перки с требованиями и исключениями
         this.perksDB = {
             'Нежное обаяние': { 
                 picked: false, 
@@ -212,9 +211,7 @@ class CharacterEditor {
         this.stats[name] = next;
         this.renderStats();
         this.updateDisplay();
-        
-        // ВАЖНО: При смене статов перепроверяем доступность перков
-        this.renderPerks();
+        this.renderPerks(); 
     }
 
     renderSkills() {
@@ -275,9 +272,8 @@ class CharacterEditor {
             const el = document.createElement('div');
             el.className = `skill-item ${picked ? 'selected' : ''}`;
             
-            // Проверка требований
             let isLocked = false;
-            let reqText = '';
+            let reqHtml = '';
             
             if (!picked && data.req) {
                 const missing = [];
@@ -289,23 +285,22 @@ class CharacterEditor {
                 }
                 if (isLocked) {
                     el.classList.add('locked');
-                    reqText = `[Требует: ${missing.join(', ')}]`;
+                    reqHtml = `<div class="perk-req">🔒 Требуется: ${missing.join(', ')}</div>`;
                 }
             }
 
-            // Проверка исключений
             if (!picked && data.exclude) {
                 const hasExcluded = data.exclude.some(ex => this.myPerks.includes(ex));
                 if (hasExcluded) {
                     isLocked = true;
                     el.classList.add('locked');
-                    reqText = `[Несовместимо с ${data.exclude[0]}]`;
+                    reqHtml = `<div class="perk-req">🔒 Несовместимо с: ${data.exclude[0]}</div>`;
                 }
             }
 
             el.innerHTML = `
-                <span class="skill-name">${name}</span>
-                ${reqText ? `<span class="req-text">${reqText}</span>` : ''}
+                <div class="perk-name">${name}</div>
+                ${reqHtml}
             `;
 
             el.addEventListener('mouseenter', () => this.showDesc(name, data.desc, 'perk'));
@@ -315,7 +310,6 @@ class CharacterEditor {
                 el.addEventListener('click', () => {
                     if (isLocked) {
                         this.playError();
-                        if (reqText) this.showMsg(`Не выполнены условия: ${reqText}`, 'error');
                         return;
                     }
                     this.pickPerk(name);
@@ -519,7 +513,6 @@ class CharacterEditor {
         const shuffledSkills = [...skillKeys].sort(() => 0.5 - Math.random());
         this.mySkills = shuffledSkills.slice(0, skillCount);
 
-        // Рандом перков с учетом требований (упрощенный)
         const perkKeys = Object.keys(this.perksDB);
         const perkCount = this.isUnlimited ? Math.floor(Math.random() * 3) + 1 : 2;
         const shuffledPerks = [...perkKeys].sort(() => 0.5 - Math.random());
@@ -529,9 +522,7 @@ class CharacterEditor {
         for (const perk of shuffledPerks) {
             if (addedPerks >= perkCount) break;
             const data = this.perksDB[perk];
-            // Проверка исключений
             if (data.exclude && data.exclude.some(ex => this.myPerks.includes(ex))) continue;
-            // (Если безлимит, требования игнорируем, иначе проверяем)
             if (!this.isUnlimited && data.req) {
                 let hasReq = true;
                 for (const [stat, val] of Object.entries(data.req)) {
