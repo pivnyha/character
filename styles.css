@@ -1024,3 +1024,21 @@ header {
     border-radius: 2px;
 }
 ::-webkit-scrollbar-thumb:hover { background: var(--border-lit); }
+
+/* Стили для заблокированных перков */
+.skill-item.locked {
+    opacity: 0.4;
+    cursor: not-allowed;
+    border-color: var(--accent-warn);
+}
+
+.skill-item.locked:hover {
+    background: var(--bg-card);
+    border-color: var(--accent-warn);
+}
+
+.req-text {
+    font-family: var(--font-mono);
+    letter-spacing: 0;
+    margin-left: 5px;
+}
